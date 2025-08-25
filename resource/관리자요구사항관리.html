@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP 관리자 요청사항 처리</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6366f1;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: #6366f1;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #c084fc;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+
+        .notification::after {
+            content: '7';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #dc2626;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .main-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .content-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: 2px dashed #d1d5db;
+            min-height: 600px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-select, .search-input {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .search-input {
+            min-width: 200px;
+        }
+
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+
+        .table-header {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .table-header th {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #e5e7eb;
+            position: relative;
+        }
+
+        .table-header th:first-child {
+            width: 60px;
+        }
+
+        .requests-table tbody tr {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .requests-table tbody tr:hover {
+            background: #f8fafc;
+            transform: translateX(2px);
+        }
+
+        .requests-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #6366f1;
+        }
+
+        .request-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .request-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .request-dept {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .request-id {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .dept-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dept-icon {
+            width: 24px;
+            height: 24px;
+            background: #6366f1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .dept-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dept-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .dept-sub {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .requester-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .requester-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .requester-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .requester-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .requester-position {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-processing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-delete {
+            background: #fecaca;
+            color: #dc2626;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .btn-edit {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+
+        .btn-edit:hover {
+            background: #ea580c;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .btn-view {
+            background: #e0e7ff;
+            color: #6366f1;
+        }
+
+        .btn-view:hover {
+            background: #6366f1;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .bulk-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bulk-approve {
+            background: #10b981;
+            color: white;
+        }
+
+        .bulk-approve:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .bulk-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .bulk-reject:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .bulk-export {
+            background: #6366f1;
+            color: white;
+        }
+
+        .bulk-export:hover {
+            background: #5856eb;
+            transform: translateY(-2px);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .card-pending .stats-number { color: #f59e0b; }
+        .card-approved .stats-number { color: #10b981; }
+        .card-processing .stats-number { color: #3b82f6; }
+        .card-rejected .stats-number { color: #ef4444; }
+
+        @media (max-width: 1200px) {
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .requests-table {
+                font-size: 0.875rem;
+            }
+            
+            .requests-table td {
+                padding: 0.75rem;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-wrapper {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div style="width: 40px; height: 40px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">ERP</div>
+            <span>관리자 시스템</span>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-item">프로젝트 관리</div>
+            <div class="nav-item">사내 일정</div>
+            <div class="nav-item">고객 관리</div>
+            <div class="nav-item">조직도</div>
+            <div class="nav-item">결재 내역</div>
+            <div class="nav-item active">관리자 메뉴</div>
+        </nav>
+        
+        <div class="user-info">
+            <div class="notification">🔔</div>
+            <div style="font-weight: 600;">관리자</div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1 class="page-title">요청사항 관리</h1>
+                <div style="color: #6b7280;">총 10건의 요청사항</div>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stats-card card-pending">
+                    <div class="stats-number">4</div>
+                    <div class="stats-label">처리중</div>
+                </div>
+                <div class="stats-card card-approved">
+                    <div class="stats-number">3</div>
+                    <div class="stats-label">승인</div>
+                </div>
+                <div class="stats-card card-processing">
+                    <div class="stats-number">2</div>
+                    <div class="stats-label">검토중</div>
+                </div>
+                <div class="stats-card card-rejected">
+                    <div class="stats-number">1</div>
+                    <div class="stats-label">반려</div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>상태:</label>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">전체</option>
+                        <option value="pending">처리중</option>
+                        <option value="approved">승인</option>
+                        <option value="processing">검토중</option>
+                        <option value="rejected">반려</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>부서:</label>
+                    <select class="filter-select" id="deptFilter">
+                        <option value="">전체</option>
+                        <option value="영업">영업</option>
+                        <option value="인사">인사</option>
+                        <option value="총무">총무</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <input type="text" class="search-input" placeholder="검색어를 입력하세요..." id="searchInput">
+                </div>
+            </div>
+
+            <div class="bulk-actions">
+                <button class="bulk-btn bulk-approve" onclick="bulkApprove()">
+                    ✓ 선택 항목 승인
+                </button>
+                <button class="bulk-btn bulk-reject" onclick="bulkReject()">
+                    ✗ 선택 항목 반려
+                </button>
+                <button class="bulk-btn bulk-export" onclick="exportData()">
+                    📊 엑셀 내보내기
+                </button>
+            </div>
+
+            <table class="requests-table">
+                <thead class="table-header">
+                    <tr>
+                        <th><input type="checkbox" class="checkbox" id="selectAll"></th>
+                        <th>처리사항</th>
+                        <th>처리번호</th>
+                        <th>접수파일</th>
+                        <th>요청인</th>
+                        <th>처리상태</th>
+                        <th>삭제/처리/조회</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsTableBody">
+                    <!-- 테이블 데이터가 JavaScript로 동적 생성됩니다 -->
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button class="page-btn">‹</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">›</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const requestsData = [
+            {
+                id: 1,
+                title: '고객정보수정요청',
+                dept: '영업',
+                requestId: '1654321687',
+                deptName: '고객정보수정요청',
+                deptSub: '영업',
+                requester: '대리 이승산',
+                requesterPosition: 'Secondary info',
+                status: 'pending'
+            },
+            {
+                id: 2,
+                title: '고객정보수정요청',
+                dept: '영업',
+                requestId: '3219875',
+                deptName: '고객정보수정요청',
+                deptSub: '영업',
+                requester: '사원 이서운',
+                requesterPosition: 'Secondary info',
+                status: 'pending'
+            },
+            {
+                id: 3,
+                title: '부서이동요청',
+                dept: '인사',
+                requestId: '876136868',
+                deptName: '부서이동요청',
+                deptSub: '인사',
+                requester: '사원 최영연',
+                requesterPosition: 'Secondary info',
+                status: 'approved'
+            },
+            {
+                id: 4,
+                title: '신입사원추가요청',
+                dept: '인사',
+                requestId: '32164698734',
+                deptName: '신입사원추가요청',
+                deptSub: '인사',
+                requester: '주임 하병호',
+                requesterPosition: 'Secondary info',
+                status: 'approved'
+            },
+            {
+                id: 5,
+                title: '개인정보수정요청',
+                dept: '총무',
+                requestId: '2164987684',
+                deptName: '개인정보수정요청',
+                deptSub: '총무',
+                requester: '차장 권현빈',
+                requesterPosition: 'Secondary info',
+                status: 'approved'
+            },
+            {
+                id: 6,
+                title: '개인사명수정요청',
+                dept: '영업',
+                requestId: '3167453484',
+                deptName: '개인사명수정요청',
+                deptSub: '영업',
+                requester: '사원 남윤성',
+                requesterPosition: 'Secondary info',
+                status: 'pending'
+            },
+            {
+                id: 7,
+                title: '개인사명수정요청',
+                dept: '인사',
+                requestId: '1387844646',
+                deptName: '개인사명수정요청',
+                deptSub: '인사',
+                requester: '사원 성민석',
+                requesterPosition: 'Secondary info',
+                status: 'approved'
+            },
+            {
+                id: 8,
+                title: '퇴사자처리요청',
+                dept: '인사',
+                requestId: '03168732549',
+                deptName: '퇴사자처리요청',
+                deptSub: '인사',
+                requester: '사원 양경하',
+                requesterPosition: 'Secondary info',
+                status: 'rejected'
+            },
+            {
+                id: 9,
+                title: '고객정보수정요청',
+                dept: '영업',
+                requestId: '31678654737',
+                deptName: '고객정보수정요청',
+                deptSub: '영업',
+                requester: '차장 배민서',
+                requesterPosition: 'Secondary info',
+                status: 'pending'
+            },
+            {
+                id: 10,
+                title: '신규고객추가요청',
+                dept: '영업',
+                requestId: '76456416845',
+                deptName: '신규고객추가요청',
+                deptSub: '영업',
+                requester: '과장 박요환',
+                requesterPosition: 'Secondary info',
+                status: 'pending'
+            }
+        ];
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'pending': return 'status-pending';
+                case 'approved': return 'status-approved';
+                case 'rejected': return 'status-rejected';
+                case 'processing': return 'status-processing';
+                default: return 'status-pending';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'pending': return '처리중';
+                case 'approved': return '승인';
+                case 'rejected': return '반려';
+                case 'processing': return '검토중';
+                default: return '처리중';
+            }
+        }
+
+        function getDeptIcon(dept) {
+            switch(dept) {
+                case '영업': return '영';
+                case '인사': return '인';
+                case '총무': return '총';
+                default: return '기';
+            }
+        }
+
+        function getInitial(name) {
+            return name.split(' ')[1]?.charAt(0) || name.charAt(0);
+        }
+
+        function renderTable(data = requestsData) {
+            const tbody = document.getElementById('requestsTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(request => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="checkbox" value="${request.id}"></td>
+                    <td>
+                        <div class="request-info">
+                            <div class="request-title">${request.title}</div>
+                            <div class="request-dept">${request.dept}</div>
+                        </div>
+                    </td>
+                    <td><div class="request-id">${request.requestId}</div></td>
+                    <td>
+                        <div class="dept-info">
+                            <div class="dept-icon">${getDeptIcon(request.dept)}</div>
+                            <div class="dept-details">
+                                <div class="dept-name">${request.deptName}</div>
+                                <div class="dept-sub">${request.deptSub}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="requester-info">
+                            <div class="requester-avatar">${getInitial(request.requester)}</div>
+                            <div class="requester-details">
+                                <div class="requester-name">${request.requester}</div>
+                                <div class="requester-position">${request.requesterPosition}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${getStatusClass(request.status)}">${getStatusText(request.status)}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn btn-delete" onclick="deleteRequest(${request.id})" title="삭제">🗑️</button>
+                            <button class="action-btn btn-edit" onclick="editRequest(${request.id})" title="처리">✏️</button>
+                            <button class="action-btn btn-view" onclick="viewRequest(${request.id})" title="조회">👁️</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterRequests() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const deptFilter = document.getElementById('deptFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = requestsData.filter(request => {
+                const matchesStatus = !statusFilter || request.status === statusFilter;
+                const matchesDept = !deptFilter || request.dept === deptFilter;
+                const matchesSearch = !searchTerm || 
+                    request.title.toLowerCase().includes(searchTerm) ||
+                    request.requester.toLowerCase().includes(searchTerm) ||
+                    request.requestId.includes(searchTerm);
+
+                return matchesStatus && matchesDept && matchesSearch;
+            });
+
+            renderTable(filtered);
+        }
+
+        function deleteRequest(id) {
+            if (confirm('정말로 삭제하시겠습니까?')) {
+                alert(`요청 ID ${id}가 삭제되었습니다.`);
+                // 실제 삭제 로직 구현
+            }
+        }
+
+        function editRequest(id) {
+            alert(`요청 ID ${id}의 처리 화면으로 이동합니다.`);
+            // 처리 화면으로 이동 로직 구현
+        }
+
+        function viewRequest(id) {
+            alert(`요청 ID ${id}의 상세 정보를 확인합니다.`);
+            // 상세 조회 로직 구현
+        }
+
+        function bulkApprove() {
+            const selected = getSelectedRequests();
+            if (selected.length === 0) {
+                alert('선택된 항목이 없습니다.');
+                return;
+            }
+            if (confirm(`${selected.length}개 항목을 승인하시겠습니까?`)) {
+                alert('선택된 항목들이 승인되었습니다.');
+                // 일괄 승인 로직 구현
+            }
+        }
+
+        function bulkReject() {
+            const selected = getSelectedRequests();
+            if (selected.length === 0) {
+                alert('선택된 항목이 없습니다.');
+                return;
+            }
+            if (confirm(`${selected.length}개 항목을 반려하시겠습니까?`)) {
+                alert('선택된 항목들이 반려되었습니다.');
+                // 일괄 반려 로직 구현
+            }
+        }
+
+        function exportData() {
+            alert('엑셀 파일로 내보내기를 시작합니다.');
+            // 엑셀 내보내기 로직 구현
+        }
+
+        function getSelectedRequests() {
+            const checkboxes = document.querySelectorAll('#requestsTableBody input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // 이벤트 리스너 설정
+        document.getElementById('statusFilter').addEventListener('change', filterRequests);
+        document.getElementById('deptFilter').addEventListener('change', filterRequests);
+        document.getElementById('searchInput').addEventListener('input', filterRequests);
+
+        // 전체 선택 체크박스
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('#requestsTableBody input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+
+        // 초기 테이블 렌더링
+        renderTable();
+    </script>
+</body>
+</html>
