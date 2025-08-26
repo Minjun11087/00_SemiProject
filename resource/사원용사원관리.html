@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사내 ERP - 인사 관리 시스템</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #8B5CF6, #A855F7);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+            position: relative;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(45deg, #8B5CF6, #A855F7);
+            color: white;
+        }
+        
+        .nav-item.has-notification::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+        
+        .page-title {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #8B5CF6, #A855F7);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e1e5e9;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #8B5CF6;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e1e5e9;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: #8B5CF6;
+            color: white;
+            border-color: #8B5CF6;
+        }
+        
+        .employee-table {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+            color: white;
+            padding: 18px 15px;
+            font-weight: 500;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(139, 92, 246, 0.05);
+            transform: translateY(-1px);
+        }
+        
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #8B5CF6;
+            cursor: pointer;
+        }
+        
+        .employee-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .employee-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #8B5CF6, #A855F7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .employee-details h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .employee-details p {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 60px;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .department-badge {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            background: rgba(139, 92, 246, 0.1);
+            color: #8B5CF6;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        
+        .btn-delete {
+            background: #ffe6e6;
+            color: #dc3545;
+        }
+        
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-edit {
+            background: #e6f3ff;
+            color: #0066cc;
+        }
+        
+        .btn-edit:hover {
+            background: #0066cc;
+            color: white;
+        }
+        
+        .btn-view {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .btn-view:hover {
+            background: #666;
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .control-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .table {
+                font-size: 12px;
+            }
+            
+            .table th, .table td {
+                padding: 10px 8px;
+            }
+            
+            .employee-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">HR</div>
+                <h2>사내 ERP 시스템</h2>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item">프로젝트 관리</div>
+                <div class="nav-item active">사내 일정</div>
+                <div class="nav-item">고객 관리</div>
+                <div class="nav-item">조직도</div>
+                <div class="nav-item">결재 내역</div>
+                <div class="nav-item has-notification">마이페이지</div>
+            </div>
+            <div class="user-info">
+                <span>조민준 부장</span>
+                <div class="employee-avatar" style="width: 35px; height: 35px;">J</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">사원 관리</h1>
+        
+        <div class="control-panel">
+            <div class="control-row">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="사원명, 사번, 부서로 검색..." id="searchInput">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByStatus('all')">전체</button>
+                    <button class="filter-btn" onclick="filterByStatus('active')">재직</button>
+                    <button class="filter-btn" onclick="filterByStatus('pending')">휴직</button>
+                    <button class="filter-btn" onclick="filterByStatus('inactive')">퇴직</button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="exportData()">📊 내보내기</button>
+                    <button class="btn btn-primary" onclick="openAddModal()">➕ 사원 등록</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="employee-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">
+                            <input type="checkbox" class="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                        </th>
+                        <th>사원명</th>
+                        <th>사원 세부정보</th>
+                        <th>부재상태</th>
+                        <th>삭제/처리/조회</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                    <tr>
+                        <td><input type="checkbox" class="checkbox employee-checkbox"></td>
+                        <td>
+                            <div class="employee-info">
+                                <div class="employee-avatar">양</div>
+                                <div class="employee-details">
+                                    <h4>양서준 사원</h4>
+                                    <p>총무</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>📄 양서준 사원 세부정보</div>
+                            <div style="margin-top: 5px;">
+                                <span class="department-badge">총무팀</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pending">휴가</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-delete" onclick="deleteEmployee(1)" title="삭제">🗑</button>
+                                <button class="action-btn btn-edit" onclick="editEmployee(1)" title="수정">✏️</button>
+                                <button class="action-btn btn-view" onclick="viewEmployee(1)" title="상세보기">👁</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox employee-checkbox"></td>
+                        <td>
+                            <div class="employee-info">
+                                <div class="employee-avatar">강</div>
+                                <div class="employee-details">
+                                    <h4>강치운 대리</h4>
+                                    <p>영업</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>📄 강치운 대리 세부정보</div>
+                            <div style="margin-top: 5px;">
+                                <span class="department-badge">영업팀</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pending">휴가</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-delete" onclick="deleteEmployee(2)" title="삭제">🗑</button>
+                                <button class="action-btn btn-edit" onclick="editEmployee(2)" title="수정">✏️</button>
+                                <button class="action-btn btn-view" onclick="viewEmployee(2)" title="상세보기">👁</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox employee-checkbox"></td>
+                        <td>
+                            <div class="employee-info">
+                                <div class="employee-avatar">진</div>
+                                <div class="employee-details">
+                                    <h4>진준영 사원</h4>
+                                    <p>영업</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>📄 진준영 사원 세부정보</div>
+                            <div style="margin-top: 5px;">
+                                <span class="department-badge">영업팀</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-active">근무중</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-delete" onclick="deleteEmployee(3)" title="삭제">🗑</button>
+                                <button class="action-btn btn-edit" onclick="editEmployee(3)" title="수정">✏️</button>
+                                <button class="action-btn btn-view" onclick="viewEmployee(3)" title="상세보기">👁</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox employee-checkbox"></td>
+                        <td>
+                            <div class="employee-info">
+                                <div class="employee-avatar">양</div>
+                                <div class="employee-details">
+                                    <h4>양해원 대리</h4>
+                                    <p>영업</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>📄 양해원 대리 세부정보</div>
+                            <div style="margin-top: 5px;">
+                                <span class="department-badge">영업팀</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-active">근무중</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-delete" onclick="deleteEmployee(4)" title="삭제">🗑</button>
+                                <button class="action-btn btn-edit" onclick="editEmployee(4)" title="수정">✏️</button>
+                                <button class="action-btn btn-view" onclick="viewEmployee(4)" title="상세보기">👁</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox employee-checkbox"></td>
+                        <td>
+                            <div class="employee-info">
+                                <div class="employee-avatar">안</div>
+                                <div class="employee-details">
+                                    <h4>안유나 사원</h4>
+                                    <p>인사</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>📄 안유나 사원 세부정보</div>
+                            <div style="margin-top: 5px;">
+                                <span class="department-badge">인사팀</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-active">근무중</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-delete" onclick="deleteEmployee(5)" title="삭제">🗑</button>
+                                <button class="action-btn btn-edit" onclick="editEmployee(5)" title="수정">✏️</button>
+                                <button class="action-btn btn-view" onclick="viewEmployee(5)" title="상세보기">👁</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox employee-checkbox"></td>
+                        <td>
+                            <div class="employee-info">
+                                <div class="employee-avatar">류</div>
+                                <div class="employee-details">
+                                    <h4>류현서 과장</h4>
+                                    <p>총무</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>📄 류현서 과장 세부정보</div>
+                            <div style="margin-top: 5px;">
+                                <span class="department-badge">총무팀</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pending">휴가</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-delete" onclick="deleteEmployee(6)" title="삭제">🗑</button>
+                                <button class="action-btn btn-edit" onclick="editEmployee(6)" title="수정">✏️</button>
+                                <button class="action-btn btn-view" onclick="viewEmployee(6)" title="상세보기">👁</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox employee-checkbox"></td>
+                        <td>
+                            <div class="employee-info">
+                                <div class="employee-avatar">고</div>
+                                <div class="employee-details">
+                                    <h4>고준영 차장</h4>
+                                    <p>인사</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>📄 고준영 차장 세부정보</div>
+                            <div style="margin-top: 5px;">
+                                <span class="department-badge">인사팀</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-active">근무중</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-delete" onclick="deleteEmployee(7)" title="삭제">🗑</button>
+                                <button class="action-btn btn-edit" onclick="editEmployee(7)" title="수정">✏️</button>
+                                <button class="action-btn btn-view" onclick="viewEmployee(7)" title="상세보기">👁</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 사원 추가/편집 모달 -->
+    <div class="modal" id="employeeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">사원 등록</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="employeeForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">사원명 *</label>
+                        <input type="text" class="form-input" id="employeeName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">사원번호 *</label>
+                        <input type="text" class="form-input" id="employeeId" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">부서 *</label>
+                        <select class="form-select" id="employeeDepartment" required>
+                            <option value="">부서 선택</option>
+                            <option value="인사팀">인사팀</option>
+                            <option value="총무팀">총무팀</option>
+                            <option value="영업팀">영업팀</option>
+                            <option value="개발팀">개발팀</option>
+                            <option value="마케팅팀">마케팅팀</option>
+                            <option value="기획팀">기획팀</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">직급 *</label>
+                        <select class="form-select" id="employeePosition" required>
+                            <option value="">직급 선택</option>
+                            <option value="사원">사원</option>
+                            <option value="대리">대리</option>
+                            <option value="과장">과장</option>
+                            <option value="차장">차장</option>
+                            <option value="부장">부장</option>
+                            <option value="이사">이사</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">전화번호</label>
+                        <input type="tel" class="form-input" id="employeePhone">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">이메일</label>
+                        <input type="email" class="form-input" id="employeeEmail">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">입사일 *</label>
+                        <input type="date" class="form-input" id="employeeJoinDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">근무상태</label>
+                        <select class="form-select" id="employeeStatus">
+                            <option value="active">근무중</option>
+                            <option value="pending">휴가</option>
+                            <option value="inactive">퇴직</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">주소</label>
+                    <input type="text" class="form-input" id="employeeAddress">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비고</label>
+                    <textarea class="form-input" id="employeeNotes" rows="3" style="resize: vertical;"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let employees = [
+            {id: 1, name: '양서준', position: '사원', department: '총무', phone: '010-1111-2222', email: 'yang@company.com', status: 'pending', joinDate: '2024.03.15', empId: 'EMP001

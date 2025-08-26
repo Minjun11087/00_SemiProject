@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사내 ERP - 고객 관리 시스템</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+        
+        .page-title {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e1e5e9;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+        
+        .customer-table {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 15px;
+            font-weight: 500;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateY(-1px);
+        }
+        
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+        
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .customer-details h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .customer-details p {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 60px;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        
+        .btn-delete {
+            background: #ffe6e6;
+            color: #dc3545;
+        }
+        
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-edit {
+            background: #e6f3ff;
+            color: #0066cc;
+        }
+        
+        .btn-edit:hover {
+            background: #0066cc;
+            color: white;
+        }
+        
+        .btn-view {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .btn-view:hover {
+            background: #666;
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .control-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .table {
+                font-size: 12px;
+            }
+            
+            .table th, .table td {
+                padding: 10px 8px;
+            }
+            
+            .customer-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">ERP</div>
+                <h2>사내 ERP 시스템</h2>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item">대시보드</div>
+                <div class="nav-item active">고객 관리</div>
+                <div class="nav-item">프로젝트</div>
+                <div class="nav-item">보고서</div>
+                <div class="nav-item">설정</div>
+            </div>
+            <div class="user-info">
+                <span>조민준 부장</span>
+                <div class="customer-avatar" style="width: 35px; height: 35px;">조</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">고객 관리</h1>
+        
+        <div class="control-panel">
+            <div class="control-row">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="고객명, 회사명, 전화번호로 검색..." id="searchInput">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="exportData()">📊 내보내기</button>
+                    <button class="btn btn-primary" onclick="openAddModal()">➕ 고객 추가</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="customer-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">
+                            <input type="checkbox" class="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                        </th>
+                        <th>고객정보</th>
+                        <th>회사/부서</th>
+                        <th>연락처</th>
+                        <th>상태</th>
+                        <th>등록일</th>
+                        <th>마지막 접촉</th>
+                        <th style="width: 120px;">관리</th>
+                    </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                    <tr>
+                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
+                        <td>
+                            <div class="customer-info">
+                                <div class="customer-avatar">김</div>
+                                <div class="customer-details">
+                                    <h4>김철수</h4>
+                                    <p>대리</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <div style="font-weight: 500;">삼성전자</div>
+                                <div style="color: #666; font-size: 12px;">IT사업부</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>010-1234-5678</div>
+                            <div style="color: #666; font-size: 12px;">kim@samsung.com</div>
+                        </td>
+                        <td><span class="status-badge status-active">활성</span></td>
+                        <td>2024.01.15</td>
+                        <td>2024.08.20</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewCustomer(1)" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="editCustomer(1)" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer(1)" title="삭제">🗑</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
+                        <td>
+                            <div class="customer-info">
+                                <div class="customer-avatar">박</div>
+                                <div class="customer-details">
+                                    <h4>박영희</h4>
+                                    <p>과장</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <div style="font-weight: 500;">LG전자</div>
+                                <div style="color: #666; font-size: 12px;">마케팅팀</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>010-2345-6789</div>
+                            <div style="color: #666; font-size: 12px;">park@lge.com</div>
+                        </td>
+                        <td><span class="status-badge status-active">활성</span></td>
+                        <td>2024.02.10</td>
+                        <td>2024.08.18</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewCustomer(2)" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="editCustomer(2)" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer(2)" title="삭제">🗑</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
+                        <td>
+                            <div class="customer-info">
+                                <div class="customer-avatar">이</div>
+                                <div class="customer-details">
+                                    <h4>이민수</h4>
+                                    <p>팀장</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <div style="font-weight: 500;">네이버</div>
+                                <div style="color: #666; font-size: 12px;">개발팀</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>010-3456-7890</div>
+                            <div style="color: #666; font-size: 12px;">lee@naver.com</div>
+                        </td>
+                        <td><span class="status-badge status-pending">대기</span></td>
+                        <td>2024.03.05</td>
+                        <td>2024.08.15</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewCustomer(3)" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="editCustomer(3)" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer(3)" title="삭제">🗑</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
+                        <td>
+                            <div class="customer-info">
+                                <div class="customer-avatar">정</div>
+                                <div class="customer-details">
+                                    <h4>정수진</h4>
+                                    <p>부장</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <div style="font-weight: 500;">카카오</div>
+                                <div style="color: #666; font-size: 12px;">기획팀</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>010-4567-8901</div>
+                            <div style="color: #666; font-size: 12px;">jung@kakao.com</div>
+                        </td>
+                        <td><span class="status-badge status-inactive">비활성</span></td>
+                        <td>2023.12.20</td>
+                        <td>2024.07.10</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewCustomer(4)" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="editCustomer(4)" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer(4)" title="삭제">🗑</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
+                        <td>
+                            <div class="customer-info">
+                                <div class="customer-avatar">최</div>
+                                <div class="customer-details">
+                                    <h4>최현우</h4>
+                                    <p>대리</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <div style="font-weight: 500;">SK하이닉스</div>
+                                <div style="color: #666; font-size: 12px;">연구소</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>010-5678-9012</div>
+                            <div style="color: #666; font-size: 12px;">choi@skhynix.com</div>
+                        </td>
+                        <td><span class="status-badge status-active">활성</span></td>
+                        <td>2024.04.12</td>
+                        <td>2024.08.25</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewCustomer(5)" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="editCustomer(5)" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer(5)" title="삭제">🗑</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 고객 추가/편집 모달 -->
+    <div class="modal" id="customerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">고객 추가</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="customerForm">
+                <div class="form-group">
+                    <label class="form-label">고객명 *</label>
+                    <input type="text" class="form-input" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">직급</label>
+                    <input type="text" class="form-input" id="customerPosition">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">회사명 *</label>
+                    <input type="text" class="form-input" id="customerCompany" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">부서</label>
+                    <input type="text" class="form-input" id="customerDepartment">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">전화번호 *</label>
+                    <input type="tel" class="form-input" id="customerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" class="form-input" id="customerEmail">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">상태</label>
+                    <select class="form-select" id="customerStatus">
+                        <option value="active">활성</option>
+                        <option value="pending">대기</option>
+                        <option value="inactive">비활성</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let customers = [
+            {id: 1, name: '김철수', position: '대리', company: '삼성전자', department: 'IT사업부', phone: '010-1234-5678', email: 'kim@samsung.com', status: 'active', regDate: '2024.01.15', lastContact: '2024.08.20'},
+            {id: 2, name: '박영희', position: '과장', company: 'LG전자', department: '마케팅팀', phone: '010-2345-6789', email: 'park@lge.com', status: 'active', regDate: '2024.02.10', lastContact: '2024.08.18'},
+            {id: 3, name: '이민수', position: '팀장', company: '네이버', department: '개발팀', phone: '010-3456-7890', email: 'lee@naver.com', status: 'pending', regDate: '2024.03.05', lastContact: '2024.08.15'},
+            {id: 4, name: '정수진', position: '부장', company: '카카오', department: '기획팀', phone: '010-4567-8901', email: 'jung@kakao.com', status: 'inactive', regDate: '2023.12.20', lastContact: '2024.07.10'},
+            {id: 5, name: '최현우', position: '대리', company: 'SK하이닉스', department: '연구소', phone: '010-5678-9012', email: 'choi@skhynix.com', status: 'active', regDate: '2024.04.12', lastContact: '2024.08.25'}
+        ];
+
+        let editingCustomerId = null;
+
+        // 검색 기능
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterCustomers(searchTerm);
+        });
+
+        function filterCustomers(searchTerm) {
+            const filteredCustomers = customers.filter(customer => 
+                customer.name.toLowerCase().includes(searchTerm) ||
+                customer.company.toLowerCase().includes(searchTerm) ||
+                customer.phone.includes(searchTerm) ||
+                customer.email.toLowerCase().includes(searchTerm)
+            );
+            renderCustomers(filteredCustomers);
+        }
+
+        function renderCustomers(customersToRender) {
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = '';
+            
+            customersToRender.forEach(customer => {
+                const statusClass = `status-${customer.status}`;
+                const statusText = {
+                    'active': '활성',
+                    'pending': '대기',
+                    'inactive': '비활성'
+                }[customer.status];
+                
+                const row = `
+                    <tr>
+                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
+                        <td>
+                            <div class="customer-info">
+                                <div class="customer-avatar">${customer.name.charAt(0)}</div>
+                                <div class="customer-details">
+                                    <h4>${customer.name}</h4>
+                                    <p>${customer.position}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <div style="font-weight: 500;">${customer.company}</div>
+                                <div style="color: #666; font-size: 12px;">${customer.department}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>${customer.phone}</div>
+                            <div style="color: #666; font-size: 12px;">${customer.email}</div>
+                        </td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${customer.regDate}</td>
+                        <td>${customer.lastContact}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewCustomer(${customer.id})" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="editCustomer(${customer.id})" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer(${customer.id})" title="삭제">🗑</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // 전체 선택 기능
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.customer-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+
+        // 모달 관련 함수
+        function openAddModal() {
+            editingCustomerId = null;
+            document.getElementById('modalTitle').textContent = '고객 추가';
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerModal').style.display = 'flex';
+        }
+
+        function editCustomer(id) {
+            const customer = customers.find(c => c.id === i
