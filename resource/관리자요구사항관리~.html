@@ -22,6 +22,8 @@
             color: white;
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
+            position: relative;
+            z-index: 1;
         }
 .header-content {
             max-width: 1200px;
@@ -257,7 +259,7 @@
         .checkbox {
             width: 18px;
             height: 18px;
-            accent-color: #6366f1;
+            accent-color: #ca73da ;
         }
 
         .request-info {
@@ -291,7 +293,7 @@
         .dept-icon {
             width: 24px;
             height: 24px;
-            background: #6366f1;
+            background: #ca73da ;
             border-radius: 4px;
             display: flex;
             align-items: center;
@@ -325,7 +327,7 @@
         .requester-avatar {
             width: 35px;
             height: 35px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #e4b6ec, #ca73da );
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -468,17 +470,7 @@
             background: #dc2626;
             transform: translateY(-2px);
         }
-
-        .bulk-export {
-            background: #6366f1;
-            color: white;
-        }
-
-        .bulk-export:hover {
-            background: #5856eb;
-            transform: translateY(-2px);
-        }
-
+        
         .pagination {
             display: flex;
             justify-content: center;
@@ -508,7 +500,7 @@
 
         .stats-cards {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -520,6 +512,7 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.05);
             text-align: center;
             transition: all 0.3s ease;
+
         }
 
         .stats-card:hover {
@@ -585,7 +578,7 @@
     </style>
 </head>
 <body>
-    <header class="header">
+     <header class="header">
         <div class="header-content">
             <div class="logo">
                 <div class="logo-icon">
@@ -606,12 +599,12 @@
                 <div class="nav-item">고객 관리</div>
                 <div class="nav-item">조직도</div>
                 <div class="nav-item">결재 내역</div>
-                <div class="nav-item">마이페이지</div>
+                <div class="nav-item">요청사항 관리</div>
             </nav>
             <div class="user-profile">
                 <div class="notification-badge">3</div>
                 <div class="profile-avatar">조</div>
-                <span>조인순 부장</span>
+                <span>관리자</span>
             </div>
         </div>
     </header>
@@ -631,10 +624,6 @@
                 <div class="stats-card card-approved">
                     <div class="stats-number">3</div>
                     <div class="stats-label">승인</div>
-                </div>
-                <div class="stats-card card-processing">
-                    <div class="stats-number">2</div>
-                    <div class="stats-label">검토중</div>
                 </div>
                 <div class="stats-card card-rejected">
                     <div class="stats-number">1</div>
@@ -674,9 +663,7 @@
                 <button class="bulk-btn bulk-reject" onclick="bulkReject()">
                     ✗ 선택 항목 반려
                 </button>
-                <button class="bulk-btn bulk-export" onclick="exportData()">
-                    📊 엑셀 내보내기
-                </button>
+                
             </div>
 
             <table class="requests-table">
@@ -688,7 +675,6 @@
                         <th>접수파일</th>
                         <th>요청인</th>
                         <th>처리상태</th>
-                        <th>삭제/처리/조회</th>
                     </tr>
                 </thead>
                 <tbody id="requestsTableBody">
@@ -889,13 +875,7 @@
                     <td>
                         <span class="status-badge ${getStatusClass(request.status)}">${getStatusText(request.status)}</span>
                     </td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn btn-delete" onclick="deleteRequest(${request.id})" title="삭제">🗑️</button>
-                            <button class="action-btn btn-edit" onclick="editRequest(${request.id})" title="처리">✏️</button>
-                            <button class="action-btn btn-view" onclick="viewRequest(${request.id})" title="조회">👁️</button>
-                        </div>
-                    </td>
+                    
                 `;
                 tbody.appendChild(row);
             });

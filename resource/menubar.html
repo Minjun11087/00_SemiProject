@@ -33,23 +33,26 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e4b6ec;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: white;
             color: #e4b6ec;
             font-weight: bold;
+            font-size: 18px;
+            overflow: hidden;
         }
 
         .logo-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 0;
         }
-
         .nav-menu {
             display: flex;
             gap: 30px;
@@ -154,7 +157,7 @@
         <div class="header-content">
             <div class="logo">
                 <div class="logo-icon">
-                    <img src="https://media.discordapp.net/attachments/1399659042581774446/1404743980914184255/Logo2.png?ex=68a19347&is=68a041c7&hm=e6f891d93f66bbeda7edae1d7703054f3f8a663662bd6086427886d6f0f4ed14&=&format=webp&quality=lossless&width=646&height=646" alt="KH Bank Logo">
+                    <img src="https://media.discordapp.net/attachments/1399659042581774444/1402925692592717856/-_-001_3.png?ex=68ae139e&is=68acc21e&hm=c26c02a08b556c0473c32cc52964b7f3c01b2ba4f47a160adc7a71cb22d6a8a1&=&format=webp&quality=lossless&width=725&height=725">
                 </div>
                 <span>KH BANK</span>
             </div>
@@ -169,7 +172,13 @@
                 </div>
                 <div class="nav-item">사내 일정</div>
                 <div class="nav-item">고객 관리</div>
-                <div class="nav-item">조직도</div>
+                <div class="nav-item active has-dropdown">
+                    사원 관리
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">📋 사원 정보 조회</a>
+                        <a href="#" class="dropdown-item">✨ 조직도</a>
+                    </div>
+                </div>
                 <div class="nav-item">결재 내역</div>
                 <div class="nav-item">마이페이지</div>
             </nav>
