@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사내 ERP - 고객 관리 시스템</title>
+    <title>KH Bank 고객 관리</title>
     <style>
         * {
             margin: 0;
@@ -12,312 +12,466 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
         }
-        
+
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px 30px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
         }
-        
+
         .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
         }
-        
+
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e4b6ec;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            background: white;
+            color: #e4b6ec;
             font-weight: bold;
             font-size: 18px;
+            overflow: hidden;
         }
-        
+
+        .logo-icon img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
         .nav-menu {
             display: flex;
             gap: 30px;
             align-items: center;
         }
-        
+
         .nav-item {
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
             transition: all 0.3s ease;
-            color: #666;
+            font-size: 14px;
+            position: relative;
         }
-        
-        .nav-item:hover, .nav-item.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
-        
-        .user-info {
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-item.has-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.3);
+            min-width: 200px;
+            padding: 15px 0;
+            margin-top: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.4s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: #2d3748;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f4ff;
+            color: #e4b6ec;
+            border-left-color: #e4b6ec;
+            transform: translateX(5px);
+        }
+
+        .user-profile {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #666;
         }
-        
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 30px;
-        }
-        
-        .page-title {
-            color: white;
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .control-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        .control-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .search-box {
-            flex: 1;
-            position: relative;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 12px 45px 12px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 25px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .search-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            cursor: pointer;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-secondary {
-            background: #f8f9fa;
-            color: #666;
-            border: 2px solid #e1e5e9;
-        }
-        
-        .btn-secondary:hover {
-            background: #e9ecef;
-            border-color: #667eea;
-        }
-        
-        .customer-table {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 18px 15px;
-            font-weight: 500;
-            text-align: left;
-            font-size: 14px;
-        }
-        
-        .table td {
-            padding: 15px;
-            border-bottom: 1px solid #f1f3f4;
-            vertical-align: middle;
-        }
-        
-        .table tbody tr {
-            transition: all 0.2s ease;
-        }
-        
-        .table tbody tr:hover {
-            background: rgba(102, 126, 234, 0.05);
-            transform: translateY(-1px);
-        }
-        
-        .checkbox {
-            width: 18px;
-            height: 18px;
-            accent-color: #667eea;
-            cursor: pointer;
-        }
-        
-        .customer-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .customer-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 500;
+            font-weight: bold;
+        }
+
+        .notification-badge {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+        }
+
+        .search-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #e4b6ec;
+            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
+        }
+
+        .search-btn, .add-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             font-size: 14px;
         }
-        
-        .customer-details h4 {
+
+        .search-btn {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 182, 236, 0.3);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
             font-size: 14px;
-            font-weight: 500;
-            color: #333;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #e4b6ec;
+        }
+
+        .customer-table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .table-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .table-stats {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .customer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .customer-table th {
+            background: linear-gradient(135deg, #f8f4ff, #f0e7ff);
+            color: #2d3748;
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e4b6ec;
+            font-size: 14px;
+        }
+
+        .customer-table th:first-child {
+            border-top-left-radius: 15px;
+            padding-left: 25px;
+        }
+
+        .customer-table th:last-child {
+            border-top-right-radius: 15px;
+            padding-right: 25px;
+        }
+
+        .customer-table td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .customer-table td:first-child {
+            padding-left: 25px;
+        }
+
+        .customer-table td:last-child {
+            padding-right: 25px;
+        }
+
+        .customer-table tr:hover {
+            background: #f8f4ff;
+        }
+
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .customer-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: #2d3748;
             margin-bottom: 2px;
         }
-        
-        .customer-details p {
+
+        .customer-id {
+            color: #718096;
             font-size: 12px;
-            color: #666;
         }
-        
+
         .status-badge {
             padding: 6px 12px;
-            border-radius: 15px;
+            border-radius: 20px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             text-align: center;
-            min-width: 60px;
         }
-        
+
         .status-active {
-            background: #d4edda;
-            color: #155724;
+            background: #c6f6d5;
+            color: #22543d;
         }
-        
+
         .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fed7d7;
+            color: #742a2a;
         }
-        
+
         .status-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: #fef5e7;
+            color: #744210;
         }
-        
+
         .action-buttons {
             display: flex;
             gap: 8px;
         }
-        
+
         .action-btn {
-            width: 32px;
-            height: 32px;
+            width: 35px;
+            height: 35px;
             border: none;
-            border-radius: 50%;
+            border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            font-size: 14px;
+            font-size: 16px;
         }
-        
-        .btn-delete {
-            background: #ffe6e6;
-            color: #dc3545;
-        }
-        
-        .btn-delete:hover {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-edit {
-            background: #e6f3ff;
-            color: #0066cc;
-        }
-        
-        .btn-edit:hover {
-            background: #0066cc;
-            color: white;
-        }
-        
+
         .btn-view {
-            background: #f0f0f0;
-            color: #666;
+            background: #e6fffa;
+            color: #234e52;
         }
-        
-        .btn-view:hover {
-            background: #666;
+
+        .btn-edit {
+            background: #fef5e7;
+            color: #744210;
+        }
+
+        .btn-delete {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .page-btn {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
             color: white;
+            border-color: #e4b6ec;
         }
-        
+
+        .page-btn:hover:not(.active) {
+            border-color: #e4b6ec;
+            transform: translateY(-2px);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -326,472 +480,372 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
             z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            backdrop-filter: blur(5px);
         }
-        
+
         .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 500px;
+            border-radius: 20px;
+            padding: 40px;
             width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(228, 182, 236, 0.3);
         }
-        
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
-        
+
         .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
         }
-        
+
         .close-btn {
             background: none;
             border: none;
             font-size: 24px;
             cursor: pointer;
-            color: #666;
+            color: #718096;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
-        
+
+        .close-btn:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-        
+
         .form-label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
         }
-        
+
         .form-input {
             width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
             font-size: 14px;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
         }
-        
+
         .form-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #e4b6ec;
+            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
         }
-        
-        .form-select {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            background: white;
-            font-size: 14px;
-        }
-        
-        .modal-footer {
+
+        .form-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: flex-end;
             margin-top: 30px;
         }
-        
+
+        .btn-cancel {
+            padding: 15px 25px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: #2d3748;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save {
+            padding: 15px 25px;
+            border: none;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 182, 236, 0.3);
+        }
+
         @media (max-width: 768px) {
-            .container {
-                padding: 0 15px;
-            }
-            
-            .control-row {
+            .search-section, .filter-section {
                 flex-direction: column;
                 align-items: stretch;
             }
             
-            .table {
+            .search-input {
+                min-width: auto;
+            }
+            
+            .customer-table {
                 font-size: 12px;
             }
             
-            .table th, .table td {
+            .customer-table th,
+            .customer-table td {
                 padding: 10px 8px;
-            }
-            
-            .customer-info {
-                flex-direction: column;
-                text-align: center;
-                gap: 8px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <header class="header">
         <div class="header-content">
             <div class="logo">
-                <div class="logo-icon">ERP</div>
-                <h2>사내 ERP 시스템</h2>
+                <div class="logo-icon">
+                    <img src="https://github.com/Minjun11087/00_SemiProject/blob/Minjun11087-patch-1/resource/resource/fdsafda.jpg?raw=true">
+                </div>
+                <span>KH BANK</span>
             </div>
-            <div class="nav-menu">
-                <div class="nav-item">대시보드</div>
+            <nav class="nav-menu">
+                <div class="nav-item has-dropdown">
+                    프로젝트 관리
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">📋 프로젝트 목록</a>
+                        <a href="#" class="dropdown-item">✨ 프로젝트 생성</a>
+                        <a href="#" class="dropdown-item">✏️ 프로젝트 수정/삭제</a>
+                    </div>
+                </div>
+                <div class="nav-item">사내 일정</div>
                 <div class="nav-item active">고객 관리</div>
-                <div class="nav-item">프로젝트</div>
-                <div class="nav-item">보고서</div>
-                <div class="nav-item">설정</div>
-            </div>
-            <div class="user-info">
-                <span>조민준 부장</span>
-                <div class="customer-avatar" style="width: 35px; height: 35px;">조</div>
+                <div class="nav-item has-dropdown">
+                    사원 관리
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">📋 사원 정보 조회</a>
+                        <a href="#" class="dropdown-item">✨ 조직도</a>
+                    </div>
+                </div>
+                <div class="nav-item">결재 내역</div>
+                <div class="nav-item">마이페이지</div>
+            </nav>
+            <div class="user-profile">
+                <div class="notification-badge">3</div>
+                <div class="profile-avatar">조</div>
+                <span>조인순 부장</span>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="container">
-        <h1 class="page-title">고객 관리</h1>
-        
+    <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">고객 관리 시스템</h1>
+            <p class="page-subtitle">은행 고객의 정보를 체계적으로 관리하고 조회할 수 있습니다.</p>
+        </div>
+
         <div class="control-panel">
-            <div class="control-row">
-                <div class="search-box">
-                    <input type="text" class="search-input" placeholder="고객명, 회사명, 전화번호로 검색..." id="searchInput">
-                    <span class="search-icon">🔍</span>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-secondary" onclick="exportData()">📊 내보내기</button>
-                    <button class="btn btn-primary" onclick="openAddModal()">➕ 고객 추가</button>
-                </div>
+            <div class="search-section">
+                <input type="text" class="search-input" placeholder="고객명, 전화번호, 계좌번호로 검색하세요..." id="searchInput">
+                <button class="search-btn" onclick="searchCustomers()">🔍 검색</button>
+                <button class="add-btn" onclick="openModal('add')">➕ 고객 추가</button>
+            </div>
+            
+            <div class="filter-section">
+                <select class="filter-select" id="statusFilter" onchange="filterCustomers()">
+                    <option value="all">모든 상태</option>
+                    <option value="active">활성</option>
+                    <option value="inactive">비활성</option>
+                    <option value="pending">대기중</option>
+                </select>
+                
+                <select class="filter-select" id="typeFilter" onchange="filterCustomers()">
+                    <option value="all">모든 고객 유형</option>
+                    <option value="individual">개인</option>
+                    <option value="business">기업</option>
+                </select>
+                
+                <select class="filter-select" id="branchFilter" onchange="filterCustomers()">
+                    <option value="all">모든 지점</option>
+                    <option value="gangnam">강남지점</option>
+                    <option value="jongno">종로지점</option>
+                    <option value="yeouido">여의도지점</option>
+                </select>
             </div>
         </div>
 
-        <div class="customer-table">
-            <table class="table">
+        <div class="customer-table-container">
+            <div class="table-header">
+                <h2 class="table-title">고객 목록</h2>
+                <div class="table-stats">총 <strong>127</strong>명의 고객</div>
+            </div>
+            
+            <table class="customer-table">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">
-                            <input type="checkbox" class="checkbox" id="selectAll" onchange="toggleSelectAll()">
-                        </th>
-                        <th>고객정보</th>
-                        <th>회사/부서</th>
+                        <th>고객 정보</th>
                         <th>연락처</th>
+                        <th>계좌 정보</th>
+                        <th>고객 유형</th>
+                        <th>주소</th>
                         <th>상태</th>
                         <th>등록일</th>
-                        <th>마지막 접촉</th>
-                        <th style="width: 120px;">관리</th>
+                        <th>작업</th>
                     </tr>
                 </thead>
                 <tbody id="customerTableBody">
                     <tr>
-                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
                         <td>
                             <div class="customer-info">
                                 <div class="customer-avatar">김</div>
                                 <div class="customer-details">
-                                    <h4>김철수</h4>
-                                    <p>대리</p>
+                                    <div class="customer-name">김민수</div>
+                                    <div class="customer-id">ID: C001234</div>
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <div>
-                                <div style="font-weight: 500;">삼성전자</div>
-                                <div style="color: #666; font-size: 12px;">IT사업부</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>010-1234-5678</div>
-                            <div style="color: #666; font-size: 12px;">kim@samsung.com</div>
-                        </td>
+                        <td>010-1234-5678<br>kimms@email.com</td>
+                        <td>110-123-456789<br>잔액: 5,240,000원</td>
+                        <td>개인</td>
+                        <td>강남지점</td>
                         <td><span class="status-badge status-active">활성</span></td>
-                        <td>2024.01.15</td>
-                        <td>2024.08.20</td>
+                        <td>2024-01-15</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn btn-view" onclick="viewCustomer(1)" title="상세보기">👁</button>
-                                <button class="action-btn btn-edit" onclick="editCustomer(1)" title="수정">✏️</button>
-                                <button class="action-btn btn-delete" onclick="deleteCustomer(1)" title="삭제">🗑</button>
+                                <button class="action-btn btn-view" onclick="viewCustomer('C001234')" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="openModal('edit', 'C001234')" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer('C001234')" title="삭제">🗑️</button>
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
-                        <td>
-                            <div class="customer-info">
-                                <div class="customer-avatar">박</div>
-                                <div class="customer-details">
-                                    <h4>박영희</h4>
-                                    <p>과장</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div style="font-weight: 500;">LG전자</div>
-                                <div style="color: #666; font-size: 12px;">마케팅팀</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>010-2345-6789</div>
-                            <div style="color: #666; font-size: 12px;">park@lge.com</div>
-                        </td>
-                        <td><span class="status-badge status-active">활성</span></td>
-                        <td>2024.02.10</td>
-                        <td>2024.08.18</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn btn-view" onclick="viewCustomer(2)" title="상세보기">👁</button>
-                                <button class="action-btn btn-edit" onclick="editCustomer(2)" title="수정">✏️</button>
-                                <button class="action-btn btn-delete" onclick="deleteCustomer(2)" title="삭제">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
                         <td>
                             <div class="customer-info">
                                 <div class="customer-avatar">이</div>
                                 <div class="customer-details">
-                                    <h4>이민수</h4>
-                                    <p>팀장</p>
+                                    <div class="customer-name">이지은</div>
+                                    <div class="customer-id">ID: C001235</div>
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <div>
-                                <div style="font-weight: 500;">네이버</div>
-                                <div style="color: #666; font-size: 12px;">개발팀</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>010-3456-7890</div>
-                            <div style="color: #666; font-size: 12px;">lee@naver.com</div>
-                        </td>
-                        <td><span class="status-badge status-pending">대기</span></td>
-                        <td>2024.03.05</td>
-                        <td>2024.08.15</td>
+                        <td>010-2345-6789<br>lee.je@email.com</td>
+                        <td>110-234-567890<br>잔액: 1,850,000원</td>
+                        <td>개인</td>
+                        <td>종로지점</td>
+                        <td><span class="status-badge status-active">활성</span></td>
+                        <td>2024-02-20</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn btn-view" onclick="viewCustomer(3)" title="상세보기">👁</button>
-                                <button class="action-btn btn-edit" onclick="editCustomer(3)" title="수정">✏️</button>
-                                <button class="action-btn btn-delete" onclick="deleteCustomer(3)" title="삭제">🗑</button>
+                                <button class="action-btn btn-view" onclick="viewCustomer('C001235')" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="openModal('edit', 'C001235')" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer('C001235')" title="삭제">🗑️</button>
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
                         <td>
                             <div class="customer-info">
-                                <div class="customer-avatar">정</div>
+                                <div class="customer-avatar">박</div>
                                 <div class="customer-details">
-                                    <h4>정수진</h4>
-                                    <p>부장</p>
+                                    <div class="customer-name">박서준</div>
+                                    <div class="customer-id">ID: C001236</div>
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <div>
-                                <div style="font-weight: 500;">카카오</div>
-                                <div style="color: #666; font-size: 12px;">기획팀</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>010-4567-8901</div>
-                            <div style="color: #666; font-size: 12px;">jung@kakao.com</div>
-                        </td>
-                        <td><span class="status-badge status-inactive">비활성</span></td>
-                        <td>2023.12.20</td>
-                        <td>2024.07.10</td>
+                        <td>010-3456-7890<br>park.sj@email.com</td>
+                        <td>110-345-678901<br>잔액: 12,750,000원</td>
+                        <td>개인</td>
+                        <td>여의도지점</td>
+                        <td><span class="status-badge status-pending">대기중</span></td>
+                        <td>2024-03-10</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn btn-view" onclick="viewCustomer(4)" title="상세보기">👁</button>
-                                <button class="action-btn btn-edit" onclick="editCustomer(4)" title="수정">✏️</button>
-                                <button class="action-btn btn-delete" onclick="deleteCustomer(4)" title="삭제">🗑</button>
+                                <button class="action-btn btn-view" onclick="viewCustomer('C001236')" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="openModal('edit', 'C001236')" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer('C001236')" title="삭제">🗑️</button>
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
+                        <td>
+                            <div class="customer-info">
+                                <div class="customer-avatar">(주)</div>
+                                <div class="customer-details">
+                                    <div class="customer-name">테크코리아(주)</div>
+                                    <div class="customer-id">ID: C001237</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>02-1234-5678<br>info@techkorea.co.kr</td>
+                        <td>110-456-789012<br>잔액: 58,920,000원</td>
+                        <td>기업</td>
+                        <td>강남지점</td>
+                        <td><span class="status-badge status-active">활성</span></td>
+                        <td>2024-01-05</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewCustomer('C001237')" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="openModal('edit', 'C001237')" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer('C001237')" title="삭제">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>
                             <div class="customer-info">
                                 <div class="customer-avatar">최</div>
                                 <div class="customer-details">
-                                    <h4>최현우</h4>
-                                    <p>대리</p>
+                                    <div class="customer-name">최영희</div>
+                                    <div class="customer-id">ID: C001238</div>
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <div>
-                                <div style="font-weight: 500;">SK하이닉스</div>
-                                <div style="color: #666; font-size: 12px;">연구소</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>010-5678-9012</div>
-                            <div style="color: #666; font-size: 12px;">choi@skhynix.com</div>
-                        </td>
-                        <td><span class="status-badge status-active">활성</span></td>
-                        <td>2024.04.12</td>
-                        <td>2024.08.25</td>
+                        <td>010-4567-8901<br>choi.yh@email.com</td>
+                        <td>110-567-890123<br>잔액: 3,450,000원</td>
+                        <td>개인</td>
+                        <td>종로지점</td>
+                        <td><span class="status-badge status-inactive">비활성</span></td>
+                        <td>2023-11-30</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn btn-view" onclick="viewCustomer(5)" title="상세보기">👁</button>
-                                <button class="action-btn btn-edit" onclick="editCustomer(5)" title="수정">✏️</button>
-                                <button class="action-btn btn-delete" onclick="deleteCustomer(5)" title="삭제">🗑</button>
+                                <button class="action-btn btn-view" onclick="viewCustomer('C001238')" title="상세보기">👁</button>
+                                <button class="action-btn btn-edit" onclick="openModal('edit', 'C001238')" title="수정">✏️</button>
+                                <button class="action-btn btn-delete" onclick="deleteCustomer('C001238')" title="삭제">🗑️</button>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+
+            <div class="pagination">
+                <button class="page-btn">‹</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">4</button>
+                <button class="page-btn">5</button>
+                <button class="page-btn">›</button>
+            </div>
         </div>
     </div>
 
-    <!-- 고객 추가/편집 모달 -->
-    <div class="modal" id="customerModal">
+    <!-- 고객 추가/수정 모달 -->
+    <div id="customerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">고객 추가</h3>
+                <h3 class="modal-title" id="modalTitle">새 고객 추가</h3>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <form id="customerForm">
-                <div class="form-group">
-                    <label class="form-label">고객명 *</label>
-                    <input type="text" class="form-input" id="customerName" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">직급</label>
-                    <input type="text" class="form-input" id="customerPosition">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">회사명 *</label>
-                    <input type="text" class="form-input" id="customerCompany" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">부서</label>
-                    <input type="text" class="form-input" id="customerDepartment">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">전화번호 *</label>
-                    <input type="tel" class="form-input" id="customerPhone" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">이메일</label>
-                    <input type="email" class="form-input" id="customerEmail">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">상태</label>
-                    <select class="form-select" id="customerStatus">
-                        <option value="active">활성</option>
-                        <option value="pending">대기</option>
-                        <option value="inactive">비활성</option>
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">취소</button>
-                    <button type="submit" class="btn btn-primary">저장</button>
-                </div>
-            </form>
+            
+            <form id="customerForm"></form>
         </div>
     </div>
-
-    <script>
-        // 전역 변수
-        let customers = [
-            {id: 1, name: '김철수', position: '대리', company: '삼성전자', department: 'IT사업부', phone: '010-1234-5678', email: 'kim@samsung.com', status: 'active', regDate: '2024.01.15', lastContact: '2024.08.20'},
-            {id: 2, name: '박영희', position: '과장', company: 'LG전자', department: '마케팅팀', phone: '010-2345-6789', email: 'park@lge.com', status: 'active', regDate: '2024.02.10', lastContact: '2024.08.18'},
-            {id: 3, name: '이민수', position: '팀장', company: '네이버', department: '개발팀', phone: '010-3456-7890', email: 'lee@naver.com', status: 'pending', regDate: '2024.03.05', lastContact: '2024.08.15'},
-            {id: 4, name: '정수진', position: '부장', company: '카카오', department: '기획팀', phone: '010-4567-8901', email: 'jung@kakao.com', status: 'inactive', regDate: '2023.12.20', lastContact: '2024.07.10'},
-            {id: 5, name: '최현우', position: '대리', company: 'SK하이닉스', department: '연구소', phone: '010-5678-9012', email: 'choi@skhynix.com', status: 'active', regDate: '2024.04.12', lastContact: '2024.08.25'}
-        ];
-
-        let editingCustomerId = null;
-
-        // 검색 기능
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            filterCustomers(searchTerm);
-        });
-
-        function filterCustomers(searchTerm) {
-            const filteredCustomers = customers.filter(customer => 
-                customer.name.toLowerCase().includes(searchTerm) ||
-                customer.company.toLowerCase().includes(searchTerm) ||
-                customer.phone.includes(searchTerm) ||
-                customer.email.toLowerCase().includes(searchTerm)
-            );
-            renderCustomers(filteredCustomers);
-        }
-
-        function renderCustomers(customersToRender) {
-            const tbody = document.getElementById('customerTableBody');
-            tbody.innerHTML = '';
-            
-            customersToRender.forEach(customer => {
-                const statusClass = `status-${customer.status}`;
-                const statusText = {
-                    'active': '활성',
-                    'pending': '대기',
-                    'inactive': '비활성'
-                }[customer.status];
-                
-                const row = `
-                    <tr>
-                        <td><input type="checkbox" class="checkbox customer-checkbox"></td>
-                        <td>
-                            <div class="customer-info">
-                                <div class="customer-avatar">${customer.name.charAt(0)}</div>
-                                <div class="customer-details">
-                                    <h4>${customer.name}</h4>
-                                    <p>${customer.position}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div style="font-weight: 500;">${customer.company}</div>
-                                <div style="color: #666; font-size: 12px;">${customer.department}</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>${customer.phone}</div>
-                            <div style="color: #666; font-size: 12px;">${customer.email}</div>
-                        </td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td>${customer.regDate}</td>
-                        <td>${customer.lastContact}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn btn-view" onclick="viewCustomer(${customer.id})" title="상세보기">👁</button>
-                                <button class="action-btn btn-edit" onclick="editCustomer(${customer.id})" title="수정">✏️</button>
-                                <button class="action-btn btn-delete" onclick="deleteCustomer(${customer.id})" title="삭제">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-
-        // 전체 선택 기능
-        function toggleSelectAll() {
-            const selectAll = document.getElementById('selectAll');
-            const checkboxes = document.querySelectorAll('.customer-checkbox');
-            
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAll.checked;
-            });
-        }
-
-        // 모달 관련 함수
-        function openAddModal() {
-            editingCustomerId = null;
-            document.getElementById('modalTitle').textContent = '고객 추가';
-            document.getElementById('customerForm').reset();
-            document.getElementById('customerModal').style.display = 'flex';
-        }
-
-        function editCustomer(id) {
-            const customer = customers.find(c => c.id === i
+</body>
+</html>

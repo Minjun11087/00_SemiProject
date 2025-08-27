@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>김민수 고객 상세 정보 - KH Bank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e4b6ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #e4b6ec;
+            font-weight: bold;
+            font-size: 18px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notification-badge {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #e4b6ec;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb span {
+            color: #718096;
+            margin: 0 10px;
+        }
+
+        .customer-header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+        }
+
+        .customer-profile {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .customer-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(228, 182, 236, 0.3);
+        }
+
+        .customer-basic-info {
+            flex: 1;
+        }
+
+        .customer-name {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .customer-id {
+            color: #718096;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .customer-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag.vip {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #744210;
+        }
+
+        .tag.individual {
+            background: #e6fffa;
+            color: #234e52;
+        }
+
+        .tag.active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #fef5e7, #fed7aa);
+            color: #744210;
+            border: 2px solid #fed7aa;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            color: #742a2a;
+            border: 2px solid #feb2b2;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e4b6ec;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #718096;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .accounts-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+        }
+
+        .accounts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .add-account-btn {
+            padding: 12px 20px;
+            border: 2px solid #e4b6ec;
+            background: white;
+            color: #e4b6ec;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .add-account-btn:hover {
+            background: #e4b6ec;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .account-card {
+            background: linear-gradient(135deg, #f8f4ff, #f0e7ff);
+            border-radius: 20px;
+            padding: 25px;
+            border-left: 5px solid #e4b6ec;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(228, 182, 236, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .account-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(228, 182, 236, 0.2);
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .account-type {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .account-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .account-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e4b6ec;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .account-balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .account-details {
+            display: flex;
+            justify-content: space-between;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .transactions-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+        }
+
+        .transactions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .view-all-btn {
+            padding: 10px 20px;
+            border: 2px solid #e4b6ec;
+            background: white;
+            color: #e4b6ec;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            background: #e4b6ec;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .transaction-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: #f0e7ff;
+            transform: translateX(5px);
+        }
+
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .transaction-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .transaction-icon.deposit {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .transaction-icon.withdrawal {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .transaction-icon.transfer {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .transaction-desc {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .transaction-type {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .transaction-detail {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .amount {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .amount.positive {
+            color: #22543d;
+        }
+
+        .amount.negative {
+            color: #742a2a;
+        }
+
+        .transaction-date {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .notes-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.1);
+            border: 1px solid rgba(228, 182, 236, 0.2);
+        }
+
+        .notes-content {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #e4b6ec;
+        }
+
+        .note-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .note-date {
+            font-size: 12px;
+            color: #718096;
+            min-width: 80px;
+        }
+
+        .note-text {
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .edit-notes-btn {
+            padding: 10px 20px;
+            border: 2px solid #e4b6ec;
+            background: white;
+            color: #e4b6ec;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            float: right;
+        }
+
+        .edit-notes-btn:hover {
+            background: #e4b6ec;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .customer-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+            
+            .accounts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="https://github.com/Minjun11087/00_SemiProject/blob/Minjun11087-patch-1/resource/resource/fdsafda.jpg?raw=true">
+                </div>
+                <span>KH BANK</span>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item">프로젝트 관리</div>
+                <div class="nav-item">사내 일정</div>
+                <div class="nav-item active">고객 관리</div>
+                <div class="nav-item">사원 관리</div>
+                <div class="nav-item">결재 내역</div>
+                <div class="nav-item">마이페이지</div>
+            </nav>
+            <div class="user-profile">
+                <div class="notification-badge">3</div>
+                <div class="profile-avatar">조</div>
+                <span>조인순 부장</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="breadcrumb">
+            <a href="#" onclick="goBack()">고객 관리</a>
+            <span>></span>
+            <span>김민수 고객 상세정보</span>
+        </div>
+
+        <div class="customer-header">
+            <div class="customer-profile">
+                <div class="customer-avatar-large">김</div>
+                <div class="customer-basic-info">
+                    <h1 class="customer-name">김민수</h1>
+                    <p class="customer-id">고객 ID: C001234</p>
+                    <div class="customer-tags">
+                        <span class="tag vip">⭐ VIP 고객</span>
+                        <span class="tag individual">개인</span>
+                        <span class="tag active">활성</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn btn-back" onclick="goBack()">
+                            ← 목록으로
+                        </button>
+                        <button class="action-btn btn-edit" onclick="editCustomer()">
+                            ✏️ 수정
+                        </button>
+                        <button class="action-btn btn-delete" onclick="deleteCustomer()">
+                            🗑️ 삭제
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-section">
+                <h2 class="section-title">개인 정보</h2>
+                <div class="info-item">
+                    <span class="info-label">성명</span>
+                    <span class="info-value">김민수</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">생년월일</span>
+                    <span class="info-value">1985-03-15</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">성별</span>
+                    <span class="info-value">남성</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">주소</span>
+                    <span class="info-value">서울시 강남구 테헤란로 123</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">직업</span>
+                    <span class="info-value">IT 엔지니어</span>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="section-title">연락처 정보</h2>
+                <div class="info-item">
+                    <span class="info-label">휴대폰</span>
+                    <span class="info-value">010-1234-5678</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">이메일</span>
+                    <span class="info-value">kimms@email.com</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">직장 전화</span>
+                    <span class="info-value">02-1234-5678</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">담당 지점</span>
+                    <span class="info-value">강남지점</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">가입일</span>
+                    <span class="info-value">2024-01-15</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="accounts-section">
+            <div class="accounts-header">
+                <h2 class="section-title">보유 계좌</h2>
+                <button class="add-account-btn" onclick="addAccount()">+ 계좌 추가</button>
+            </div>
+            <div class="accounts-grid">
+                <div class="account-card">
+                    <div class="account-header">
+                        <div class="account-type">KH 입출금통장</div>
+                        <div class="account-status">정상</div>
+                    </div>
+                    <div class="account-number">110-123-456789</div>
+                    <div class="account-balance">5,240,000원</div>
+                    <div class="account-details">
+                        <span>개설일: 2024-01-15</span>
+                        <span>주거래</span>
+                    </div>
+                </div>
+
+                <div class="account-card">
+                    <div class="account-header">
+                        <div class="account-type">KH 정기적금</div>
+                        <div class="account-status">정상</div>
+                    </div>
+                    <div class="account-number">130-123-456789</div>
+                    <div class="account-balance">2,500,000원</div>
+                    <div class="account-details">
+                        <span>개설일: 2024-02-01</span>
+                        <span>만기: 2025-02-01</span>
+                    </div>
+                </div>
+
+                <div class="account-card">
+                    <div class="account-header">
+                        <div class="account-type">KH 청약저축</div>
+                        <div class="account-status">정상</div>
+                    </div>
+                    <div class="account-number">140-123-456789</div>
+                    <div class="account-balance">850,000원</div>
+                    <div class="account-details">
+                        <span>개설일: 2024-01-20</span>
+                        <span>납입회차: 8/24</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="transactions-section">
+            <div class="transactions-header">
+                <h2 class="section-title">최근 거래 내역</h2>
+                <button class="view-all-btn" onclick="viewAllTransactions()">전체 보기</button>
+            </div>
+            <div class="transaction-list">
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div class="transaction-icon deposit">💰</div>
+                        <div class="transaction-desc">
+                            <div class="transaction-type">입금</div>
+                            <div class="transaction-detail">급여이체 - ㈜테크컴퍼니</div>
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="amount positive">+3,500,000원</div>
+                        <div class="transaction-date">2024-08-25 09:30</div>
+                    </div>
+                </div>
+
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div class="transaction-icon withdrawal">💳</div>
+                        <div class="transaction-desc">
+                            <div class="transaction-type">출금</div>
+                            <div class="transaction-detail">ATM 현금출금 - 강남역점</div>
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="amount negative">-200,000원</div>
+                        <div class="transaction-date">2024-08-24 14:22</div>
+                    </div>
+                </div>
+
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div class="transaction-icon transfer">📤</div>
+                        <div class="transaction-desc">
+                            <div class="transaction-type">계좌이체</div>
+                            <div class="transaction-detail">온라인쇼핑 - 쿠팡</div>
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="amount negative">-89,000원</div>
+                        <div class="transaction-date">2024-08-23 19:45</div>
+                    </div>
+                </div>
+
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div class="transaction-icon deposit">📥</div>
+                        <div class="transaction-desc">
+                            <div class="transaction-type">계좌이체</div>
+                            <div class="transaction-detail">보험환급금 - 삼성생명</div>
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="amount positive">+450,000원</div>
+                        <div class="transaction-date">2024-08-22 11:15</div>
+                    </div>
+                </div>
+
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div class="transaction-icon transfer">🏦</div>
+                        <div class="transaction-desc">
+                            <div class="transaction-type">자동이체</div>
+                            <div class="transaction-detail">적금납입 - KH정기적금</div>
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="amount negative">-300,000원</div>
+                        <div class="transaction-date">2024-08-20 10:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notes-section">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="section-title">상담 이력 및 메모</h2>
+                <button class="edit-notes-btn" onclick="editNotes()">편집</button>
+            </div>
+            <div class="notes-content">
+                <div class="note-item">
+                    <div class="note-date">2024-08-15</div>
+                    <div class="note-text">
+                        <strong>[VIP 등급 승급]</strong><br>
+                        거래실적 우수로 VIP 등급으로 승급 처리됨. 우대금리 및 수수료 면제 혜택 적용.
+                    </div>
+                </div>
+                <div class="note-item">
+                    <div class="note-date">2024-07-20</div>
+                    <div class="note-text">
+                        <strong>[대출 상담]</strong><br>
+                        주택담보대출 문의. 신용등급 1등급, 연소득 7천만원. 대출 한도 3억원 안내 완료.
+                    </div>
+                </div>
+                <div class="note-item">
+                    <div class="note-date">2024-06-10</div>
+                    <div class="note-text">
+                        <strong>[투자상품 가입]</strong><br>
+                        펀드 투자상품 가입 완료. 위험성향 공격투자형. 월 50만원 적립식 투자 시작.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
