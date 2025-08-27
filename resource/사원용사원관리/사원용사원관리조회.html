@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KH BANK - 사원 상세 정보</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9ff;
+            color: #333;
+        }
+
+        /* 헤더 스타일 - 기존과 동일 */
+        .header {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e4b6ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #e4b6ec;
+            font-weight: bold;
+            font-size: 18px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notification-badge {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 24px;
+        }
+
+        .content-wrapper {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(228, 182, 236, 0.1);
+            border: 2px dashed #e4b6ec;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .breadcrumb a {
+            color: #e4b6ec;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* 사원 프로필 섹션 */
+        .employee-profile {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #f8f4ff, #fff8f4);
+            border-radius: 16px;
+            border-left: 5px solid #e4b6ec;
+        }
+
+        .profile-image-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(228, 182, 236, 0.3);
+        }
+
+        .status-indicator {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .profile-info {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* 탭 네비게이션 */
+        .tab-navigation {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: #e4b6ec;
+            border-bottom-color: #e4b6ec;
+        }
+
+        .tab-btn:hover {
+            color: #e4b6ec;
+            background: rgba(228, 182, 236, 0.1);
+        }
+
+        /* 탭 컨텐츠 */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 상세 정보 섹션 */
+        .detail-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .detail-label {
+            font-size: 13px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 500;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #e4b6ec;
+        }
+
+        /* 액션 버튼 */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(228, 182, 236, 0.3);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #ffca2c;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        /* 히스토리 테이블 */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .history-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 13px;
+        }
+
+        .history-table td {
+            font-size: 14px;
+        }
+
+        .history-table tr:hover {
+            background: #f8f4ff;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .close-btn:hover {
+            color: #dc3545;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #e4b6ec;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .employee-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .tab-navigation {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="https://github.com/Minjun11087/00_SemiProject/blob/Minjun11087-patch-1/resource/resource/fdsafda.jpg?raw=true">
+                </div>
+                <span>KH BANK</span>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item">프로젝트 관리</div>
+                <div class="nav-item">사내 일정</div>
+                <div class="nav-item">고객 관리</div>
+                <div class="nav-item">결재 내역</div>
+                <div class="nav-item active">사원 관리</div>
+                <div class="nav-item">마이페이지</div>
+            </nav>
+            <div class="user-profile">
+                <div class="notification-badge">3</div>
+                <div class="profile-avatar">조</div>
+                <span>조인순 부장</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="content-wrapper">
+            <!-- 페이지 헤더 -->
+            <div class="page-header">
+                <h1 class="page-title">사원 상세 정보</h1>
+                <div class="breadcrumb">
+                    <a href="#" onclick="goBack()">사원 관리</a> > <span id="employeeName">양시준</span>
+                </div>
+            </div>
+
+            <!-- 사원 프로필 -->
+            <div class="employee-profile">
+                <div class="profile-image-section">
+                    <div class="profile-image" id="profileImage">양</div>
+                    <div class="status-indicator status-active" id="statusBadge">근무중</div>
+                </div>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <span class="info-label">사원명</span>
+                        <span class="info-value" id="displayName">양시준</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">직급</span>
+                        <span class="info-value" id="displayPosition">사원</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">부서</span>
+                        <span class="info-value" id="displayDepartment">총무</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">입사일</span>
+                        <span class="info-value" id="displayJoinDate">2023-03-15</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 탭 네비게이션 -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="showTab('basic')">기본 정보</button>
+                <button class="tab-btn" onclick="showTab('contact')">연락처 정보</button>
+                <button class="tab-btn" onclick="showTab('work')">근무 정보</button>
+                <button class="tab-btn" onclick="showTab('history')">변경 이력</button>
+            </div>
+
+            <!-- 기본 정보 탭 -->
+            <div class="tab-content active" id="basic">
+                <div class="detail-section">
+                    <h3 class="section-title">개인 정보</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">사원번호</span>
+                            <span class="detail-value" id="employeeId">EMP001</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">이름</span>
+                            <span class="detail-value" id="fullName">양시준</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">생년월일</span>
+                            <span class="detail-value" id="birthDate">1995-08-20</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">성별</span>
+                            <span class="detail-value" id="gender">남성</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 연락처 정보 탭 -->
+            <div class="tab-content" id="contact">
+                <div class="detail-section">
+                    <h3 class="section-title">연락처 정보</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">이메일</span>
+                            <span class="detail-value" id="email">yang.sijun@khbank.co.kr</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">휴대폰</span>
+                            <span class="detail-value" id="phone">010-1234-5678</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">내선번호</span>
+                            <span class="detail-value" id="extension">2101</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">주소</span>
+                            <span class="detail-value" id="address">서울시 강남구 테헤란로 123</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 근무 정보 탭 -->
+            <div class="tab-content" id="work">
+                <div class="detail-section">
+                    <h3 class="section-title">근무 정보</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">입사일</span>
+                            <span class="detail-value" id="joinDate">2023-03-15</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">근무 형태</span>
+                            <span class="detail-value" id="workType">정규직</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">급여 등급</span>
+                            <span class="detail-value" id="salaryGrade">3급</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">직속 상관</span>
+                            <span class="detail-value" id="supervisor">김과장</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 변경 이력 탭 -->
+            <div class="tab-content" id="history">
+                <div class="detail-section">
+                    <h3 class="section-title">변경 이력</h3>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>변경일</th>
+                                <th>변경 항목</th>
+                                <th>변경 전</th>
+                                <th>변경 후</th>
+                                <th>변경자</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-08-15</td>
+                                <td>직급</td>
+                                <td>인턴</td>
+                                <td>사원</td>
+                                <td>조인순 부장</td>
+                            </tr>
+                            <tr>
+                                <td>2024-06-01</td>
+                                <td>부서</td>
+                                <td>인사</td>
+                                <td>총무</td>
+                                <td>조인순 부장</td>
+                            </tr>
+                            <tr>
+                                <td>2023-03-15</td>
+                                <td>입사</td>
+                                <td>-</td>
+                                <td>인턴</td>
+                                <td>시스템</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="goBack()">
+                    ◀ 목록으로
+                </button>
+                <button class="btn btn-warning" onclick="openEditModal()">
+                    ✏️ 수정
+                </button>
+                <button class="btn btn-danger" onclick="deleteEmployee()">
+                    🗑️ 삭제
+                </button>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- 수정 모달 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">사원 정보 수정</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label class="form-label">이름</label>
+                    <input type="text" class="form-input" id="editName" value="양시준">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">직급</label>
+                    <select class="form-select" id="editPosition">
+                        <option value="인턴">인턴</option>
+                        <option value="사원" selected>사원</option>
+                        <option value="대리">대리</option>
+                        <option value="과장">과장</option>
+                        <option value="차장">차장</option>
+                        <option value="부장">부장</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">부서</label>
+                    <select class="form-select" id="editDepartment">
+                        <option value="총무" selected>총무</option>
+                        <option value="영업">영업</option>
+                        <option value="인사">인사</option>
+                        <option value="개발">개발</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">상태</label>
+                    <select class="form-select" id="editStatus">
+                        <option value="근무중" selected>근무중</option>
+                        <option value="휴가">휴가</option>
+                        <option value="출장">출장</option>
+                        <option value="휴직">휴직</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" class="form-input" id="editEmail" value="yang.sijun@khbank.co.kr">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">휴대폰</label>
+                    <input type="tel" class="form-input" id="editPhone" value="010-1234-5678">
+                </div>
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEmployee()">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 현재 사원 데이터 (실제로는 서버에서 받아올 데이터)
+        let currentEmployee = {
+            id: 1,
+            name: "양시준",
+            position: "사원",
+            department: "총무",
+            status: "근무중",
+            employeeId: "EMP001",
+            birthDate: "1995-08-20",
+            gender: "남성",
+            email: "yang.sijun@khbank.co.kr",
+            phone: "010-1234-5678",
+            extension: "2101",
+            address: "서울시 강남구 테헤란로 123",
+            joinDate: "2023-03-15",
+            workType: "정규직",
+            salaryGrade: "3급",
+            supervisor: "김과장"
+        };
+
+        // 탭 전환 함수
+        function showTab(tabName) {
+            // 모든 탭 버튼과 컨텐츠 비활성화
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // 수정 모달 열기
+        function openEditModal() {
+            document.getElementById('editModal').classList.add('show');
+            
+            // 현재 데이터로 폼 채우기
+            document.getElementById('editName').value = currentEmployee.name;
+            document.getElementById('editPosition').value = currentEmployee.position;
+            document.getElementById('editDepartment').value = currentEmployee.department;
+            document.getElementById('editStatus').value = currentEmployee.status;
+            document.getElementById('editEmail').value = currentEmployee.email;
+            document.getElementById('editPhone').value = currentEmployee.phone;
+        }
+
+        // 수정 모달 닫기
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        // 사원 정보 저장
+        function saveEmployee() {
+            const updatedEmployee = {
+                ...currentEmployee,
+                name: document.getElementById('editName').value,
+                position: document.getElementById('editPosition').value,
+                department: document.getElementById('editDepartment').value,
+                status: document.getElementById('editStatus').value,
+                email: document.getElementById('editEmail').value,
+                phone: document.getElementById('editPhone').value
+            };
+
+            // 변경사항 확인
+            const changes = [];
+            if (currentEmployee.name !== updatedEmployee.name) changes.push('이름');
+            if (currentEmployee.position !== updatedEmployee.position) changes.push('직급');
+            if (currentEmployee.department !== updatedEmployee.department) changes.push('부서');
+            if (currentEmployee.status !== updatedEmployee.status) changes.push('상태');
+            if (currentEmployee.email !== updatedEmployee.email) changes.push('이메일');
+        }
