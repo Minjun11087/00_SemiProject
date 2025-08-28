@@ -542,6 +542,33 @@
                 flex-wrap: wrap;
             }
         }
+            #footer {
+        width:80%;
+        height:200px;
+        margin:auto;
+        margin-top:50px;
+    }
+    #footer-1 {
+        width:100%;
+        height:20%;
+        border-top:1px solid lightgray;
+        border-bottom:1px solid lightgray;
+    }
+    #footer-2 {width:100%; height:80%;}
+    #footer-1, #footer-2 {padding-left:50px;}
+    #footer-1>a {
+        text-decoration:none;
+        font-weight:600;
+        margin:10px;
+        line-height:40px;
+        color:black;
+    }
+    #footer-2>p {
+        margin:0;
+        padding:10px;
+        font-size:13px;
+    }
+    #p2 {text-align:center;}
     </style>
 </head>
 <body>
@@ -611,7 +638,6 @@
                 <button class="tab-btn active" onclick="showTab('basic')">기본 정보</button>
                 <button class="tab-btn" onclick="showTab('contact')">연락처 정보</button>
                 <button class="tab-btn" onclick="showTab('work')">근무 정보</button>
-                <button class="tab-btn" onclick="showTab('history')">변경 이력</button>
             </div>
 
             <!-- 기본 정보 탭 -->
@@ -674,61 +700,15 @@
                             <span class="detail-value" id="joinDate">2023-03-15</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">근무 형태</span>
-                            <span class="detail-value" id="workType">정규직</span>
+                            <span class="detail-label">급여</span>
+                            <span class="detail-value" id="salaryGrade">급여액수</span>
                         </div>
-                        <div class="detail-item">
-                            <span class="detail-label">급여 등급</span>
-                            <span class="detail-value" id="salaryGrade">3급</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">직속 상관</span>
-                            <span class="detail-value" id="supervisor">김과장</span>
-                        </div>
+                       
                     </div>
                 </div>
             </div>
 
-            <!-- 변경 이력 탭 -->
-            <div class="tab-content" id="history">
-                <div class="detail-section">
-                    <h3 class="section-title">변경 이력</h3>
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>변경일</th>
-                                <th>변경 항목</th>
-                                <th>변경 전</th>
-                                <th>변경 후</th>
-                                <th>변경자</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2024-08-15</td>
-                                <td>직급</td>
-                                <td>인턴</td>
-                                <td>사원</td>
-                                <td>조인순 부장</td>
-                            </tr>
-                            <tr>
-                                <td>2024-06-01</td>
-                                <td>부서</td>
-                                <td>인사</td>
-                                <td>총무</td>
-                                <td>조인순 부장</td>
-                            </tr>
-                            <tr>
-                                <td>2023-03-15</td>
-                                <td>입사</td>
-                                <td>-</td>
-                                <td>인턴</td>
-                                <td>시스템</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            
 
             <!-- 액션 버튼 -->
             <div class="action-buttons">
@@ -802,6 +782,25 @@
             </form>
         </div>
     </div>
+    <div id="footer">
+        <div id="footer-1">
+            <a href="#">이용약관</a> | 
+            <a href="#">개인정보취급방침</a> | 
+            <a href="#">고객센터</a>
+        </div>
+
+        <div id="footer-2">
+            <p id="p1">
+                지원부 : 1111-1111 &nbsp&nbsp
+                총무부 : 2222-2222 &nbsp&nbsp
+                인사과 : 3333-3333 &nbsp&nbsp
+                영업부 : 4444-4444 &nbsp&nbsp
+                관리부 : 5555-5555 &nbsp&nbsp
+            </p>
+            <p id="p2">Copyright © 1998-2025 KH Information Educational Institute All Right Reserved</p>
+        </div>
+    </div>
+
 
     <script>
         // 현재 사원 데이터 (실제로는 서버에서 받아올 데이터)
