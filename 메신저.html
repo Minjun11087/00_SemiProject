@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    display: flex;
+    height: 100vh;
+    background: #f5f5f5;
+}
+
+/* 채팅방 목록 */
+.chat-list {
+    width: 300px;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 20px;
+    background: #e4b6ec;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.header-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-box {
+    padding: 15px;
+    background: #e4b6ec;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.9);
+    outline: none;
+    font-size: 14px;
+}
+
+.search-clear {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+}
+
+.search-container {
+    position: relative;
+}
+
+.chat-rooms {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-room {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.2s;
+}
+
+.chat-room:hover {
+    background: #f8f8f8;
+}
+
+.chat-room.active {
+    background: #e8f5e8;
+}
+
+.profile-img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.chat-info {
+    flex: 1;
+}
+
+.chat-name {
+    font-weight: bold;
+    margin-bottom: 3px;
+    font-size: 15px;
+}
+
+.chat-preview {
+    font-size: 13px;
+    color: #666;
+}
+
+.chat-time {
+    font-size: 11px;
+    color: #999;
+    margin-left: 10px;
+}
+
+/* 채팅 영역 */
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-area-header {
+    padding: 15px 20px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.current-chat-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.current-chat-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.chat-members {
+    font-size: 12px;
+    color: #666;
+}
+
+.online-indicator {
+    width: 8px;
+    height: 8px;
+    background: #4caf50;
+    border-radius: 50%;
+}
+
+.messages-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8f8f8;
+}
+
+.message {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.message.my-message {
+    justify-content: flex-end;
+}
+
+.message.my-message .message-bubble {
+    background: #e4b6ec;
+    color: white;
+    order: 2;
+}
+
+.message.my-message .message-time {
+    order: 1;
+}
+
+.message-bubble {
+    background: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 70%;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.message-time {
+    font-size: 10px;
+    color: #999;
+    margin: 0 5px;
+}
+
+.input-area {
+    padding: 15px 20px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.message-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+    resize: none;
+    max-height: 100px;
+}
+
+.message-input:focus {
+    border-color: #e4b6ec;
+}
+
+.send-btn {
+    width: 40px;
+    height: 40px;
+    background: #e4b6ec;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.send-btn:hover {
+    background: #e4b6ec;
+}
+
+.send-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* 사이드바 */
+.sidebar {
+    width: 300px;
+    background: white;
+    border-left: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    background-color: #e4b6ec;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.participant-count {
+    font-size: 14px;
+    color: #666;
+}
+
+.search-participants {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    outline: none;
+    font-size: 13px;
+}
+
+.participants-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.participants-section {
+    padding: 15px 20px;
+}
+
+.section-title {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.participant {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+.participant-profile {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.participant-name {
+    flex: 1;
+    font-size: 14px;
+}
+
+.online-status {
+    width: 8px;
+    height: 8px;
+    background: #4caf50;
+    border-radius: 50%;
+}
+
+.offline-status {
+    width: 8px;
+    height: 8px;
+    background: #ccc;
+    border-radius: 50%;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    
+    .chat-list {
+        width: 100px;
+    }
+    
+    .chat-name, .chat-preview {
+        display: none;
+    }
+    
+    .chat-room {
+        justify-content: center;
+    }
+}
+
+/* 스크롤바 스타일링 */
+.chat-rooms::-webkit-scrollbar,
+.messages-container::-webkit-scrollbar,
+.participants-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-rooms::-webkit-scrollbar-track,
+.messages-container::-webkit-scrollbar-track,
+.participants-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-rooms::-webkit-scrollbar-thumb,
+.messages-container::-webkit-scrollbar-thumb,
+.participants-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.chat-rooms::-webkit-scrollbar-thumb:hover,
+.messages-container::-webkit-scrollbar-thumb:hover,
+.participants-container::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+</style>
+</head>
+<body>
+<!-- 채팅방 목록 -->
+<div class="chat-list">
+    <div class="chat-header">
+        <span class="chat-title">채팅방</span>
+        <div class="header-icons">
+            <span class="icon">+</span>
+            <span class="icon">⚙</span>
+        </div>
+    </div>
+    
+    <div class="search-box">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="채팅방 검색" id="chatSearch">
+            <span class="search-clear" onclick="clearSearch()">×</span>
+        </div>
+    </div>
+    
+    <div class="chat-rooms" id="chatRoomsList">
+        <div class="chat-room active" data-room-id="1" data-room-name="김민수">
+            <div class="profile-img">김</div>
+            <div class="chat-info">
+                <div class="chat-name">김민수</div>
+                <div class="chat-preview">안녕하세요!</div>
+            </div>
+            <div class="chat-time">오후 1:23</div>
+        </div>
+        
+        <div class="chat-room" data-room-id="2" data-room-name="이영희">
+            <div class="profile-img">이</div>
+            <div class="chat-info">
+                <div class="chat-name">이영희</div>
+                <div class="chat-preview">온라인</div>
+            </div>
+            <div class="chat-time">오후 12:45</div>
+        </div>
+        
+        <div class="chat-room" data-room-id="3" data-room-name="박철수">
+            <div class="profile-img">박</div>
+            <div class="chat-info">
+                <div class="chat-name">박철수</div>
+                <div class="chat-preview">모임관련...</div>
+            </div>
+            <div class="chat-time">오전 11:30</div>
+        </div>
+        
+        <div class="chat-room" data-room-id="4" data-room-name="최미연">
+            <div class="profile-img">최</div>
+            <div class="chat-info">
+                <div class="chat-name">최미연</div>
+                <div class="chat-preview">네, 알겠습니다</div>
+            </div>
+            <div class="chat-time">어제</div>
+        </div>
+    </div>
+</div>
+
+<!-- 채팅 영역 -->
+<div class="chat-area">
+    <div class="chat-area-header">
+        <div class="current-chat-info">
+            <div>
+                <div class="current-chat-name" id="currentChatName">김민수</div>
+                <div class="chat-members">대화 상대 1명</div>
+            </div>
+            <div class="online-indicator"></div>
+        </div>
+    </div>
+    
+    <div class="messages-container" id="messagesContainer">
+        <div class="message">
+            <div class="message-bubble">안녕하세요! 반가워요!</div>
+            <div class="message-time">오후 1:20</div>
+        </div>
+        
+        <div class="message my-message">
+            <div class="message-time">오후 1:22</div>
+            <div class="message-bubble">네, 안녕하세요!</div>
+        </div>
+        
+        <div class="message">
+            <div class="message-bubble">오늘 날씨가 정말 좋네요</div>
+            <div class="message-time">오후 1:23</div>
+        </div>
+    </div>
+    
+    <div class="input-area">
+        <input type="text" class="message-input" placeholder="메시지를 입력하세요..." id="messageInput">
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- 사이드바 -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-title">
+            <span>사원</span>
+            <span class="participant-count">4</span>
+        </div>
+        <input type="text" class="search-participants" placeholder="사원 검색">
+    </div>
+    
+    <div class="participants-container">
+        <div class="participants-section">
+            <div class="section-title">온라인 - 4</div>
+            
+            <div class="participant">
+                <div class="participant-profile">김</div>
+                <span class="participant-name">김민수</span>
+                <div class="online-status"></div>
+            </div>
+            
+            <div class="participant">
+                <div class="participant-profile">이</div>
+                <span class="participant-name">이영희</span>
+                <div class="online-status"></div>
+            </div>
+            
+            <div class="participant">
+                <div class="participant-profile">박</div>
+                <span class="participant-name">박철수</span>
+                <div class="online-status"></div>
+            </div>
+            
+            <div class="participant">
+                <div class="participant-profile">최</div>
+                <span class="participant-name">최미연</span>
+                <div class="online-status"></div>
+            </div>
+        </div>
+        
+        <div class="participants-section">
+            <div class="section-title">오프라인 - 3</div>
+            
+            <div class="participant">
+                <div class="participant-profile">최</div>
+                <span class="participant-name">최민호</span>
+                <div class="offline-status"></div>
+            </div>
+            
+            <div class="participant">
+                <div class="participant-profile">서</div>
+                <span class="participant-name">서현지</span>
+                <div class="offline-status"></div>
+            </div>
+            
+            <div class="participant">
+                <div class="participant-profile">한</div>
+                <span class="participant-name">한지민</span>
+                <div class="offline-status"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 메시지 전송 기능
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+        
+        if (message) {
+            addMessage(message, true);
+            input.value = '';
+            updateSendButton();
+        }
+    }
+    
+    // 메시지 추가
+    function addMessage(text, isMine) {
+        const container = document.getElementById('messagesContainer');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message' + (isMine ? ' my-message' : '');
+        
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const period = hours >= 12 ? '오후' : '오전';
+        const displayHours = hours > 12 ? hours - 12 : (hours === 0 ? 12 : hours);
+        const timeStr = `${period} ${displayHours}:${minutes}`;
+        
+        messageDiv.innerHTML = isMine ? 
+            `<div class="message-time">${timeStr}</div><div class="message-bubble">${text}</div>` :
+            `<div class="message-bubble">${text}</div><div class="message-time">${timeStr}</div>`;
+            
+        container.appendChild(messageDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    // 전송 버튼 상태 업데이트
+    function updateSendButton() {
+        const input = document.getElementById('messageInput');
+        const button = document.getElementById('sendBtn');
+        button.disabled = input.value.trim() === '';
+    }
+    
+    // 채팅방 검색
+    function searchChatRooms() {
+        const searchTerm = document.getElementById('chatSearch').value.toLowerCase();
+        const chatRooms = document.querySelectorAll('.chat-room');
+        
+        chatRooms.forEach(room => {
+            const chatName = room.querySelector('.chat-name').textContent.toLowerCase();
+            room.style.display = chatName.includes(searchTerm) ? 'flex' : 'none';
+        });
+    }
+    
+    // 검색 초기화
+    function clearSearch() {
+        const searchInput = document.getElementById('chatSearch');
+        searchInput.value = '';
+        searchChatRooms();
+    }
+    
+    // 채팅방 선택
+    function selectChatRoom(roomElement) {
+        // 이전 선택 해제
+        document.querySelector('.chat-room.active')?.classList.remove('active');
+        
+        // 새로운 채팅방 선택
+        roomElement.classList.add('active');
+        
+        // 채팅방 이름 업데이트
+        const chatName = roomElement.dataset.roomName;
+        document.getElementById('currentChatName').textContent = chatName;
+        
+        // 메시지 초기화 (실제로는 서버에서 해당 채팅방 메시지를 가져와야 함)
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.innerHTML = `
+            <div class="message">
+                <div class="message-bubble">${chatName}님과의 채팅을 시작합니다.</div>
+                <div class="message-time">지금</div>
+            </div>
+        `;
+    }
+    
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enter 키로 메시지 전송
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // 입력 상태에 따른 전송 버튼 활성화
+        document.getElementById('messageInput').addEventListener('input', updateSendButton);
+        
+        // 채팅방 검색
+        document.getElementById('chatSearch').addEventListener('input', searchChatRooms);
+        
+        // 채팅방 선택
+        document.querySelectorAll('.chat-room').forEach(room => {
+            room.addEventListener('click', function() {
+                selectChatRoom(this);
+            });
+        });
+        
+        // 초기 전송 버튼 상태 설정
+        updateSendButton();
+    });
+    
+    // 자동 응답 시뮬레이션 (데모용)
+    function simulateResponse() {
+        const responses = [
+            '네, 알겠습니다!',
+            '좋은 생각이네요',
+            '어떻게 생각하세요?',
+            '그렇군요!',
+            '재미있겠네요'
+        ];
+        
+        setTimeout(() => {
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            addMessage(randomResponse, false);
+        }, 1000 + Math.random() * 2000);
+    }
+    
+    // 메시지 전송 시 자동 응답 (데모용)
+    const originalSendMessage = sendMessage;
+    sendMessage = function() {
+        originalSendMessage();
+        if (Math.random() > 0.3) { // 70% 확률로 자동 응답
+            simulateResponse();
+        }
+    };
+</script>
+</body>
+</html>
