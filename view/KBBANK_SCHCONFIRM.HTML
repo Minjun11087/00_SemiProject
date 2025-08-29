@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사내일정 승인관리 - KH BANK</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
+        }
+
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e4b6ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #e4b6ec;
+            font-weight: bold;
+            font-size: 18px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: nowrap; 
+           
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+            color: white;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-item.has-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.3);
+            min-width: 200px;
+            padding: 15px 0;
+            margin-top: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.4s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: #2d3748;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f4ff;
+            color: #e4b6ec;
+            border-left-color: #e4b6ec;
+            transform: translateX(5px);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notification-badge {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .request-list {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e4b6ec;
+        }
+
+        .list-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            padding: 0.25rem;
+            border-radius: 10px;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .filter-tab.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: #e4b6ec;
+            font-weight: 600;
+        }
+
+        .request-card {
+            background: #fafafa;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .request-card:hover {
+            border-color: #e4b6ec;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .request-card.pending {
+            border-left: 5px solid #f59e0b;
+        }
+
+        .request-card.approved {
+            border-left: 5px solid #10b981;
+        }
+
+        .request-card.rejected {
+            border-left: 5px solid #ef4444;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .request-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .request-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .card-content {
+            margin: 1rem 0;
+        }
+
+        .content-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .content-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .content-value {
+            font-size: 0.95rem;
+            color: #1f2937;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-view {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+
+            .content-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .filter-tabs {
+                overflow-x: auto;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .request-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+           /* div{border:1px solid red;} */
+        #footer {
+            width:80%;
+            height:200px;
+            margin:auto;
+            margin-top:50px;
+        }
+        #footer-1 {
+            width:100%;
+            height:20%;
+            border-top:1px solid lightgray;
+            border-bottom:1px solid lightgray;
+        }
+        #footer-2 {width:100%; height:80%;}
+        #footer-1, #footer-2 {padding-left:50px;}
+        #footer-1>a {
+            text-decoration:none;
+            font-weight:600;
+            margin:10px;
+            line-height:40px;
+            color:black;
+        }
+        #footer-2>p {
+            margin:0;
+            padding:10px;
+            font-size:13px;
+        }
+        #p2 {text-align:center;}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="https://media.discordapp.net/attachments/1399659042581774444/1402925692592717856/-_-001_3.png?ex=68ae139e&is=68acc21e&hm=c26c02a08b556c0473c32cc52964b7f3c01b2ba4f47a160adc7a71cb22d6a8a1&=&format=webp&quality=lossless&width=725&height=725">
+                </div>
+                <span>KH BANK</span>
+            </div>
+           
+           
+            <nav class="nav-menu">
+                <a href="#" class="nav-item">프로젝트 관리</a>
+                <div class="nav-item active has-dropdown">
+                    사내 일정
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">일정신청</a>
+                        <a href="#" class="dropdown-item">일정목록조회</a>
+                        <a href="#" class="dropdown-item">일정생성(인사과)</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-item">고객 관리</a>
+                <a href="#" class="nav-item">조직도</a>
+                <a href="#" class="nav-item">결재 내역</a>
+                <a href="#" class="nav-item">마이페이지</a>
+            </nav>
+
+
+            <div class="user-profile">
+                <div class="notification-badge">5</div>
+                <div class="profile-avatar">김</div>
+                <span>김인사 과장 (인사과)</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">사내일정 승인관리</h1>
+            <p class="page-subtitle">직원들이 신청한 사내 일정을 검토하고 승인/반려 처리하세요</p>
+        </div>
+
+        <div class="request-list">
+            <div class="list-header">
+                <h2 class="list-title">일정 신청 목록</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterRequests('all')">전체</button>
+                    <button class="filter-tab" onclick="filterRequests('pending')">대기중</button>
+                    <button class="filter-tab" onclick="filterRequests('approved')">승인됨</button>
+                    <button class="filter-tab" onclick="filterRequests('rejected')">반려됨</button>
+                </div>
+            </div>
+
+            <div id="requestList">
+                <!-- 신청 항목들이 여기에 동적으로 생성됩니다 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 승인/반려 모달 -->
+    <div class="modal" id="actionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">일정 승인</h3>
+            </div>
+            <div class="form-group">
+                <label class="form-label">처리 사유</label>
+                <textarea class="form-textarea" id="actionReason" placeholder="승인 또는 반려 사유를 입력해주세요"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+                <button class="btn" id="confirmBtn" onclick="confirmAction()">확인</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="footer">
+        <div id="footer-1">
+            <a href="#">이용약관</a> | 
+            <a href="#">개인정보취급방침</a> | 
+            <a href="#">고객센터</a>
+        </div>
+
+        <div id="footer-2">
+            <p id="p1">
+                지원부 : 1111-1111 &nbsp&nbsp
+                총무부 : 2222-2222 &nbsp&nbsp
+                인사과 : 3333-3333 &nbsp&nbsp
+                영업부 : 4444-4444 &nbsp&nbsp
+                관리부 : 5555-5555 &nbsp&nbsp
+            </p>
+            <p id="p2">Copyright © 1998-2025 KH Information Educational Institute All Right Reserved</p>
+        </div>
+    </div> 
+
+    <script>
+        // 샘플 데이터
+        const requests = [
+            {
+                id: 1,
+                title: "월간 실적 검토 회의",
+                content: "8월 실적 분석 및 9월 목표 설정을 위한 부서별 회의",
+                author: "조인순 부장",
+                employeeId: "EMP-20231205",
+                department: "영업부",
+                startDate: "2025-08-30 09:00",
+                endDate: "2025-08-30 11:00",
+                requestDate: "2025-08-26 14:30",
+                status: "pending"
+            },
+            {
+                id: 2,
+                title: "신입사원 교육",
+                content: "2025년 하반기 신입사원 오리엔테이션 및 기초 교육",
+                author: "박교육 차장",
+                employeeId: "EMP-20220815",
+                department: "교육팀",
+                startDate: "2025-09-02 10:00",
+                endDate: "2025-09-02 17:00",
+                requestDate: "2025-08-25 11:20",
+                status: "approved",
+                actionDate: "2025-08-26 09:15",
+                actionReason: "교육 계획이 체계적으로 수립되어 승인합니다."
+            },
+            {
+                id: 3,
+                title: "시스템 정기점검",
+                content: "서버 및 네트워크 장비 정기점검으로 인한 시스템 중단",
+                author: "이개발 대리",
+                employeeId: "EMP-20230410",
+                department: "IT부",
+                startDate: "2025-08-31 02:00",
+                endDate: "2025-08-31 06:00",
+                requestDate: "2025-08-24 16:45",
+                status: "rejected",
+                actionDate: "2025-08-25 13:30",
+                actionReason: "고객 업무시간과 중복되어 다른 시간대로 조정 필요합니다."
+            },
+            {
+                id: 4,
+                title: "고객 서비스 개선 워크샵",
+                content: "고객 만족도 향상을 위한 서비스 개선 아이디어 도출 워크샵",
+                author: "최서비스 과장",
+                employeeId: "EMP-20221120",
+                department: "고객서비스부",
+                startDate: "2025-09-05 13:00",
+                endDate: "2025-09-05 18:00",
+                requestDate: "2025-08-26 10:15",
+                status: "pending"
+            }
+        ];
+
+        let currentFilter = 'all';
+        let selectedRequest = null;
+        let actionType = null;
+
+        function renderRequests() {
+            const container = document.getElementById('requestList');
+            const filteredRequests = requests.filter(req => 
+                currentFilter === 'all' || req.status === currentFilter
+            );
+
+            if (filteredRequests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>해당하는 신청이 없습니다</h3>
+                        <p>다른 필터를 선택해보세요</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredRequests.map(req => `
+                <div class="request-card ${req.status}">
+                    <div class="card-header">
+                        <div>
+                            <div class="request-title">${req.title}</div>
+                            <div class="request-meta">
+                                <span>신청자: ${req.author} (${req.department})</span>
+                                <span>신청일: ${req.requestDate}</span>
+                            </div>
+                        </div>
+                        <span class="status-badge status-${req.status}">
+                            ${getStatusText(req.status)}
+                        </span>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="content-row">
+                            <div class="content-item">
+                                <span class="content-label">일정 내용</span>
+                                <span class="content-value">${req.content}</span>
+                            </div>
+                            <div class="content-item">
+                                <span class="content-label">사원번호</span>
+                                <span class="content-value">${req.employeeId}</span>
+                            </div>
+                        </div>
+                        <div class="content-row">
+                            <div class="content-item">
+                                <span class="content-label">시작일시</span>
+                                <span class="content-value">${req.startDate}</span>
+                            </div>
+                            <div class="content-item">
+                                <span class="content-label">종료일시</span>
+                                <span class="content-value">${req.endDate}</span>
+                            </div>
+                        </div>
+                        ${req.status !== 'pending' ? `
+                            <div class="content-row">
+                                <div class="content-item">
+                                    <span class="content-label">처리일시</span>
+                                    <span class="content-value">${req.actionDate}</span>
+                                </div>
+                                <div class="content-item">
+                                    <span class="content-label">처리사유</span>
+                                    <span class="content-value">${req.actionReason}</span>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="card-actions">
+                        ${req.status === 'pending' ? `
+                            <button class="btn btn-approve" onclick="openActionModal(${req.id}, 'approve')">
+                                승인
+                            </button>
+                            <button class="btn btn-reject" onclick="openActionModal(${req.id}, 'reject')">
+                                반려
+                            </button>
+                        ` : `
+                            <button class="btn btn-view" onclick="viewDetails(${req.id})">
+                                상세보기
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '대기중',
+                'approved': '승인됨',
+                'rejected': '반려됨'
+            };
+            return statusMap[status];
+        }
+
+        function filterRequests(filter) {
+            currentFilter = filter;
+            
+            // 탭 활성화 상태 업데이트
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderRequests();
+        }
+
+        function openActionModal(requestId, action) {
+            selectedRequest = requests.find(req => req.id === requestId);
+            actionType = action;
+            
+            const modal = document.getElementById('actionModal');
+            const title = document.getElementById('modalTitle');
+            const confirmBtn = document.getElementById('confirmBtn');
+            
+            if (action === 'approve') {
+                title.textContent = '일정 승인';
+                confirmBtn.textContent = '승인';
+                confirmBtn.className = 'btn btn-approve';
+            } else {
+                title.textContent = '일정 반려';
+                confirmBtn.textContent = '반려';
+                confirmBtn.className = 'btn btn-reject';
+            }
+            
+            document.getElementById('actionReason').value = '';
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('actionModal').style.display = 'none';
+            selectedRequest = null;
+            actionType = null;
+        }
+
+        function confirmAction() {
+            const reason = document.getElementById('actionReason').value.trim();
+            
+            if (!reason) {
+                alert('처리 사유를 입력해주세요.');
+                return;
+            }
+            
+            // 요청 상태 업데이트
+            selectedRequest.status = actionType === 'approve' ? 'approved' : 'rejected';
+            selectedRequest.actionDate = new Date().toLocaleString('ko-KR');
+            selectedRequest.actionReason = reason;
+            
+            closeModal();
+            renderRequests();
+            
+            const actionText = actionType === 'approve' ? '승인' : '반려';
+            alert(`일정이 ${actionText} 처리되었습니다.`);
+        }
+
+        function viewDetails(requestId) {
+            const request = requests.find(req => req.id === requestId);
+            alert(`일정명: ${request.title}\n신청자: ${request.author}\n상태: ${getStatusText(request.status)}\n처리사유: ${request.actionReason || '-'}`);
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('actionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            renderRequests();
+        });
+    </script>
+</body>
+</html>

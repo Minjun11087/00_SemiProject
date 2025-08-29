@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KH Bank 프로젝트 생성</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e4b6ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #e4b6ec;
+            font-weight: bold;
+            font-size: 18px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notification-badge {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .breadcrumb {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #e4b6ec;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #2d3748;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #e4b6ec;
+            position: relative;
+        }
+
+        .create-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group.full-width {
+            flex: none;
+            width: 100%;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #e4b6ec;
+            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #e4b6ec;
+            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
+        }
+
+        .tag-input-container {
+            position: relative;
+        }
+
+        .tag-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+
+        .tag-suggestion {
+            padding: 10px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f7fafc;
+            font-size: 14px;
+        }
+
+        .tag-suggestion:hover {
+            background-color: #f7fafc;
+        }
+
+        .tag-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #f7fafc;
+            color: #4a5568;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            color: #718096;
+            font-weight: bold;
+        }
+
+        .tag-remove:hover {
+            color: #e53e3e;
+        }
+
+        .member-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f7fafc;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .member-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .member-remove {
+            cursor: pointer;
+            color: #718096;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .member-remove:hover {
+            color: #e53e3e;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #fafafa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: #e4b6ec;
+            background-color: #faf5ff;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #e4b6ec;
+            background-color: #f3e8ff;
+        }
+
+        .upload-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .upload-text {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .upload-subtext {
+            color: #a0aec0;
+            font-size: 12px;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            width: 30px;
+            height: 30px;
+            background: #e4b6ec;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .file-details {
+            font-size: 14px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .file-size {
+            color: #718096;
+            font-size: 12px;
+        }
+
+        .file-remove {
+            cursor: pointer;
+            color: #718096;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .file-remove:hover {
+            color: #e53e3e;
+            background: #fed7d7;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .validation-summary {
+            background: #e6fffa;
+            border: 1px solid #38d9a9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .validation-title {
+            font-weight: 600;
+            color: #087f5b;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .validation-list {
+            font-size: 13px;
+            color: #0c8599;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .form-container {
+                padding: 25px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        #footer {
+            width: 80%;
+            height: 200px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        #footer-1 {
+            width: 100%;
+            height: 20%;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+        #footer-2 {
+            width: 100%; 
+            height: 80%;
+        }
+        #footer-1, #footer-2 {
+            padding-left: 50px;
+        }
+        #footer-1>a {
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px;
+            line-height: 40px;
+            color: black;
+        }
+        #footer-2>p {
+            margin: 0;
+            padding: 10px;
+            font-size: 13px;
+        }
+        #p2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="https://media.discordapp.net/attachments/1399659042581774444/1402925692592717856/-_-001_3.png?ex=68ae139e&is=68acc21e&hm=c26c02a08b556c0473c32cc52964b7f3c01b2ba4f47a160adc7a71cb22d6a8a1&=&format=webp&quality=lossless&width=725&height=725">  
+                </div>
+                <span>KH BANK</span>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active">프로젝트 관리</div>
+                <div class="nav-item">사내 일정</div>
+                <div class="nav-item">고객 관리</div>
+                <div class="nav-item">조직도</div>
+                <div class="nav-item">결재 내역</div>
+                <div class="nav-item">마이페이지</div>
+            </nav>
+            <div class="user-profile">
+                <div class="notification-badge">3</div>
+                <div class="profile-avatar">조</div>
+                <span>조인순 부장</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="#">프로젝트 관리</a> > <span>새 프로젝트 생성</span>
+        </div>
+        
+        <h1 class="page-title">새 프로젝트 생성</h1>
+        
+        <div class="validation-summary" id="validationSummary">
+            <div class="validation-title">입력 검증 완료</div>
+            <div class="validation-list" id="validationList"></div>
+        </div>
+        
+        <form class="form-container" id="projectForm">
+            <div class="create-badge">생성 모드</div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">프로젝트 제목 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="projectTitle" placeholder="프로젝트 제목을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">프로젝트 상태 <span class="required">*</span></label>
+                    <select class="form-select" id="projectStatus" required>
+                        <option value="">상태 선택</option>
+                        <option value="planning">기획중</option>
+                        <option value="active">진행중</option>
+                        <option value="review">검토중</option>
+                        <option value="completed">완료</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">작업 시작일 <span class="required">*</span></label>
+                    <input type="date" class="form-input" id="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">작업 완료일</label>
+                    <input type="date" class="form-input" id="endDate">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label class="form-label">작성자</label>
+                    <input type="text" class="form-input" id="author" value="조인순 부장 (개발팀)" readonly>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label class="form-label">기술 태그</label>
+                    <div class="tag-input-container">
+                        <input type="text" class="form-input" id="tagInput" placeholder="태그를 입력하고 Enter를 누르세요 (예: Java, Oracle, HTML)">
+                        <div class="tag-suggestions" id="tagSuggestions"></div>
+                    </div>
+                    <div class="selected-tags" id="selectedTags"></div>
+                    <div class="form-help">자주 사용되는 태그: Java, Oracle, HTML, CSS, JavaScript, React, Spring, MySQL</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label class="form-label">프로젝트 설명 <span class="required">*</span></label>
+                    <textarea class="form-input form-textarea" id="projectDescription" placeholder="프로젝트의 목표, 주요 기능, 예상 결과물 등을 상세히 작성해주세요" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label class="form-label">프로젝트 구성원</label>
+                    <select class="form-select" id="memberSelect">
+                        <option value="">구성원 추가</option>
+                        <option value="김경식">김경식 과장 (영업팀)</option>
+                        <option value="이미영">이미영 대리 (개발팀)</option>
+                        <option value="박준호">박준호 사원 (디자인팀)</option>
+                        <option value="최수진">최수진 차장 (기획팀)</option>
+                        <option value="정현우">정현우 대리 (마케팅팀)</option>
+                    </select>
+                    <div class="member-list" id="memberList"></div>
+                    <div class="form-help">프로젝트에 참여할 팀원들을 선택해주세요</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label class="form-label">첨부파일</label>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text">파일을 드래그하거나 클릭하여 업로드</div>
+                        <div class="upload-subtext">지원 형식: PDF, DOC, XLS, PPT, 이미지 (최대 10MB)</div>
+                        <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif">
+                    </div>
+                    <div class="file-list" id="fileList"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="#" class="btn btn-secondary">취소</a>
+                <button type="submit" class="btn btn-primary">프로젝트 생성</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="footer">
+        <div id="footer-1">
+            <a href="#">이용약관</a> | 
+            <a href="#">개인정보취급방침</a> | 
+            <a href="#">고객센터</a>
+        </div>
+        <div id="footer-2">
+            <p id="p1">
+                지원부 : 1111-1111 &nbsp&nbsp
+                이무부 : 2222-2222 &nbsp&nbsp
+                인사과 : 3333-3333 &nbsp&nbsp
+                영업부 : 4444-4444 &nbsp&nbsp
+                관리부 : 5555-5555 &nbsp&nbsp
+            </p>
+            <p id="p2">Copyright © 1998-2025 KH Information Educational Institute All Right Reserved</p>
+        </div>
+    </div>
+
+    <script>
+        // 현재 날짜 설정
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = today;
+
+        // 태그 기능
+        const commonTags = ['Java', 'Oracle', 'HTML', 'CSS', 'JavaScript', 'React', 'Spring', 'MySQL', 'Python', 'Node.js'];
+        let selectedTagsArray = [];
+
+        const tagInput = document.getElementById('tagInput');
+        const tagSuggestions = document.getElementById('tagSuggestions');
+        const selectedTagsContainer = document.getElementById('selectedTags');
+
+        tagInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            if (value) {
+                const matches = commonTags.filter(tag => 
+                    tag.toLowerCase().includes(value) && !selectedTagsArray.includes(tag)
+                );
+                
+                if (matches.length > 0) {
+                    tagSuggestions.innerHTML = matches.map(tag => 
+                        `<div class="tag-suggestion" onclick="addTag('${tag}')">${tag}</div>`
+                    ).join('');
+                    tagSuggestions.style.display = 'block';
+                } else {
+                    tagSuggestions.style.display = 'none';
+                }
+            } else {
+                tagSuggestions.style.display = 'none';
+            }
+        });
+
+        tagInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = this.value.trim();
+                if (value && !selectedTagsArray.includes(value)) {
+                    addTag(value);
+                }
+            }
+        });
+
+        function addTag(tag) {
+            if (!selectedTagsArray.includes(tag)) {
+                selectedTagsArray.push(tag);
+                updateTagsDisplay();
+                tagInput.value = '';
+                tagSuggestions.style.display = 'none';
+                validateForm();
+            }
+        }
+
+        function removeTag(tag) {
+            selectedTagsArray = selectedTagsArray.filter(t => t !== tag);
+            updateTagsDisplay();
+            validateForm();
+        }
+
+        function updateTagsDisplay() {
+            selectedTagsContainer.innerHTML = selectedTagsArray.map(tag =>
+                `<span class="tag">${tag} <span class="tag-remove" onclick="removeTag('${tag}')">×</span></span>`
+            ).join('');
+        }
+
+        // 구성원 추가 기능
+        let selectedMembers = [];
+        const memberSelect = document.getElementById('memberSelect');
+        const memberList = document.getElementById('memberList');
+
+        memberSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            if (selectedValue && !selectedMembers.includes(selectedValue)) {
+                selectedMembers.push(selectedValue);
+                updateMemberDisplay();
+                this.value = '';
+                validateForm();
+            }
+        });
+
+        function removeMember(member) {
+            selectedMembers = selectedMembers.filter(m => m !== member);
+            updateMemberDisplay();
+            validateForm();
+        }
+
+        function updateMemberDisplay() {
+            memberList.innerHTML = selectedMembers.map((member, index) =>
+                `<div class="member-item">
+                    <div class="member-avatar">${member.charAt(0)}</div>
+                    <span>${member}</span>
+                    <span class="member-remove" onclick="removeMember('${member}')">×</span>
+                </div>`
+            ).join('');
+        }
+
+        // 파일 업로드 기능
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        let uploadedFiles = [];
+
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', function() {
+            const files = Array.from(this.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                if (file.size <= 10 * 1024 * 1024) { // 10MB 제한
+                    uploadedFiles.push(file);
+                } else {
+                    alert(`${file.name}은(는) 10MB를 초과합니다.`);
+                }
+            });
+            updateFileDisplay();
+            validateForm();
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileDisplay();
+            validateForm();
+        }
+
+        function updateFileDisplay() {
+            fileList.innerHTML = uploadedFiles.map((file, index) =>
+                `<div class="file-item">
+                    <div class="file-info">
+                        <div class="file-icon">📄</div>
+                        <div class="file-details">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${(file.size / 1024).toFixed(1)} KB</div>
+                        </div>
+                    </div>
+                    <div class="file-remove" onclick="removeFile(${index})">×</div>
+                </div>`
+            ).join('');
+        }
+
+        // 실시간 유효성 검사
+        function validateForm() {
+            const title = document.getElementById('projectTitle').value.trim();
+            const status = document.getElementById('projectStatus').value;
+            const startDate = document.getElementById('startDate').value;
+            const description = document.getElementById('projectDescription').value.trim();
+            
+            const validationSummary = document.getElementById('validationSummary');
+            const validationList = document.getElementById('validationList');
+            
+            const validations = [];
+            
+            if (title) validations.push('• 프로젝트 제목이 입력되었습니다');
+            if (status) validations.push('• 프로젝트 상태가 선택되었습니다');
+            if (startDate) validations.push('• 시작일이 설정되었습니
