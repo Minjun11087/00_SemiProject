@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/mainLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background: #f5f5f5;
+        }
+    .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+    /* 페이지 헤더 */
+    .page-header {
+        background: linear-gradient(135deg, #e4b6ec, #c299dd);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .page-logo {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 24px;
+        color: white;
+    }
+
+    .page-title {
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    /* 폼 컨테이너 */
+    .form-container {
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 폼 그룹 */
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .required {
+        color: #e74c3c;
+        margin-left: 3px;
+    }
+
+    /* 입력 필드 */
+    .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #d4a5e8;
+        box-shadow: 0 0 0 3px rgba(212, 165, 232, 0.1);
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        cursor: pointer;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-select:focus {
+        outline: none;
+        border-color: #d4a5e8;
+        box-shadow: 0 0 0 3px rgba(212, 165, 232, 0.1);
+    }
+
+    .form-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-textarea:focus {
+        outline: none;
+        border-color: #d4a5e8;
+        box-shadow: 0 0 0 3px rgba(212, 165, 232, 0.1);
+    }
+
+    /* 파일 업로드 */
+    .file-upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+        border-color: #d4a5e8;
+        background: #fafafa;
+    }
+
+    .file-upload-area.dragover {
+        border-color: #d4a5e8;
+        background: #f0f8ff;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .file-upload-text {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .file-upload-icon {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+    }
+
+    .file-list {
+        margin-top: 15px;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+
+    .file-name {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .file-remove {
+        color: #e74c3c;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0 5px;
+    }
+
+    .file-remove:hover {
+        background: #f0f0f0;
+        border-radius: 3px;
+    }
+
+    /* 버튼 스타일 */
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        min-width: 120px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #e4b6ec, #c299dd);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #c299dd, #b088d3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(212, 165, 232, 0.3);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-menu {
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .nav-item {
+            font-size: 12px;
+            padding: 8px 16px;
+        }
+
+        .container {
+            padding: 20px 10px;
+        }
+
+        .page-header {
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .form-container {
+            padding: 25px;
+        }
+
+        .button-group {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    /* 유효성 검사 */
+    .form-input.error,
+    .form-select.error,
+    .form-textarea.error {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .error-message.show {
+        display: block;
+    }
+</style>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <div class="container">
+            <!-- 페이지 헤더 -->
+            <div class="page-header">
+                <div class="page-logo">📝</div>
+                <h1 class="page-title">요청사항 작성</h1>
+            </div>
+
+            <!-- 폼 컨테이너 -->
+            <div class="form-container">
+                <form id="requestForm" enctype="multipart/form-data">
+                    <!-- 제목 -->
+                    <div class="form-group">
+                        <label class="form-label" for="title">제목<span class="required">*</span></label>
+                        <input type="text" id="title" name="title" class="form-input" placeholder="요청사항의 제목을 입력해주세요" required>
+                        <div class="error-message" id="titleError">제목을 입력해주세요.</div>
+                    </div>
+
+                    <!-- 카테고리 -->
+                    <div class="form-group">
+                        <label class="form-label" for="category">카테고리<span class="required">*</span></label>
+                        <select id="category" name="category" class="form-select" required>
+                            <option value="결재" selected>결재</option>
+                            <option value="인사">인사</option>
+                            <option value="총무">총무</option>
+                            <option value="영업">영업</option>
+                            <option value="기타">기타</option>
+                        </select>
+                        <div class="error-message" id="categoryError">카테고리를 선택해주세요.</div>
+                    </div>
+
+                    <!-- 작성자 -->
+                    <div class="form-group">
+                        <label class="form-label" for="author">작성자</label>
+                        <input type="text" id="author" name="author" class="form-input" value="조인순 부장" readonly>
+                    </div>
+
+                    <!-- 작성일 -->
+                    <div class="form-group">
+                        <label class="form-label" for="writeDate">작성일</label>
+                        <input type="date" id="writeDate" name="writeDate" class="form-input" required>
+                        <div class="error-message" id="writeDateError">작성일을 선택해주세요.</div>
+                    </div>
+
+                    <!-- 작성내용 -->
+                    <div class="form-group">
+                        <label class="form-label" for="content">작성내용<span class="required">*</span></label>
+                        <textarea id="content" name="content" class="form-textarea" placeholder="요청사항의 상세 내용을 입력해주세요" required></textarea>
+                        <div class="error-message" id="contentError">내용을 입력해주세요.</div>
+                    </div>
+
+                    <!-- 첨부파일 -->
+                    <div class="form-group">
+                        <label class="form-label" for="files">첨부파일</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <div class="file-upload-icon">📁</div>
+                            <div class="file-upload-text">
+                                <p>파일을 드래그하여 업로드하거나 클릭하여 선택해주세요</p>
+                                <small>최대 10MB, 여러 파일 업로드 가능</small>
+                            </div>
+                            <input type="file" id="files" name="files" class="file-input" multiple>
+                        </div>
+                        <div class="file-list" id="fileList"></div>
+                    </div>
+
+                    <!-- 버튼 그룹 -->
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="cancelForm()">취소하기</button>
+                        <button type="submit" class="btn btn-primary">작성하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // 현재 날짜 설정
+            document.addEventListener('DOMContentLoaded', function() {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('writeDate').value = today;
+            });
+
+            // 파일 업로드 관련
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const fileInput = document.getElementById('files');
+            const fileList = document.getElementById('fileList');
+            let selectedFiles = [];
+
+            // 파일 업로드 영역 클릭
+            fileUploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // 파일 선택
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // 드래그 앤 드롭
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                handleFileSelect({ target: { files: files } });
+            });
+
+            // 파일 선택 처리
+            function handleFileSelect(event) {
+                const files = Array.from(event.target.files);
+
+                files.forEach(file => {
+                    if (file.size > 10 * 1024 * 1024) { // 10MB 제한
+                        alert(`${file.name}은(는) 10MB를 초과합니다.`);
+                        return;
+                    }
+
+                    if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                        selectedFiles.push(file);
+                    }
+                });
+
+                updateFileList();
+            }
+
+            // 파일 목록 업데이트
+            function updateFileList() {
+                fileList.innerHTML = '';
+
+                selectedFiles.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <span class="file-name">${file.name} (${formatFileSize(file.size)})</span>
+                        <span class="file-remove" onclick="removeFile(${index})">×</span>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            }
+
+            // 파일 삭제
+            function removeFile(index) {
+                selectedFiles.splice(index, 1);
+                updateFileList();
+            }
+
+            // 파일 크기 포맷
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // 폼 유효성 검사
+            function validateForm() {
+                let isValid = true;
+
+                // 제목 검사
+                const title = document.getElementById('title');
+                const titleError = document.getElementById('titleError');
+                if (!title.value.trim()) {
+                    title.classList.add('error');
+                    titleError.classList.add('show');
+                    isValid = false;
+                } else {
+                    title.classList.remove('error');
+                    titleError.classList.remove('show');
+                }
+
+                // 카테고리 검사
+                const category = document.getElementById('category');
+                const categoryError = document.getElementById('categoryError');
+                if (!category.value) {
+                    category.classList.add('error');
+                    categoryError.classList.add('show');
+                    isValid = false;
+                } else {
+                    category.classList.remove('error');
+                    categoryError.classList.remove('show');
+                }
+
+                // 작성일 검사
+                const writeDate = document.getElementById('writeDate');
+                const writeDateError = document.getElementById('writeDateError');
+                if (!writeDate.value) {
+                    writeDate.classList.add('error');
+                    writeDateError.classList.add('show');
+                    isValid = false;
+                } else {
+                    writeDate.classList.remove('error');
+                    writeDateError.classList.remove('show');
+                }
+
+                // 내용 검사
+                const content = document.getElementById('content');
+                const contentError = document.getElementById('contentError');
+                if (!content.value.trim()) {
+                    content.classList.add('error');
+                    contentError.classList.add('show');
+                    isValid = false;
+                } else {
+                    content.classList.remove('error');
+                    contentError.classList.remove('show');
+                }
+
+                return isValid;
+            }
+
+            // 폼 제출
+            document.getElementById('requestForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (validateForm()) {
+                    const formData = new FormData();
+                    formData.append('title', document.getElementById('title').value);
+                    formData.append('category', document.getElementById('category').value);
+                    formData.append('author', document.getElementById('author').value);
+                    formData.append('writeDate', document.getElementById('writeDate').value);
+                    formData.append('content', document.getElementById('content').value);
+
+                    selectedFiles.forEach(file => {
+                        formData.append('files', file);
+                    });
+
+                    // 실제로는 서버로 전송
+                    console.log('폼 데이터:', {
+                        title: formData.get('title'),
+                        category: formData.get('category'),
+                        author: formData.get('author'),
+                        writeDate: formData.get('writeDate'),
+                        content: formData.get('content'),
+                        files: selectedFiles
+                    });
+
+                    alert('요청사항이 성공적으로 작성되었습니다!');
+                    // window.location.href = '/request-list'; // 목록 페이지로 이동
+                }
+            });
+
+            // 취소 버튼
+            function cancelForm() {
+                if (confirm('작성 중인 내용이 사라집니다. 정말 취소하시겠습니까?')) {
+                    // window.history.back(); // 이전 페이지로
+                    // 또는 특정 페이지로 이동
+                    window.location.href = '/request-list';
+                }
+            }
+
+            // 네비게이션 메뉴 클릭 이벤트
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (!this.classList.contains('has-dropdown')) {
+                        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+
+            // 입력 필드 에러 상태 제거
+            document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('error');
+                    const errorId = this.id + 'Error';
+                    const errorElement = document.getElementById(errorId);
+                    if (errorElement) {
+                        errorElement.classList.remove('show');
+                    }
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>
