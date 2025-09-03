@@ -216,7 +216,7 @@ CREATE TABLE EMPLOYEE_TB ( -- 사원 테이블
     HIRE_DATE DATE DEFAULT SYSDATE, -- 입사날짜
     MODIFY_DATE DATE DEFAULT SYSDATE, -- 수정날짜
     EMP_PICTURE VARCHAR2(4000) NOT NULL, -- 증명사진(파일 링크 문자열로 저장)
-    MESSENGER_STATUS CHAR(1) CHECK (MESSENGER_STATUS IN ('Y', 'N') DEFAULT 'N' -- 메신저 접속상태
+    MESSENGER_STATUS CHAR(1) DEFAULT 'N' CHECK (MESSENGER_STATUS IN ('Y', 'N'))  -- 메신저 접속상태
 );
 
 --=================================================
