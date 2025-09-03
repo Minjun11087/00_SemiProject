@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 
@@ -21,18 +23,19 @@ public class MessengerController {
     private MessengerService msService;
 
     @GetMapping("/main.ms")
-    public String messenger(Message ms, HttpSession session){
+    public String messenger(HttpSession session, Model model){
 
         return "common/messenger";
     }
 
-    @PostMapping("/cr.ms")
-    public String chatroom(Message ms, Model model){
+    @PostMapping(value = "/cr.ms", produces = "application/JSON; charset=utf-8")
+    @ResponseBody
+    public ArrayList<Message> chatroom(Message ms, Model model){
 
         ArrayList<Message> chatroom = msService.chatroom(ms);
         model.addAttribute("chatroom", chatroom);
 
-        return "redirect:messenger";
+        return chatroom;
     }
 
     @PostMapping("/send.ms")
@@ -41,32 +44,33 @@ public class MessengerController {
         int result = msService.sendMessage(ms);
 
         if(result > 0){
-            return "redirect:messenger";
+            return "success";
         }else{
             model.addAttribute("errorMsg", "메세지 전송 실패");
-            return "common/errorPage";
+            return "false";
         }
 
     }
 
-    @PostMapping("/chatList.ms")
-    public String chatList(Message ms, Model model){
+    @PostMapping(value = "/chatList.ms", produces = "application/JSON; charset=utf-8")
+    @ResponseBody
+    public ArrayList<Message> chatList(Message ms, Model model){
 
         ArrayList<Message> chatList = msService.chatList(ms);
-
         model.addAttribute("chatList", chatList);
 
-        return "redirect:messenger";
+        return chatList;
     }
 
-    @GetMapping("/empList.ms")
-    public String empListMs(Model model){
+    @GetMapping(value = "/empList.ms", produces = "application/JSON; charset=utf-8")
+    @ResponseBody
+    public ArrayList<Employee> empListMs(Model model){
 
         ArrayList<Employee> empList = msService.empListMs();
 
         model.addAttribute("empList", empList);
 
-        return "redirect:messenger";
+        return empList;
     }
 
     @PostMapping("/update.ms")

@@ -32,4 +32,12 @@ public class MessengerDao {
     public ArrayList<Message> selectChatRoom(SqlSessionTemplate sqlSession, Message ms) {
         return (ArrayList)sqlSession.selectList("messengerMapper.selectChatRoom", ms);
     }
+
+    public Employee loginEmp(SqlSessionTemplate sqlSession, Employee emp) {
+        return sqlSession.selectOne("messengerMapper.loginEmp", emp);
+    }
+
+    public int insertEmp(SqlSessionTemplate sqlSession, Employee emp) {
+        return sqlSession.insert("messengerMapper.insertEmp, emp");
+    }
 }

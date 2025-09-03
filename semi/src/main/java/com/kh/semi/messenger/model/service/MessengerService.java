@@ -18,4 +18,8 @@ public interface MessengerService {
     int updateMsOnline(String empId);
 
     int updateMsOffline(String empId);
+
+    Employee loginEmp(Employee emp);
+
+    int insertEmp(Employee emp);
 }

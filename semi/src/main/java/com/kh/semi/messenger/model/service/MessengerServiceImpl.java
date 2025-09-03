@@ -44,6 +44,16 @@ public class MessengerServiceImpl implements MessengerService{
     }
 
     @Override
+    public Employee loginEmp(Employee emp) {
+        return msDao.loginEmp(sqlSession, emp);
+    }
+
+    @Override
+    public int insertEmp(Employee emp) {
+        return msDao.insertEmp(sqlSession, emp);
+    }
+
+    @Override
     public int updateMsOnline(String empId){
         return msDao.updateMsOnline(sqlSession, empId);
     }

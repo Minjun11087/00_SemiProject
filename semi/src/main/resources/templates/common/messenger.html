@@ -410,297 +410,315 @@ body {
 </style>
 </head>
 <body>
-    <th:block layout:fragment="content">
-        <div class="chat-list">
-            <div class="chat-header">
-                <span class="chat-title">채팅방</span>
-                <div class="header-icons">
-                    <span class="icon">+</span>
-                    <span class="icon">⚙</span>
-                </div>
-            </div>
-
-            <div class="search-box">
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="채팅방 검색" id="chatSearch">
-                    <span class="search-clear" onclick="clearSearch()">×</span>
-                </div>
-            </div>
-
-            <div class="chat-rooms" id="chatRoomsList">
-                <div class="chat-room active" data-room-id="1" data-room-name="김민수">
-                    <div class="profile-img">김</div>
-                    <div class="chat-info">
-                        <div class="chat-name">김민수</div>
-                        <div class="chat-preview">안녕하세요!</div>
-                    </div>
-                    <div class="chat-time">오후 1:23</div>
-                </div>
-
-                <div class="chat-room" data-room-id="2" data-room-name="이영희">
-                    <div class="profile-img">이</div>
-                    <div class="chat-info">
-                        <div class="chat-name">이영희</div>
-                        <div class="chat-preview">온라인</div>
-                    </div>
-                    <div class="chat-time">오후 12:45</div>
-                </div>
-
-                <div class="chat-room" data-room-id="3" data-room-name="박철수">
-                    <div class="profile-img">박</div>
-                    <div class="chat-info">
-                        <div class="chat-name">박철수</div>
-                        <div class="chat-preview">모임관련...</div>
-                    </div>
-                    <div class="chat-time">오전 11:30</div>
-                </div>
-
-                <div class="chat-room" data-room-id="4" data-room-name="최미연">
-                    <div class="profile-img">최</div>
-                    <div class="chat-info">
-                        <div class="chat-name">최미연</div>
-                        <div class="chat-preview">네, 알겠습니다</div>
-                    </div>
-                    <div class="chat-time">어제</div>
-                </div>
+    <div class="chat-list">
+        <div class="chat-header">
+            <span class="chat-title">채팅방</span>
+            <div class="header-icons">
+                <span class="icon">+</span>
+                <span class="icon">⚙</span>
             </div>
         </div>
 
-        <!-- 채팅 영역 -->
-        <div class="chat-area">
-            <div class="chat-area-header">
-                <div class="current-chat-info">
-                    <div>
-                        <div class="current-chat-name" id="currentChatName">김민수</div>
-                        <div class="chat-members">대화 상대 1명</div>
-                    </div>
-                    <div class="online-indicator"></div>
-                </div>
-            </div>
-
-            <div class="messages-container" id="messagesContainer">
-                <div class="message">
-                    <div class="message-bubble">안녕하세요! 반가워요!</div>
-                    <div class="message-time">오후 1:20</div>
-                </div>
-
-                <div class="message my-message">
-                    <div class="message-time">오후 1:22</div>
-                    <div class="message-bubble">네, 안녕하세요!</div>
-                </div>
-
-                <div class="message">
-                    <div class="message-bubble">오늘 날씨가 정말 좋네요</div>
-                    <div class="message-time">오후 1:23</div>
-                </div>
-            </div>
-
-            <div class="input-area">
-                <input type="text" class="message-input" placeholder="메시지를 입력하세요..." id="messageInput">
-                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                    </svg>
-                </button>
+        <div class="search-box">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="채팅방 검색" id="chatSearch">
+                <span class="search-clear" onclick="clearSearch()">×</span>
             </div>
         </div>
 
-        <!-- 사이드바 -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">
-                    <span>사원</span>
-                    <span class="participant-count">4</span>
+        <div class="chat-rooms" id="chatRoomsList">
+            <div class="chat-room active" data-room-id="1" data-room-name="김민수">
+                <div class="profile-img">김</div>
+                <div class="chat-info">
+                    <div class="chat-name">김민수</div>
+                    <div class="chat-preview">안녕하세요!</div>
                 </div>
-                <input type="text" class="search-participants" placeholder="사원 검색">
+                <div class="chat-time">오후 1:23</div>
             </div>
 
-            <div class="participants-container">
-                <div class="participants-section">
-                    <div class="section-title">온라인 - 4</div>
-
-                    <div class="participant">
-                        <div class="participant-profile">김</div>
-                        <span class="participant-name">김민수</span>
-                        <div class="online-status"></div>
-                    </div>
-
-                    <div class="participant">
-                        <div class="participant-profile">이</div>
-                        <span class="participant-name">이영희</span>
-                        <div class="online-status"></div>
-                    </div>
-
-                    <div class="participant">
-                        <div class="participant-profile">박</div>
-                        <span class="participant-name">박철수</span>
-                        <div class="online-status"></div>
-                    </div>
-
-                    <div class="participant">
-                        <div class="participant-profile">최</div>
-                        <span class="participant-name">최미연</span>
-                        <div class="online-status"></div>
-                    </div>
+            <div class="chat-room" data-room-id="2" data-room-name="이영희">
+                <div class="profile-img">이</div>
+                <div class="chat-info">
+                    <div class="chat-name">이영희</div>
+                    <div class="chat-preview">온라인</div>
                 </div>
+                <div class="chat-time">오후 12:45</div>
+            </div>
 
-                <div class="participants-section">
-                    <div class="section-title">오프라인 - 3</div>
-
-                    <div class="participant">
-                        <div class="participant-profile">최</div>
-                        <span class="participant-name">최민호</span>
-                        <div class="offline-status"></div>
-                    </div>
-
-                    <div class="participant">
-                        <div class="participant-profile">서</div>
-                        <span class="participant-name">서현지</span>
-                        <div class="offline-status"></div>
-                    </div>
-
-                    <div class="participant">
-                        <div class="participant-profile">한</div>
-                        <span class="participant-name">한지민</span>
-                        <div class="offline-status"></div>
-                    </div>
+            <div class="chat-room" data-room-id="3" data-room-name="박철수">
+                <div class="profile-img">박</div>
+                <div class="chat-info">
+                    <div class="chat-name">박철수</div>
+                    <div class="chat-preview">모임관련...</div>
                 </div>
+                <div class="chat-time">오전 11:30</div>
+            </div>
+
+            <div class="chat-room" data-room-id="4" data-room-name="최미연">
+                <div class="profile-img">최</div>
+                <div class="chat-info">
+                    <div class="chat-name">최미연</div>
+                    <div class="chat-preview">네, 알겠습니다</div>
+                </div>
+                <div class="chat-time">어제</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 채팅 영역 -->
+    <div class="chat-area">
+        <div class="chat-area-header">
+            <div class="current-chat-info">
+                <div>
+                    <div class="current-chat-name" id="currentChatName">김민수</div>
+                    <div class="chat-members">대화 상대 1명</div>
+                </div>
+                <div class="online-indicator"></div>
             </div>
         </div>
 
-        <script>
-            // 메시지 전송 기능
-            function sendMessage() {
-                const input = document.getElementById('messageInput');
-                const message = input.value.trim();
+        <div class="messages-container" id="messagesContainer">
+            <div class="message">
+                <div class="message-bubble">안녕하세요! 반가워요!</div>
+                <div class="message-time">오후 1:20</div>
+            </div>
 
-                if (message) {
-                    addMessage(message, true);
-                    input.value = '';
-                    updateSendButton();
-                }
-            }
+            <div class="message my-message">
+                <div class="message-time">오후 1:22</div>
+                <div class="message-bubble">네, 안녕하세요!</div>
+            </div>
 
-            // 메시지 추가
-            function addMessage(text, isMine) {
-                const container = document.getElementById('messagesContainer');
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message' + (isMine ? ' my-message' : '');
+            <div class="message">
+                <div class="message-bubble">오늘 날씨가 정말 좋네요</div>
+                <div class="message-time">오후 1:23</div>
+            </div>
+        </div>
 
-                const now = new Date();
-                const hours = now.getHours();
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const period = hours >= 12 ? '오후' : '오전';
-                const displayHours = hours > 12 ? hours - 12 : (hours === 0 ? 12 : hours);
-                const timeStr = `${period} ${displayHours}:${minutes}`;
+        <div class="input-area">
+            <input type="text" class="message-input" placeholder="메시지를 입력하세요..." id="messageInput" name="msgContent">
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
 
-                messageDiv.innerHTML = isMine ?
-                    `<div class="message-time">${timeStr}</div><div class="message-bubble">${text}</div>` :
-                    `<div class="message-bubble">${text}</div><div class="message-time">${timeStr}</div>`;
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">
+                <span>사원</span>
+                <span class="participant-count">4</span>
+            </div>
+            <input type="text" class="search-participants" placeholder="사원 검색">
+        </div>
 
-                container.appendChild(messageDiv);
-                container.scrollTop = container.scrollHeight;
-            }
+        <div class="participants-container">
+            <div class="participants-section">
+                <div class="section-title">온라인 - 4</div>
 
-            // 전송 버튼 상태 업데이트
-            function updateSendButton() {
-                const input = document.getElementById('messageInput');
-                const button = document.getElementById('sendBtn');
-                button.disabled = input.value.trim() === '';
-            }
+                <div class="participant">
+                    <div class="participant-profile">김</div>
+                    <span class="participant-name">김민수</span>
+                    <div class="online-status"></div>
+                </div>
 
-            // 채팅방 검색
-            function searchChatRooms() {
-                const searchTerm = document.getElementById('chatSearch').value.toLowerCase();
-                const chatRooms = document.querySelectorAll('.chat-room');
+                <div class="participant">
+                    <div class="participant-profile">이</div>
+                    <span class="participant-name">이영희</span>
+                    <div class="online-status"></div>
+                </div>
 
-                chatRooms.forEach(room => {
-                    const chatName = room.querySelector('.chat-name').textContent.toLowerCase();
-                    room.style.display = chatName.includes(searchTerm) ? 'flex' : 'none';
-                });
-            }
+                <div class="participant">
+                    <div class="participant-profile">박</div>
+                    <span class="participant-name">박철수</span>
+                    <div class="online-status"></div>
+                </div>
 
-            // 검색 초기화
-            function clearSearch() {
-                const searchInput = document.getElementById('chatSearch');
-                searchInput.value = '';
-                searchChatRooms();
-            }
+                <div class="participant">
+                    <div class="participant-profile">최</div>
+                    <span class="participant-name">최미연</span>
+                    <div class="online-status"></div>
+                </div>
+            </div>
 
-            // 채팅방 선택
-            function selectChatRoom(roomElement) {
-                // 이전 선택 해제
-                document.querySelector('.chat-room.active')?.classList.remove('active');
+            <div class="participants-section">
+                <div class="section-title">오프라인 - 3</div>
 
-                // 새로운 채팅방 선택
-                roomElement.classList.add('active');
+                <div class="participant">
+                    <div class="participant-profile">최</div>
+                    <span class="participant-name">최민호</span>
+                    <div class="offline-status"></div>
+                </div>
 
-                // 채팅방 이름 업데이트
-                const chatName = roomElement.dataset.roomName;
-                document.getElementById('currentChatName').textContent = chatName;
+                <div class="participant">
+                    <div class="participant-profile">서</div>
+                    <span class="participant-name">서현지</span>
+                    <div class="offline-status"></div>
+                </div>
 
-                // 메시지 초기화 (실제로는 서버에서 해당 채팅방 메시지를 가져와야 함)
-                const messagesContainer = document.getElementById('messagesContainer');
-                messagesContainer.innerHTML = `
-                    <div class="message">
-                        <div class="message-bubble">${chatName}님과의 채팅을 시작합니다.</div>
-                        <div class="message-time">지금</div>
-                    </div>
-                `;
-            }
+                <div class="participant">
+                    <div class="participant-profile">한</div>
+                    <span class="participant-name">한지민</span>
+                    <div class="offline-status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // 이벤트 리스너 등록
-            document.addEventListener('DOMContentLoaded', function() {
-                // Enter 키로 메시지 전송
-                document.getElementById('messageInput').addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
+    <script th:inline="javascript">
+        // 메시지 전송 기능
 
-                // 입력 상태에 따른 전송 버튼 활성화
-                document.getElementById('messageInput').addEventListener('input', updateSendButton);
+        /*
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
 
-                // 채팅방 검색
-                document.getElementById('chatSearch').addEventListener('input', searchChatRooms);
-
-                // 채팅방 선택
-                document.querySelectorAll('.chat-room').forEach(room => {
-                    room.addEventListener('click', function() {
-                        selectChatRoom(this);
-                    });
-                });
-
-                // 초기 전송 버튼 상태 설정
+            if (message) {
+                addMessage(message, true);
+                input.value = '';
                 updateSendButton();
+            }
+        }
+        */
+
+        $(function(){
+            chatList();
+
+            setinterval(chatList(), 1000);
+        })
+
+        function sendMessage(){
+            $.ajax({
+                url : "send.ms",
+                data : {
+                    empSno : ${},
+                    empRno : ${session.loginUser.userNo},
+                    msgContent : $("#messageInput").val(),
+                },
+                type : "post",
+                success : data => {
+                    const message = $.trim(data);
+                }, error : data => {
+
+                }
+            })
+        }
+
+        function chatList(){
+            $.ajax({
+                url : "chatList.ms",
+                data : {
+                    msgNo : ${},
+                    empSno : ${},
+                    empRno : ${},
+                    msgContent : $("#")
+                },
+                type : "post",
+                success : data => {
+
+                },error : data => {
+
+                }
+            })
+        }
+
+        // 메시지 추가
+        function addMessage(text, isMine) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message' + (isMine ? ' my-message' : '');
+
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const period = hours >= 12 ? '오후' : '오전';
+            const displayHours = hours > 12 ? hours - 12 : (hours === 0 ? 12 : hours);
+            const timeStr = `${period} ${displayHours}:${minutes}`;
+
+            messageDiv.innerHTML = isMine ?
+                `<div class="message-time">${timeStr}</div><div class="message-bubble">${text}</div>` :
+                `<div class="message-bubble">${text}</div><div class="message-time">${timeStr}</div>`;
+
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 전송 버튼 상태 업데이트
+        function updateSendButton() {
+            const input = document.getElementById('messageInput');
+            const button = document.getElementById('sendBtn');
+            button.disabled = input.value.trim() === '';
+        }
+
+        // 채팅방 검색
+        function searchChatRooms() {
+            const searchTerm = document.getElementById('chatSearch').value.toLowerCase();
+            const chatRooms = document.querySelectorAll('.chat-room');
+
+            chatRooms.forEach(room => {
+                const chatName = room.querySelector('.chat-name').textContent.toLowerCase();
+                room.style.display = chatName.includes(searchTerm) ? 'flex' : 'none';
+            });
+        }
+
+        // 검색 초기화
+        function clearSearch() {
+            const searchInput = document.getElementById('chatSearch');
+            searchInput.value = '';
+            searchChatRooms();
+        }
+
+        // 채팅방 선택
+        function selectChatRoom(roomElement) {
+            // 이전 선택 해제
+            document.querySelector('.chat-room.active')?.classList.remove('active');
+
+            // 새로운 채팅방 선택
+            roomElement.classList.add('active');
+
+            // 채팅방 이름 업데이트
+            const chatName = roomElement.dataset.roomName;
+            document.getElementById('currentChatName').textContent = chatName;
+
+            // 메시지 초기화 (실제로는 서버에서 해당 채팅방 메시지를 가져와야 함)
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = `
+                <div class="message">
+                    <div class="message-bubble">${chatName}님과의 채팅을 시작합니다.</div>
+                    <div class="message-time">지금</div>
+                </div>
+            `;
+        }
+
+        // 이벤트 리스너 등록
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enter 키로 메시지 전송
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
             });
 
-            // 자동 응답 시뮬레이션 (데모용)
-            function simulateResponse() {
-                const responses = [
-                    '네, 알겠습니다!',
-                    '좋은 생각이네요',
-                    '어떻게 생각하세요?',
-                    '그렇군요!',
-                    '재미있겠네요'
-                ];
+            // 입력 상태에 따른 전송 버튼 활성화
+            document.getElementById('messageInput').addEventListener('input', updateSendButton);
 
-                setTimeout(() => {
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addMessage(randomResponse, false);
-                }, 1000 + Math.random() * 2000);
-            }
+            // 채팅방 검색
+            document.getElementById('chatSearch').addEventListener('input', searchChatRooms);
 
-            // 메시지 전송 시 자동 응답 (데모용)
-            const originalSendMessage = sendMessage;
-            sendMessage = function() {
-                originalSendMessage();
-                if (Math.random() > 0.3) { // 70% 확률로 자동 응답
-                    simulateResponse();
-                }
-            };
-        </script>
-    </th:block>
+            // 채팅방 선택
+            document.querySelectorAll('.chat-room').forEach(room => {
+                room.addEventListener('click', function() {
+                    selectChatRoom(this);
+                });
+            });
+
+            // 초기 전송 버튼 상태 설정
+            updateSendButton();
+        });
+
+    </script>
 </body>
 </html>

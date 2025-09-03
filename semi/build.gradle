@@ -30,6 +30,8 @@ dependencies {
     implementation("com.oracle.database.jdbc:ojdbc8:23.2.0.0") // 오라클 JDBC 드라이버
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3") // 순수 mybatis
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.5.5") // jdbc를 위한 라이브러리 설정
+    implementation("com.google.code.gson:gson:2.10.1") // gson 라이브러리
+    implementation("org.springframework.boot:spring-boot-starter-security:3.5.5") // 스프링 시큐리티
 
 }
 
