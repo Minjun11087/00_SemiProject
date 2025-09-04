@@ -1,4 +1,4 @@
-package com.App.approve;
+package com.App;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
