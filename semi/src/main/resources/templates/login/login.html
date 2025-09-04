@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org/"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}"
-      layout:fragment="content">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -291,7 +289,21 @@
         }
 
         .login-btn {
-            width: 100%;
+            width: 49%;
+            padding: 16px;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(228, 182, 236, 0.3);
+        }
+
+        .enrollForm-btn{
+            width: 49%;
             padding: 16px;
             background: linear-gradient(135deg, #e4b6ec, #d196dd);
             color: white;
@@ -309,8 +321,9 @@
             box-shadow: 0 8px 25px rgba(228, 182, 236, 0.4);
         }
 
-        .login-btn:active {
-            transform: translateY(0);
+        .enrollForm-btn:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 182, 236, 0.4);
         }
 
         .security-notice {
@@ -504,16 +517,16 @@
             로그아웃되었습니다.
         </div>
 
-        <form class="login-form" action="#" method="post" id="loginForm">
+        <form class="login-form" action="login.bo" method="post" id="loginForm">
             <div class="form-group">
                 <label class="form-label" for="userId">사용자 ID</label>
                 <input type="text" class="form-input" id="userId" name="userId" placeholder="사용자 ID 입력" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="password">비밀번호</label>
+                <label class="form-label" for="empPwd">비밀번호</label>
                 <div class="password-container">
-                    <input type="password" class="form-input" id="password" name="password" placeholder="비밀번호 입력" required>
+                    <input type="password" class="form-input" id="empPwd" name="empPwd" placeholder="비밀번호 입력" required>
                 </div>
             </div>
 
@@ -529,6 +542,7 @@
             </div>
 
             <button type="submit" class="login-btn" id="loginBtn"> 로그인</button>
+            <button type="submit" class="enrollForm-btn" id="enrollFormbtn"> 회원가입</button>
         </form>
 
         <div class="security-notice">
@@ -539,10 +553,6 @@
                 • 개인정보 보호를 위해 사용 후 로그아웃 해주세요<br>
                 • 비밀번호는 정기적으로 변경하시기 바랍니다
             </div>
-        </div>
-
-        <div class="footer">
-            <div>© 2025 KH Bank. All rights reserved.</div>
         </div>
     </div>
 </div>
