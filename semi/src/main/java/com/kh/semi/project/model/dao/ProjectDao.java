@@ -5,15 +5,14 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 @Repository
 public class ProjectDao {
 
-    @Autowired
-    private SqlSessionTemplate sqlSession; // 필드 주입
 
-    public List<Project> selectProjectList() {
-        return sqlSession.selectList("projectMapper.selectProjectList");
+    public ArrayList<Project> selectProjectList(SqlSessionTemplate sqlSession) {
+        return (ArrayList)sqlSession.selectList("projectMapper.selectProjectList");
     }
 }
