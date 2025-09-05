@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        th:fragment="header">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e4b6ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #e4b6ec;
+            font-weight: bold;
+            font-size: 18px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-item.has-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.3);
+            min-width: 200px;
+            padding: 15px 0;
+            margin-top: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.4s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: #2d3748;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f4ff;
+            color: #e4b6ec;
+            border-left-color: #e4b6ec;
+            transform: translateX(5px);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notification-badge {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+
+</head>
+<body>
+<!-- 헤더 -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2FedHNCK%2FbtsQjUbYyRg%2FAAAAAAAAAAAAAAAAAAAAAL5yIvH97j1PoGG719ArkRUlPMm4udsS1KazSP2RhQSp%2Fimg.jpg%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1759244399%26allow_ip%3D%26allow_referer%3D%26signature%3DkbxYrhhlU1T3pCHJ%2Fef5ev8Eero%3D">
+            </div>
+            <span>KH BANK</span>
+        </div>
+        <div class="nav-item has-dropdown">
+            프로젝트 관리
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item">📋 프로젝트 목록</a>
+                <a href="#" class="dropdown-item">✨ 프로젝트 생성</a>
+                <a href="#" class="dropdown-item">✏️ 프로젝트 수정/삭제</a>
+            </div>
+        </div>
+        <div class="nav-item has-dropdown">
+            사내 일정
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item">📋 일정 목록</a>
+            </div>
+        </div>
+        <div class="nav-item has-dropdown">
+            고객 관리
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item">📋 고객 목록</a>
+                <a href="#" class="dropdown-item">✨ 고객 계좌 목록</a>
+            </div>
+        </div>
+
+        <!--
+            사원 관리 페이지
+        -->
+        <div class="nav-item has-dropdown">
+            <a href="list.emp">사원관리</a>
+            <div class="dropdown-menu">
+                <a href="" class="dropdown-item">📋 사원 목록</a>
+                <a href="" class="dropdown-item"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#8C1AF6"><path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 49 46.5t17 58.5v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780Zm-455-80h311q-10-20-55.5-35T480-370q-55 0-100.5 15T325-320ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Zm0-80q17 0 28.5-11.5T520-600q0-17-11.5-28.5T480-640q-17 0-28.5 11.5T440-600q0 17 11.5 28.5T480-560Zm1 240Zm-1-280Z"/></svg> 조직도</a>
+            </div>
+        </div>
+
+        <!--
+            결재 내역 페이지
+        -->
+        <div class="nav-item has-dropdown active">
+            결재 내역
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item">📋 결재 목록</a>
+            </div>
+        </div>
+        <div class="nav-item has-dropdown">마이페이지</div>
+        </nav>
+        <div class="user-profile">
+            <div class="notification-badge">3</div>
+            <div class="profile-avatar">조</div>
+            <span>조인순 부장</span>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

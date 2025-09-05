@@ -1,0 +1,36 @@
+package com.kh.semi.employee.controller;
+
+import com.kh.semi.common.model.vo.PageInfo;
+import com.kh.semi.common.template.Pagination;
+import com.kh.semi.employee.model.service.EmployeeService;
+import com.kh.semi.employee.model.vo.Employee;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+
+@Controller
+public class EmployeeController {
+
+    @Autowired
+    private EmployeeService bservice;
+
+    @GetMapping("list.emp")
+    public ModelAndView selectList(@RequestParam(value="cpage", defaultValue = "1") int currentPage, ModelAndView mv){
+
+        int listCount = bservice.selectListCount();
+
+        PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
+
+        ArrayList<Employee> list = bservice.selectList(pi);
+
+        mv.addObject("pi", pi)
+                .addObject("list", list)
+                .setViewName("employee/empListView");
+
+        return mv;
+    }
+}
