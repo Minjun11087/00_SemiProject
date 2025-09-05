@@ -14,6 +14,22 @@
             padding: 30px 20px;
         }
 
+        .breadcrumb {
+            background: #f7fafc;
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #e4b6ec;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
         .page-title {
             font-size: 28px;
             font-weight: bold;
@@ -116,6 +132,11 @@
         .status-completed {
             background: #f0f4f8;
             color: #718096;
+        }
+
+        .status-expired {
+            background: #ffe6e6;
+            color: #e60000;
         }
 
         .project-info {
@@ -287,7 +308,9 @@
 </head>
 <body>
 <div class="container">
-    <h1 class="page-title">>> 최근 프로젝트 목록</h1>
+    <div class="breadcrumb">
+        <a href="#">프로젝트 관리</a> > <span>전체 프로젝트 목록</span>
+    </div>
 
     <div class="stats-bar">
         <div class="stat-item">
@@ -308,25 +331,36 @@
         </div>
     </div>
 
-    <input type="text" class="search-bar" placeholder="프로젝트 검색...">
+    <input type="text" class="search-bar" placeholder="검색할 프로젝트 제목을 입력하세요...">
 
     <div class="project-tabs">
         <div class="tab active">전체 프로젝트</div>
         <div class="tab">진행중인 프로젝트</div>
+        <div class="tab">계획중인 프로젝트</div>
         <div class="tab">완료된 프로젝트</div>
     </div>
 
     <div class="project-grid">
 
-        <div class="project-card" th:each="p : ${list}">
+        <div class="project-card detailProject" th:each="p:${list}" >
             <div class="project-header">
+                <input type="hidden" id="pno" th:value="${p.pjtNo}">
                 <h3 class="project-title" th:text="${p.pjtName}">KH BANK 뱅킹앱 모바일 UX, UI 최적화 개선</h3>
-                <span class="project-status status-active">진행</span>
+                <th:block th:if="${#dates.createNow().after(p.pjtEndDate)}">
+                    <span class="project-status status-expired">만료</span>
+                </th:block>
+
+                <th:block th:unless="${#dates.createNow().after(p.pjtEndDate)}">
+                    <span th:if="${p.pjtStatus eq 'p'}" class="project-status status-active">진행</span>
+                    <span th:if="${p.pjtStatus eq 'c'}" class="project-status status-planning">계획</span>
+                    <span th:if="${p.pjtStatus eq 'o'}" class="project-status status-completed">완료</span>
+                </th:block>
+
             </div>
 
             <div class="project-info">
                 <div class="project-date" th:text="${p.pjtEnrollDate}">작업일: 8.11, 2025</div>
-                <div class="project-description " th:text="${p.empNo}">작성자: 조인순 부장</div>
+                <div class="project-description ">작성자: [[${p.empName}]]</div>
             </div>
             <!--
             <div class="project-footer">
@@ -347,11 +381,57 @@
         </div>
 
 
-        <div class="add-project-card project-card">
+        <div class="add-project-card project-card" onclick="location.href='enrollForm.pj'">
             <div class="add-icon">+</div>
             <div class="add-text">새 프로젝트 추가</div>
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        $(".detailProject").click(function(){
+            let pno = $(this).find("#pno").val();
+
+            location.href='detail.pj?pno='+ pno;
+        });
+    })
+</script>
+
+
+<script>
+    // 탭 클릭 이벤트
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // 검색 기능
+    document.querySelector('.search-bar').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        document.querySelectorAll('.project-card').forEach(card => {
+            if (!card.classList.contains('add-project-card')) {
+                const title = card.querySelector('.project-title').textContent.toLowerCase();
+                const description = card.querySelector('.project-description').textContent.toLowerCase();
+
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        });
+    });
+
+    // 프로젝트 카드 클릭
+    document.querySelectorAll('.project-card:not(.add-project-card)').forEach(card => {
+        card.addEventListener('click', function() {
+            const title = this.querySelector('.project-title').textContent;
+            alert(`${title} 프로젝트 상세 페이지로 이동`);
+        });
+    });
+</script>
 </body>
 </html>

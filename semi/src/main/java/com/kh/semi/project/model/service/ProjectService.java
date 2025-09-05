@@ -6,4 +6,8 @@ import java.util.ArrayList;
 
 public interface ProjectService {
     ArrayList<Project> selectProjectList();
+
+    int insertProject(Project p);
+
+    Project selectProject(int pno);
 }
