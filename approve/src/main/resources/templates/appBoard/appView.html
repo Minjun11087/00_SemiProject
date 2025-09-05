@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -17,150 +19,7 @@
             background: #f5f5f5;
         }
 
-        /* 헤더 스타일 */
-        .header {
-            background: linear-gradient(135deg, #e4b6ec, #d196dd);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(228, 182, 236, 0.3);
-        }
 
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #e4b6ec;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            color: #e4b6ec;
-            font-weight: bold;
-            font-size: 18px;
-            overflow: hidden;
-        }
-
-        .logo-icon img {
-            width: 90%;
-            height: 90%;
-            object-fit: cover;
-            border-radius: 0;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-item {
-            padding: 10px 20px;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            position: relative;
-        }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-item.has-dropdown:hover .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(228, 182, 236, 0.3);
-            min-width: 200px;
-            padding: 15px 0;
-            margin-top: 10px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.4s ease;
-            z-index: 1000;
-        }
-
-        .dropdown-item {
-            display: block;
-            padding: 12px 20px;
-            color: #2d3748;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .dropdown-item:hover {
-            background: #f8f4ff;
-            color: #e4b6ec;
-            border-left-color: #e4b6ec;
-            transform: translateX(5px);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .notification-badge {
-            background: #ff4757;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            margin-left: 10px;
-        }
 
         /* 메인 컨텐츠 */
         .container {
@@ -597,83 +456,12 @@
         .error-message.show {
             display: block;
         }
-/* div{border:1px solid red;} */
-    #footer {
-        width:80%;
-        height:200px;
-        margin:auto;
-        margin-top:50px;
-    }
-    #footer-1 {
-        width:100%;
-        height:20%;
-        border-top:1px solid lightgray;
-        border-bottom:1px solid lightgray;
-    }
-    #footer-2 {width:100%; height:80%;}
-    #footer-1, #footer-2 {padding-left:50px;}
-    #footer-1>a {
-        text-decoration:none;
-        font-weight:600;
-        margin:10px;
-        line-height:40px;
-        color:black;
-    }
-    #footer-2>p {
-        margin:0;
-        padding:10px;
-        font-size:13px;
-    }
-    #p2 {text-align:center;}
+
     </style>
 </head>
 <body>
 <!-- 헤더 -->
-<header class="header">
-    <div class="header-content">
-        <div class="logo">
-            <div class="logo-icon">
-                <img src="https://media.discordapp.net/attachments/1399659042581774444/1402925692592717856/-_-001_3.png?ex=68ae139e&is=68acc21e&hm=c26c02a08b556c0473c32cc52964b7f3c01b2ba4f47a160adc7a71cb22d6a8a1&=&format=webp&quality=lossless&width=725&height=725">
-            </div>
-            <span>KH BANK</span>
-        </div>
-        <div class="nav-item has-dropdown">
-            프로젝트 관리
-            <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">📋 프로젝트 목록</a>
-                <a href="#" class="dropdown-item">✨ 프로젝트 생성</a>
-                <a href="#" class="dropdown-item">✏️ 프로젝트 수정/삭제</a>
-            </div>
-        </div>
-        <div class="nav-item has-dropdown">
-            사내 일정
-            <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">📋 일정 목록</a>
-            </div>
-        </div>
-        <div class="nav-item has-dropdown">
-            고객 관리
-            <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">📋 고객 목록</a>
-                <a href="#" class="dropdown-item">✨ 고객 계좌 목록</a>
-            </div>
-        </div>
-        <div class="nav-item has-dropdown">조직도</div>
-        <div class="nav-item has-dropdown active">
-            결재 내역
-            <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">📋 결재 목록</a>
-            </div>
-        </div>
-        <div class="nav-item has-dropdown">마이페이지</div>
-        </nav>
-        <div class="user-profile">
-            <div class="notification-badge">3</div>
-            <div class="profile-avatar">조</div>
-            <span>조인순 부장</span>
-        </div>
-    </div>
-</header>
+
 
 <!-- 메인 컨텐츠 -->
 <div class="container">
@@ -691,19 +479,15 @@
         <div class="info-grid">
             <div class="info-item">
                 <span class="info-label">결재 번호:</span>
-                <span class="info-value">AP-2024-001</span>
+                <span class="info-value" th:text="${a.appTitle}"></span>
             </div>
             <div class="info-item">
                 <span class="info-label">신청일:</span>
-                <span class="info-value">2024-08-26</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">처리 예정일:</span>
-                <span class="info-value">2024-08-28</span>
+                <span class="info-value" th:text="${a.createDate}"></span>
             </div>
             <div class="info-item">
                 <span class="info-label">현재 결재자:</span>
-                <span class="info-value">김부장 (영업팀)</span>
+                <span class="info-value" th:text="${a.empName}"></span>
             </div>
         </div>
     </div>
@@ -890,23 +674,6 @@
         e.preventDefault();
     })
 </script>
-<div id="footer">
-    <div id="footer-1">
-        <a href="#">이용약관</a> |
-        <a href="#">개인정보취급방침</a> |
-        <a href="#">고객센터</a>
-    </div>
 
-    <div id="footer-2">
-        <p id="p1">
-            지원부 : 1111-1111 &nbsp&nbsp
-            총무부 : 2222-2222 &nbsp&nbsp
-            인사과 : 3333-3333 &nbsp&nbsp
-            영업부 : 4444-4444 &nbsp&nbsp
-            관리부 : 5555-5555 &nbsp&nbsp
-        </p>
-        <p id="p2">Copyright © 1998-2025 KH Information Educational Institute All Right Reserved</p>
-    </div>
-</div>
 </body>
 </html>
