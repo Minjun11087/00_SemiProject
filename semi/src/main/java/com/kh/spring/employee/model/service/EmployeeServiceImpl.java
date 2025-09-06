@@ -17,26 +17,31 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public Employee loginMember(Employee e) {
+
         return eDao.loginMember(sqlSession, e);
     }
 
     @Override
     public int insertMember(Employee e) {
-        return 0;
+
+        return eDao.insertMember(sqlSession, e);
     }
 
     @Override
     public int updateMember(Employee e) {
-        return 0;
+
+        return eDao.updateMember(sqlSession, e);
     }
 
     @Override
-    public int deleteMember(String userId) {
-        return 0;
+    public int deleteMember(String empId) {
+
+        return eDao.deleteMember(sqlSession, empId);
     }
 
     @Override
     public int idCheck(String checkId) {
-        return 0;
+
+        return eDao.idCheck(sqlSession, checkId);
     }
 }
