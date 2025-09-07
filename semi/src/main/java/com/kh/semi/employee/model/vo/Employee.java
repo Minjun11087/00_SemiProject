@@ -26,9 +26,11 @@ public class Employee {
     private String empSign;
     private int salary;
     private int bonus;
-    private Date hireDate;
+    private String hireDate;
     private Date modifyDate;
     private String empPicture;
     private String messengerStatus;
+    private String deptTitle;
+    private String jobTitle;
 
 }
