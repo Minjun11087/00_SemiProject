@@ -19,4 +19,8 @@ public class ProjectDao {
     public int insertProject(Project p, SqlSessionTemplate sqlSession) {
         return sqlSession.insert("projectMapper.insertProject", p);
     }
+
+    public Project selectProject(int pno, SqlSessionTemplate sqlSession) {
+        return sqlSession.selectOne("projectMapper.selectProject", pno);
+    }
 }

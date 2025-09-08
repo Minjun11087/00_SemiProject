@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://wwww.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
       layout:decorate="~{layout/layout}"
       layout:fragment="content">
@@ -13,7 +13,8 @@
             padding: 30px 20px;
         }
 
-        .breadcrumb {
+         .breadcrumb {
+            background: #f7fafc;
             color: #718096;
             font-size: 14px;
             margin-bottom: 20px;
@@ -54,24 +55,24 @@
             font-weight: 600;
         }
 
-        .status-active {
-            background: #d4edda;
-            color: #155724;
+       .status-active {
+            background: #e6fffa;
+            color: #00a085;
         }
 
         .status-planning {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-review {
-            background: #cce5ff;
-            color: #004085;
+            background: #e6f3ff;
+            color: #0080ff;
         }
 
         .status-completed {
-            background: #d1ecf1;
-            color: #0c5460;
+            background: #f0f4f8;
+            color: #718096;
+        }
+
+        .status-expired {
+            background: #ffe6e6;
+            color: #e60000;
         }
 
         .project-meta {
@@ -461,19 +462,33 @@
         <a href="#">프로젝트 관리</a> > <a href="#">프로젝트 목록</a> > <span>프로젝트 상세</span>
     </div>
 
+
     <div class="project-header">
-        <div class="project-title">
-            온라인 뱅킹 시스템 고도화
-            <span class="status-badge status-active">진행중</span>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="project-title" th:text="${p.pjtName}">
         </div>
+
+            <th:block th:if="${#dates.createNow().after(p.pjtEndDate)}">
+                <span class="status-badge status-expired">만료</span>
+            </th:block>
+
+            <th:block th:unless="${#dates.createNow().after(p.pjtEndDate)}">
+                <span th:if="${p.pjtStatus eq 'p'}" class="status-badge status-active">진행</span>
+                <span th:if="${p.pjtStatus eq 'c'}" class="status-badge status-planning">검토</span>
+                <span th:if="${p.pjtStatus eq 'o'}" class="status-badge status-completed">완료</span>
+            </th:block >
+        </div>
+
         <div class="project-meta">
             <div class="meta-item">
                 <span class="meta-icon">📅</span>
-                <span>작성일: 2024년 12월 1일</span>
+                <span> 작성일 : </span>
+                <span  th:text="${#dates.format(p.pjtEnrollDate, 'yyyy년 MM월 dd일')}" ></span>
             </div>
             <div class="meta-item">
                 <span class="meta-icon">👤</span>
-                <span>조인순 부장 (개발팀)</span>
+                <span th:text="${p.empName}"></span>
             </div>
             <div class="meta-item">
                 <span class="meta-icon">👥</span>
@@ -489,11 +504,11 @@
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">업무 시작일</div>
-                <div class="info-value">2024년 12월 1일</div>
+                <div class="info-value"  th:text="${#dates.format(p.pjtStartDate, 'yyyy년 MM월 dd일')}">2024년 12월 1일</div>
             </div>
             <div class="info-item">
                 <div class="info-label">업무 기한</div>
-                <div class="info-value">2025년 3월 31일</div>
+                <div class="info-value"  th:text="${#dates.format(p.pjtEndDate, 'yyyy년 MM월 dd일')}">2025년 3월 31일</div>
             </div>
 
         </div>
@@ -509,20 +524,8 @@
 
     <div class="content-section">
         <h2 class="section-title">프로젝트 설명</h2>
-        <div class="description-content">
-            기존 온라인 뱅킹 시스템의 사용자 인터페이스를 개선하고, 보안성을 강화하는 프로젝트입니다.
-            주요 목표는 고객 만족도 향상과 시스템 안정성 확보입니다.<br><br>
+        <div class="description-content" th:text="${p.pjtContent}">
 
-            <strong>주요 개선 사항:</strong><br>
-            • 반응형 웹 디자인 적용으로 모바일 사용성 개선<br>
-            • 2단계 인증 시스템 도입으로 보안 강화<br>
-            • 실시간 알림 기능 추가<br>
-            • 데이터베이스 성능 최적화<br><br>
-
-            <strong>예상 효과:</strong><br>
-            • 고객 만족도 20% 향상<br>
-            • 시스템 응답 속도 30% 개선<br>
-            • 보안 사고 예방률 95% 달성
         </div>
     </div>
 
@@ -572,7 +575,7 @@
 
 
     <div class="action-buttons">
-        <a href="#" class="btn btn-back">목록으로</a>
+        <a href="/" class="btn btn-back">목록으로</a>
         <button class="btn btn-edit" onclick="manageProject()">수정 및 삭제</button>
     </div>
 </div>

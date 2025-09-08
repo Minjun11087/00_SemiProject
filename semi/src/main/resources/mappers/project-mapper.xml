@@ -28,7 +28,7 @@
              , pjt_content
 		  from project_tb
           join employee_tb using (emp_no)
-		 where pjt_status='p'
+		 where pjt_status in('p','c','e','o')
 	</select>
 
     <insert id="insertProject">
@@ -58,5 +58,22 @@
              , #{pjtContent}
              )
     </insert>
+
+    <select id="selectProject" resultMap="projectResultSet">
+        select
+              pjt_no
+            , emp_no
+            , emp_name
+            , pjt_name
+            , pjt_startdate
+            , pjt_enddate
+            , pjt_enrolldate
+            , pjt_count
+            , pjt_status
+            , pjt_content
+         from project_tb
+         join employee_tb using (emp_no)
+        where pjt_no = #{pno}
+    </select>
 
 </mapper>

@@ -27,6 +27,6 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public Project selectProject(int pno) {
-        return null;
+        return pDao.selectProject(pno, sqlSession);
     }
 }

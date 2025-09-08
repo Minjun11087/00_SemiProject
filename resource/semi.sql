@@ -318,7 +318,7 @@ CREATE TABLE PROJECT_TB ( -- 프로젝트 테이블
     PJT_ENDDATE DATE NOT NULL, --프로젝트 종료일
     PJT_ENROLLDATE DATE DEFAULT SYSDATE NOT NULL, -- 프로젝트 작성일
     PJT_COUNT NUMBER DEFAULT 0, -- 조회수
-    PJT_STATUS CHAR(1) DEFAULT 'p' NOT NULL CHECK (PJT_STATUS IN ('p','c','o','e')), -- 프로젝트 상태(진행중(p) | 검토중(c) | 완료(o) | 만료(e))
+    PJT_STATUS CHAR(1) DEFAULT 'c' NOT NULL CHECK (PJT_STATUS IN ('p','c','o','e')), -- 프로젝트 상태(진행중(p) | 검토중(c) | 완료(o) | 만료(e))
     PJT_CONTENT VARCHAR2(4000) NOT NULL -- 프로젝트 내용
 );
 
