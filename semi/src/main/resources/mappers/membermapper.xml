@@ -23,11 +23,11 @@
     </resultMap>
 
 
-    <select id="loginMember" resultMap="memberResultSet">
+    <select id="loginMember" resultMap="employeeResultSet">
     select
           emp_no
         , emp_name
-        , emp_resinum
+        , to_char(emp_resinum, 'yyMMdd') as "emp_resinum"
         , emp_id
         , emp_pwd
         , emp_gender
@@ -36,12 +36,11 @@
         , emp_phone
         , emp_email
         , emp_address
-        , emp_address
         , emp_status
         , emp_sign
         , salary
         , bonus
-        , hire_date
+        , to_char(hire_date, 'yyyy-MM-dd') as "hire_date"
         , modify_date
         , emp_picture
         from EMPLOYEE_TB
@@ -49,7 +48,7 @@
         and emp_id = #{ empId }
     </select>
 
-    <insert id="insertMember" >
+    <insert id="insertMember">
         insert
             into EMPLOYEE_TB
         (
@@ -61,6 +60,8 @@
             , job_code
             , hire_date
             , emp_resinum
+            , emp_gender
+            , emp_address
             , emp_phone
             , emp_email
         )
@@ -68,12 +69,14 @@
         (
               #{ empId }
             , #{ empPwd }
-            , #{ empNo }
+            , SEQ_ENO.NEXTVAL
             , #{ empName }
             , #{ deptCode }
             , #{ jobCode }
             , #{ hireDate }
             , #{ empResinum }
+            , #{empGender}
+            , #{empAddress}
             , #{empPhone}
             , #{empEmail}
         )
@@ -82,14 +85,14 @@
     <update id="updateMember">
             update EMPLOYEE_TB
         set emp_name = #{empName}
-        , emp_no = #{empNo}
-        , emp_id = #{empId}
-        , emp_resinum = #{empResinum}
-        , dept_code = #{deptCode}
-        , job_code = job_code
-        , salary = salary
-        , modify_date = sysdate
-        where emp_id = #{empId}
+            , emp_no = #{empNo}
+            , emp_id = #{empId}
+            , emp_resinum = #{empResinum}
+            , dept_code = #{deptCode}
+            , job_code = job_code
+            , salary = salary
+            , modify_date = sysdate
+          where emp_id = #{empId}
     </update>
 
     <update id="deleteMember">

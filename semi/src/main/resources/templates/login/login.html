@@ -519,8 +519,8 @@
 
         <form class="login-form" action="login.bo" method="post" id="loginForm">
             <div class="form-group">
-                <label class="form-label" for="userId">사용자 ID</label>
-                <input type="text" class="form-input" id="userId" name="userId" placeholder="사용자 ID 입력" required>
+                <label class="form-label" for="empId">사용자 ID</label>
+                <input type="text" class="form-input" id="empId" name="empId" placeholder="사용자 ID 입력" required>
             </div>
 
             <div class="form-group">
@@ -541,9 +541,12 @@
                 <a href="#" class="forgot-password"> 비밀번호 찾기</a>
             </div>
 
-            <button type="submit" class="login-btn" id="loginBtn"> 로그인</button>
-            <button type="submit" class="enrollForm-btn" id="enrollFormbtn"> 회원가입</button>
+
+            <button type="submit" class="login-btn" id="loginBtn" name="login"> 로그인</button>
+            <a href="enrollForm.bo" class="enrollForm-btn" id="enrollFormbtn">회원가입</a>
+
         </form>
+
 
         <div class="security-notice">
             <div class="security-notice-title">

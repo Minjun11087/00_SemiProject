@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -222,31 +222,6 @@
             align-items: flex-end;
         }
 
-        .verify-btn {
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #e4b6ec, #d196dd);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .verify-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(228, 182, 236, 0.3);
-        }
-
-        .verify-btn:disabled {
-            background: #cbd5e0;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
         .error-message {
             color: #e53e3e;
             font-size: 12px;
@@ -259,11 +234,7 @@
             margin-top: 5px;
         }
 
-        .form-help {
-            font-size: 12px;
-            color: #718096;
-            margin-top: 5px;
-        }
+
 
         .agreement-section {
             background: #f8f9fa;
@@ -459,9 +430,34 @@
                 font-size: 24px;
             }
         }
+
+        .enrollForm-btn{
+            width: 49%;
+            padding: 16px;
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(228, 182, 236, 0.3);
+        }
+
+        .enrollForm-btn:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 182, 236, 0.4);
+        }
     </style>
 </head>
 <body>
+<th:block th:if="${alertMsg != null}">
+    <script th:inline="javascript">
+        alert([[${alertMsg}]]);
+    </script>
+</th:block>
+
     <header class="header">
         <div class="header-content">
             <div class="logo">
@@ -493,7 +489,7 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
 
-            <form id="signupForm">
+            <form id="signupForm" action="insert.bo" method="post">
 
                 <!-- 시스템 계정 정보 섹션 -->
                 <div class="form-section">
@@ -503,10 +499,12 @@
                         <div class="form-group full-width">
                             <label class="form-label">로그인 ID <span class="required">*</span></label>
                             <div class="input-group">
-                                <input type="text" class="form-input" id="userId" placeholder="영문+숫자 조합 6-20자" required>
-                                <button type="button" class="verify-btn" id="idCheckBtn">중복확인</button>
+                                <input type="text" class="form-input" id="empId" name="empId" placeholder="영문+숫자 조합 6-20자" required>
+
+                                <div id="checkResult" style="font-size:1em; display:none;"></div>
+
                             </div>
-                            <div class="form-help">ERP 시스템 로그인용 ID (영문자, 숫자 조합 6-20자)</div>
+                            <!--<div class="form-help">ERP 시스템 로그인용 ID (영문자, 숫자 조합 6-20자)</div>-->
                             <div class="error-message" id="idError"></div>
                             <div class="success-message" id="idSuccess"></div>
                         </div>
@@ -515,7 +513,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">비밀번호 <span class="required">*</span></label>
-                            <input type="password" class="form-input" id="password" placeholder="영문+숫자+특수문자 8자 이상" required>
+                            <input type="password" class="form-input" id="empPwd" name="empPwd" placeholder="영문+숫자+특수문자 8자 이상" required>
                             <div class="form-help">영문, 숫자, 특수문자 조합 8자 이상</div>
                             <div class="error-message" id="passwordError"></div>
                         </div>
@@ -534,14 +532,8 @@
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">사원번호 <span class="required">*</span></label>
-                            <input type="text" class="form-input" id="employeeId" placeholder="KB2025001" required>
-                            <div class="form-help">인사팀에서 발급받은 사원번호를 입력하세요</div>
-                            <div class="error-message" id="empIdError"></div>
-                        </div>
-                        <div class="form-group">
                             <label class="form-label">성명 <span class="required">*</span></label>
-                            <input type="text" class="form-input" id="userName" placeholder="김은행" required>
+                            <input type="text" class="form-input" id="empName" name="empName" placeholder="김은행" required>
                             <div class="error-message" id="nameError"></div>
                         </div>
                     </div>
@@ -549,30 +541,24 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">소속 부서 <span class="required">*</span></label>
-                            <select class="form-select" id="department" required>
+                            <select class="form-select" id="deptCode" name="deptCode" required>
                                 <option value="">부서 선택</option>
-                                <option value="개발팀">개발팀</option>
-                                <option value="기획팀">기획팀</option>
-                                <option value="영업팀">영업팀</option>
-                                <option value="디자인팀">디자인팀</option>
-                                <option value="마케팅팀">마케팅팀</option>
-                                <option value="인사팀">인사팀</option>
-                                <option value="재무팀">재무팀</option>
-                                <option value="고객지원팀">고객지원팀</option>
-                                <option value="보안팀">보안팀</option>
+                                <option value="D1">지점장</option>
+                                <option value="D2">총무부</option>
+                                <option value="D3">인사부</option>
+                                <option value="D4">영업부</option>
+                                <option value="D5">관리부</option>
+                                <option value="D6">지원부</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">직급 <span class="required">*</span></label>
-                            <select class="form-select" id="position" required>
+                            <select class="form-select" id="jobCode" name="jobCode" required>
                                 <option value="">직급 선택</option>
-                                <option value="인턴">인턴</option>
-                                <option value="사원">사원</option>
-                                <option value="대리">대리</option>
-                                <option value="과장">과장</option>
-                                <option value="차장">차장</option>
-                                <option value="부장">부장</option>
-                                <option value="이사">이사</option>
+                                <option value="J1">지접장</option>
+                                <option value="J2">부장</option>
+                                <option value="J3">팀장</option>
+                                <option value="J4">사원</option>
                             </select>
                         </div>
                     </div>
@@ -580,11 +566,19 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">입사일 <span class="required">*</span></label>
-                            <input type="date" class="form-input" id="hireDate" required>
+                            <input type="date" class="form-input" id="hireDate" name="hireDate" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">생년월일 <span class="required">*</span></label>
-                            <input type="date" class="form-input" id="birthDate" required>
+                            <input type="text" class="form-input" id="empResinum" name="empResinum" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">직급 <span class="required">*</span></label>
+                            <select class="form-select" id="empGender" name="empGender" required>
+                                <option value="">성별</option>
+                                <option value="M">남</option>
+                                <option value="F">여</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -597,8 +591,11 @@
                         <div class="form-group">
                             <label class="form-label">휴대폰 번호 <span class="required">*</span></label>
                             <div class="input-group">
-                                <input type="tel" class="form-input" id="phoneNumber" placeholder="010-1234-5678" required>
-                                <!--<button type="button" class="verify-btn" id="phoneVerifyBtn">인증</button> -->
+                                <input type="tel" class="form-input" id="empPhone" name="empPhone" placeholder="010-1234-5678" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">주소 <span class="required">*</span></label>
+                                <input type="text" class="form-input" id="empAddress" name="empAddress" required>
                             </div>
                             <div class="error-message" id="phoneError"></div>
                         </div>
@@ -607,14 +604,9 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">회사 이메일 <span class="required">*</span></label>
-                            <input type="email" class="form-input" id="companyEmail" placeholder="name@kbbank.co.kr" required>
+                            <input type="email" class="form-input" id="empEmail" name="empEmail" placeholder="name@kbbank.co.kr" required>
                             <div class="form-help">회사에서 발급받은 공식 이메일 주소</div>
                             <div class="error-message" id="emailError"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">내선번호</label>
-                            <input type="text" class="form-input" id="extension" placeholder="1234">
-                            <div class="form-help">사내 내선번호 (선택사항)</div>
                         </div>
                     </div>
                 </div>
@@ -715,6 +707,12 @@
                         </div>
                     </div>
                 </div>
+
+                <div>
+                    <button type="submit" class="enrollForm-btn" id="enrollFormbtn"> 회원가입</button>
+                </div>
+
+
             </form>
         </div>           
     </div>
@@ -734,6 +732,49 @@
                 detailButton.textContent = '접기';
             }
         }
+    </script>
+
+    <script>
+        $(function(){
+            const $idInput = $("#signupForm input[name=empId]");
+
+            $idInput.keyup(function(){
+                if($idInput.val().length >= 5){
+
+                    $.ajax({
+                        url:"idCheck.me",
+                        data:{checkId:$idInput.val()},
+                        success:function(result){
+
+                            if(result == "NNNNN"){//사용 불가능
+                                // => 빨간색 메시지(사용불가능) 출력
+                                $("#checkResult").show();
+                                $("#checkResult").css("color", "red").text("중복된 아이디가 존재합니다. 다시 입력해주세요");
+
+                                // => 회원가입 버튼 비활성
+                                $("#signupForm :submit").attr("disabled", true);
+
+                            }else{// 사용 가능
+                                // => 초록색 메시지 (사용가능) 출력
+                                $("#checkResult").show();
+                                $("#checkResult").css("color", "green").text("사용가능한 아이디 입니다.");
+                                // => 회원가입 버튼 활성화
+                                $("#signupForm :submit").removeAttr("disabled");
+
+                            }
+
+                        }, error:function(){
+                            console.log("아이디 중복체크용 ajax 통신 실패")
+                        }
+                    });
+
+                }else{// 5글자 미만인 경우 => 가입하기 버튼 비활성화, 메시지 숨기기
+                    $("#checkResult").hide();
+                    $("#signupForm :submit").attr("disabled", true);
+                }
+
+            });
+        })
     </script>
     
 

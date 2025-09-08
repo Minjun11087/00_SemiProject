@@ -25,6 +25,7 @@ public class SecurityConfig {
 
     @Bean // PasswordEncoder 라는 타임의 빈을 스프링이 관리한다.
     public PasswordEncoder passwordEncoder(){
+
         return new BCryptPasswordEncoder();
     }
 

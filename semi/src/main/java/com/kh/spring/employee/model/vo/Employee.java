@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.Date;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -25,8 +26,8 @@ public class Employee {
     private String empSign;
     private int salary;
     private int bonus;
-    private Date hireDate;
-    private Date modifyDate;
+    private String hireDate;
+    private String modifyDate;
     private String empPicture;
     private String messengerStatus;
 }
