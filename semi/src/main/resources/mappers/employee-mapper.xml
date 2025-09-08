@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="employeeMapper">
+    <resultMap type="Employee" id="employeeResultSet">
+        <result column="emp_no" property="empNo" />
+        <result column="emp_name" property="empName" />
+        <result column="emp_id" property="empId" />
+        <result column="emp_pwd" property="empPwd" />
+        <result column="emp_gender" property="empGender" />
+        <result column="dept_code" property="deptCode" />
+        <result column="job_code" property="jobCode" />
+        <result column="emp_phone" property="empPhone" />
+        <result column="emp_email" property="empEmail" />
+        <result column="emp_address" property="empAddress" />
+        <result column="emp_status" property="empStatus" />
+        <result column="emp_sign" property="empSign" />
+        <result column="salary" property="salary" />
+        <result column="bonus" property="bonus" />
+        <result column="hire_date" property="hireDate" />
+        <result column="modify_date" property="modifyDate" />
+        <result column="emp_picture" property="empPicture" />
+        <result column="messenger_status" property="messengerStatus" />
+    </resultMap>
+
+    <select id="selectEmpListMs" resultMap="employeeResultSet">
+        select
+        emp_no
+        , emp_id
+        , emp_name
+        , messenger_status
+        from employee_tb
+    </select>
+
+    <select id="loginEmp" resultMap="employeeResultSet">
+        select
+            emp_no
+            ,  emp_name
+            ,  emp_resinum
+            ,  emp_id
+            ,  emp_pwd
+            ,  emp_gender
+            ,  dept_code
+            ,  job_code
+            ,  emp_phone
+            ,  emp_email
+            ,  emp_address
+            ,  emp_status
+            ,  emp_sign
+            ,  salary
+            ,  bonus
+            ,  hire_date
+            ,  modify_date
+            ,  emp_picture
+            ,  messenger_status
+        from employee_tb
+        where emp_status ='Y'
+        and emp_id = #{empId}
+    </select>
+
+    <insert id="insertEmp">
+        insert
+        into employee_tb
+        (
+        emp_no
+        ,  emp_name
+        ,  emp_resinum
+        ,  emp_id
+        ,  emp_pwd
+        ,  emp_gender
+        ,  dept_code
+        ,  job_code
+        ,  emp_phone
+        ,  emp_email
+        ,  emp_address
+        ,  emp_sign
+        ,  salary
+        ,  emp_picture
+        )
+        values
+        (
+        seq_eno.nextval
+        , #{empName}
+        , #{empResinum}
+        , #{empId}
+        , #{empPwd}
+        , #{empGender}
+        , #{deptCode}
+        , #{jobCode}
+        , #{empPhone}
+        , #{empEmail}
+        , #{empAddress}
+        , #{empSign}
+        , #{salary}
+        , #{empPicture}
+        )
+    </insert>
+
+</mapper>

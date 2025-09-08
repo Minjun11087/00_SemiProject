@@ -51,6 +51,9 @@ public class loginController {
 
         //System.out.println(encPwd);
         emp.setEmpPwd(encPwd); // Member객체에 userPwd에 평문이 아닌 암호문으로 변경
+
+        System.out.println(emp);
+
         int result = msService.insertEmp(emp);
 
         if(result > 0) {//성공 -> 메인페이지 url재요청

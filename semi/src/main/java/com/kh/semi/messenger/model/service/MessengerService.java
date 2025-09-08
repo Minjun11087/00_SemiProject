@@ -22,4 +22,11 @@ public interface MessengerService {
     Employee loginEmp(Employee emp);
 
     int insertEmp(Employee emp);
+
+    ArrayList<Message> selectMessage(int empNo);
+
+    ArrayList<Message> wholeChatRoomR(Message ms);
+
+    ArrayList<Message> wholeChatRoomS(Message ms);
+
 }

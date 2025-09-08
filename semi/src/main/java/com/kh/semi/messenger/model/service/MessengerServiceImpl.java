@@ -54,6 +54,21 @@ public class MessengerServiceImpl implements MessengerService{
     }
 
     @Override
+    public ArrayList<Message> selectMessage(int empNo) {
+        return msDao.selectMessage(sqlSession, empNo);
+    }
+
+    @Override
+    public ArrayList<Message> wholeChatRoomR(Message ms) {
+        return msDao.wholeChatRoomR(sqlSession, ms);
+    }
+
+    @Override
+    public ArrayList<Message> wholeChatRoomS(Message ms) {
+        return msDao.wholeChatRoomS(sqlSession, ms);
+    }
+
+    @Override
     public int updateMsOnline(String empId){
         return msDao.updateMsOnline(sqlSession, empId);
     }

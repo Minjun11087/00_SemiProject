@@ -15,6 +15,7 @@ public class Message {
     private int empSno;
     private int empRno;
     private String msgContent;
-    private Date msgDate;
+    private String msgDate;
+    private String sendEmpName;
 
 }

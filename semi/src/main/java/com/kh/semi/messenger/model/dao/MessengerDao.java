@@ -10,15 +10,15 @@ import java.util.ArrayList;
 @Repository
 public class MessengerDao {
     public int updateMsOnline(SqlSessionTemplate sqlSession, String empId) {
-        return sqlSession.update("messengerMapper.updateMsOnline");
+        return sqlSession.update("messengerMapper.updateMsOnline", empId);
     }
 
     public int updateMsOffline(SqlSessionTemplate sqlSession, String empId) {
-        return sqlSession.update("messengerMapper.updateMsOffline");
+        return sqlSession.update("messengerMapper.updateMsOffline", empId);
     }
 
     public ArrayList<Employee> empListMs(SqlSessionTemplate sqlSession) {
-        return (ArrayList)sqlSession.selectList("messengerMapper.selectEmpListMs");
+        return (ArrayList)sqlSession.selectList("employeeMapper.selectEmpListMs");
     }
 
     public int sendMessage(SqlSessionTemplate sqlSession, Message ms) {
@@ -34,10 +34,22 @@ public class MessengerDao {
     }
 
     public Employee loginEmp(SqlSessionTemplate sqlSession, Employee emp) {
-        return sqlSession.selectOne("messengerMapper.loginEmp", emp);
+        return sqlSession.selectOne("employeeMapper.loginEmp", emp);
     }
 
     public int insertEmp(SqlSessionTemplate sqlSession, Employee emp) {
-        return sqlSession.insert("messengerMapper.insertEmp, emp");
+        return sqlSession.insert("employeeMapper.insertEmp", emp);
+    }
+
+    public ArrayList<Message> selectMessage(SqlSessionTemplate sqlSession, int empNo) {
+        return (ArrayList)sqlSession.selectList("messengerMapper.selectMessage", empNo);
+    }
+
+    public ArrayList<Message> wholeChatRoomR(SqlSessionTemplate sqlSession, Message ms) {
+        return (ArrayList)sqlSession.selectList("messengerMapper.wholeChatRoomR", ms);
+    }
+
+    public ArrayList<Message> wholeChatRoomS(SqlSessionTemplate sqlSession, Message ms) {
+        return (ArrayList)sqlSession.selectList("messengerMapper.wholeChatRoomS", ms);
     }
 }
