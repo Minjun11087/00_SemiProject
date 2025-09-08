@@ -23,7 +23,7 @@ public class EmployeeDao {
 
         RowBounds rowBounds = new RowBounds(offset, limit);
 
-        return (ArrayList) sqlSession.selectList("employeeMapper.selectList", rowBounds);
+        return (ArrayList)sqlSession.selectList("employeeMapper.selectList",null, rowBounds);
 
     }
 

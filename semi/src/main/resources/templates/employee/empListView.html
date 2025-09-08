@@ -284,35 +284,24 @@
 
             <!-- 페이지네이션 -->
             <div class="pagination">
-                <button onclick="changePage('prev')" id="prevBtn">◀ Previous</button>
-                <button onclick="changePage(1)" class="active" data-page="1">1</button>
-                <button onclick="changePage(2)" data-page="2">2</button>
-                <button onclick="changePage(3)" data-page="3">3</button>
-                <span class="dots">...</span>
-                <button onclick="changePage(67)" data-page="67">67</button>
-                <button onclick="changePage(68)" data-page="68">68</button>
-                <button onclick="changePage('next')" id="nextBtn">Next ▶</button>
+                <button onclick="changePage('prev')" id="prevBtn" class="prev" th:classappend="${pi.currentPage == 1} ? 'disabled'">
+                    <a th:href="@{|list.emp?cpage=${pi.currentPage -1 }|}">◀ Previous</a>
+                </button>
+
+                <button onclick="changePage(1)" class="active" data-page="1"
+                    th:each="pageNum : ${#numbers.sequence(pi.startPage, pi.endPage)}"
+                    th:classappend="${pageNum == pi.currentPage} ? 'active'">
+                    <a class="page-link" th:text="${pageNum}" th:href="@{|list.emp?cpage=${pageNum}|}">2</a>
+                </button>
+
+                <button onclick="changePage('next')" id="nextBtn" class="next" th:classappend="${pi.currentPage == pi.maxPage} ? 'disabled'">
+                    <a th:href="@{|list.emp?cpage=${pi.currentPage +1}|}">Next ▶</a>
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        let currentPage = 1;
-        const totalPages = 68;
-
-        // 페이지 변경 함수
-        function changePage(page) {
-            if (page === 'prev' && currentPage > 1) {
-                currentPage--;
-            } else if (page === 'next' && currentPage < totalPages) {
-                currentPage++;
-            } else if (typeof page === 'number' && page >= 1 && page <= totalPages) {
-                currentPage = page;
-            }
-
-            updatePagination();
-            console.log(`페이지 ${currentPage} 로드`);
-        }
 
         // 페이지네이션 UI 업데이트
         function updatePagination() {
