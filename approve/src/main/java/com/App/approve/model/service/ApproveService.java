@@ -15,4 +15,5 @@ public interface ApproveService {
     // 게시글 상세조회
     Approvement selectAppBoard(int appNo);
 
+    int insertBoardApp(Approvement a);
 }

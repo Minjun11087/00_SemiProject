@@ -19,6 +19,9 @@ public class Approvement {
     private String appShowStatus;
     private String empName;
     private String deptTitle;
+    private String jobTitle;
+    private String appEmpStatus;
+    private String appFF;
 
 
 }

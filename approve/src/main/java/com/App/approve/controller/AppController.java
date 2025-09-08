@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 
@@ -23,8 +25,6 @@ public class AppController {
         int listCount = aService.selectListCount();
         PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
         ArrayList<Approvement> list = aService.selectList(pi);
-        System.out.println(pi);
-        System.out.println(list);
         mv.addObject("pi", pi)
                 .addObject("list", list)
                 .setViewName("appBoard/appList");
@@ -34,11 +34,36 @@ public class AppController {
     }
 
     @GetMapping("detail.app")
-    public String selectAppBoard(int ano, Model model){
+    public String selectAppBoard(int ano, Model mv){
 
         Approvement a = aService.selectAppBoard(ano);
-        model.addAttribute("a", a);
+        mv.addAttribute("a", a);
+        System.out.println(a);
         return "appBoard/appView";
     }
+
+    @GetMapping("enrollForm.app")
+    public String appEnrollForm(){
+        return "appBoard/appEnrollForm";
+    }
+
+    @PostMapping("insertBoard.app")
+    public String insertBoardApp(Approvement a, Model model, RedirectAttributes reattr){
+        int result = aService.insertBoardApp(a);
+
+        if(result>0){
+            reattr.addFlashAttribute("alertMsg", "결재신청 성공");
+            return "redirect:/";
+        }else{
+            model.addAttribute("errorMsg", "결재신청 실패");
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("updateForm.app")
+    public String appUpdateForm(Approvement a, Model model, RedirectAttributes reattr){
+        return "appBoard/appUpdateForm";
+    }
+
 
 }

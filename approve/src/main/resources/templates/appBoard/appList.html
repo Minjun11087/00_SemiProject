@@ -29,6 +29,10 @@
             gap: 20px;
         }
 
+        .page-header button{
+            margin-left:auto;
+        }
+
         .page-logo {
             width: 60px;
             height: 60px;
@@ -258,6 +262,7 @@
     <div class="page-header">
         <div class="page-logo">KH</div>
         <h1 class="page-title">결재 내역</h1>
+        <button type="button" id="enrollBtn" class="btn btn-primary">결재신청</button>
     </div>
 
     <!-- 테이블 컨테이너 -->
@@ -294,6 +299,14 @@
                     location.href="detail.app?ano="+ano;
                 })
             })
+
+            $(function(){
+                $("#enrollBtn").click(function(){
+                    location.href="enrollForm.app";
+                })
+            })
+
+
         </script>
 
         <!-- 페이지네이션 -->

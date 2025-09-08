@@ -16,14 +16,19 @@ public class ApproveDao {
 
     public ArrayList selectList(SqlSessionTemplate sqlSession, PageInfo pi) {
 
-        int offset = (pi.getCurrentPage() -1) * pi.getBoardLimit();
+        int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
         int limit = pi.getBoardLimit();
 
         RowBounds rowBounds = new RowBounds(offset, limit);
-        return (ArrayList)sqlSession.selectList("approveMapper.selectList", null, rowBounds);
+        return (ArrayList) sqlSession.selectList("approveMapper.selectList", null, rowBounds);
     }
 
     public Approvement selectAppBoard(SqlSessionTemplate sqlSession, int appNo) {
-        return sqlSession.selectOne("approveMember.selectAppBoard");
+        return sqlSession.selectOne("approveMapper.selectAppBoard", appNo);
+    }
+
+
+    public int insertBoardApp(SqlSessionTemplate sqlSession, Approvement a) {
+        return sqlSession.insert("approveMapper.insertBoardApp", a);
     }
 }

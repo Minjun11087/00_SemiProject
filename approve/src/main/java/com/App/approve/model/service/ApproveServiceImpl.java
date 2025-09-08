@@ -31,4 +31,11 @@ public class ApproveServiceImpl implements ApproveService{
     public Approvement selectAppBoard(int appNo) {
         return aDao.selectAppBoard(sqlSession, appNo);
     }
+
+    @Override
+    public int insertBoardApp(Approvement a) {
+        return aDao.insertBoardApp(sqlSession, a);
+    }
+
+
 }

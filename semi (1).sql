@@ -1,3 +1,4 @@
+DROP TABLE APP_EMP;
 DROP TABLE FINAL_APP;
 DROP TABLE VACATION_TB;
 DROP TABLE PROJECTMEMBER_TB;
@@ -395,26 +396,28 @@ COMMENT ON COLUMN APP_BOARD.APP_DATE IS '결재일';
 COMMENT ON COLUMN APP_BOARD.APP_SHOWSTATUS IS '글존재여부';
 
 
+
 -- ============================================
 -- APP_BOARD 샘플 데이터
 -- ============================================
 INSERT INTO APP_BOARD (APP_NO, EMP_NO, APP_TITLE, APP_CONTENT, APP_DATE)
-VALUES (SEQ_ANO.NEXTVAL, 100, '출장 보고', '서울 출장 보고 내용', NULL);
+VALUES (SEQ_ANO.NEXTVAL, 100, '출장 보고', '서울 출장 보고 내용', SYSDATE);
 INSERT INTO APP_BOARD (APP_NO, EMP_NO, APP_TITLE, APP_CONTENT, APP_DATE)
-VALUES (SEQ_ANO.NEXTVAL, 101, '회의 안건', '회의 안건 내용', NULL);
+VALUES (SEQ_ANO.NEXTVAL, 101, '회의 안건', '회의 안건 내용', SYSDATE);
 INSERT INTO APP_BOARD (APP_NO, EMP_NO, APP_TITLE, APP_CONTENT, APP_DATE)
-VALUES (SEQ_ANO.NEXTVAL, 102, '프로젝트 승인', '프로젝트 승인 내용', NULL);
+VALUES (SEQ_ANO.NEXTVAL, 102, '프로젝트 승인', '프로젝트 승인 내용', SYSDATE);
 INSERT INTO APP_BOARD (APP_NO, EMP_NO, APP_TITLE, APP_CONTENT, APP_DATE)
-VALUES (SEQ_ANO.NEXTVAL, 103, '휴가 요청', '휴가 요청 내용', NULL);
+VALUES (SEQ_ANO.NEXTVAL, 103, '휴가 요청', '휴가 요청 내용', SYSDATE);
 INSERT INTO APP_BOARD (APP_NO, EMP_NO, APP_TITLE, APP_CONTENT, APP_DATE)
-VALUES (SEQ_ANO.NEXTVAL, 104, '예산 승인', '예산 승인 내용', NULL);
+VALUES (SEQ_ANO.NEXTVAL, 104, '예산 승인', '예산 승인 내용', SYSDATE);
 
 -- ============================================
 -- 승인된 결재 테이블
 -- ============================================
 CREATE TABLE FINAL_APP ( -- 승인된 결재 테이블
     FA_NO NUMBER PRIMARY KEY, -- 승인번호
-    APP_NO NUMBER REFERENCES APP_BOARD(APP_NO) NOT NULL -- 결재번호    
+    APP_NO NUMBER REFERENCES APP_BOARD(APP_NO) NOT NULL -- 결재번호 
+    
 );
 
 --=================================================
@@ -422,7 +425,11 @@ CREATE TABLE FINAL_APP ( -- 승인된 결재 테이블
 COMMENT ON COLUMN FINAL_APP.FA_NO IS '승인번호';
 COMMENT ON COLUMN FINAL_APP.APP_NO IS '결재번호';
 
+
 -- ============================================
+
+
+
 -- 결재게시판에서 승인 시 승인된 결재 테이블로 자동 추가 트리거
 -- ============================================
 CREATE OR REPLACE TRIGGER TRG_FA

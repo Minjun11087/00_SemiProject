@@ -156,7 +156,10 @@
             box-shadow: 0 0 0 3px rgba(212, 165, 232, 0.1);
         }
 
-
+        .form-input[readonly] {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
 
         .form-select {
             width: 100%;
@@ -194,7 +197,10 @@
             box-shadow: 0 0 0 3px rgba(212, 165, 232, 0.1);
         }
 
-
+        .form-textarea[readonly] {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
 
         /* 첨부파일 */
         .file-list {
@@ -481,7 +487,7 @@
             </div>
             <div class="info-item">
                 <span class="info-label">현재 결재자:</span>
-                <span class="info-value" th:text="|${a.empName} ${a.jobTitle} (${a.deptTitle})|"></span>
+                <span class="info-value" th:text="${a.empName}"></span>
             </div>
         </div>
     </div>
@@ -492,7 +498,7 @@
         <div class="approval-steps">
             <div class="approval-step approved">
                 <div class="step-title">신청</div>
-                <div class="step-name" th:text="|${a.empName} ${a.jobTitle} (${a.deptTitle})|"></div>
+                <div class="step-name" th:text="${a.empName}"></div>
                 <div class="step-date" th:text="${a.createDate}"></div>
                 <div class="step-arrow">→</div>
             </div>
@@ -516,43 +522,61 @@
             <!-- 제목 -->
             <div class="form-group">
                 <label class="form-label" for="title">제목<span class="required">*</span></label>
-                <input type="text" id="title" name="title" class="form-input" th:value="${a.appTitle}" required readonly>
+                <input type="text" id="title" name="title" class="form-input" th:value="${a.appTitle}" required>
                 <div class="error-message" id="titleError">제목을 입력해주세요.</div>
             </div>
 
             <!-- 작성자 -->
             <div class="form-group">
                 <label class="form-label" for="author">작성자</label>
-                <input type="text" id="author" name="author" class="form-input" th:value="${a.empName}" readonly>
+                <input type="text" id="author" name="author" class="form-input" value="조인순 부장" readonly>
             </div>
 
             <!-- 작성일 -->
             <div class="form-group">
                 <label class="form-label" for="writeDate">작성일</label>
-                <input type="date" id="writeDate" name="writeDate" class="form-input" th:value="${a.createDate}" readonly>
+                <input type="date" id="writeDate" name="writeDate" class="form-input" value="2024-08-26" readonly>
             </div>
 
             <!-- 작성내용 -->
             <div class="form-group">
                 <label class="form-label" for="content">작성내용<span class="required">*</span></label>
-                <textarea id="content" name="content" class="form-textarea" th:text="${a.appContent}" required readonly></textarea>
+                <textarea id="content" name="content" class="form-textarea" required>안녕하세요. 조인순 부장입니다.
+
+현재 고객 관리 업무의 효율성 향상을 위해 신규 고객 관리 시스템 도입을 검토하고 있습니다.
+
+【도입 배경】
+- 기존 엑셀 기반 고객 관리의 한계
+- 고객 정보 실시간 공유 필요성 증대
+- 업무 효율성 및 정확성 향상 필요
+
+【예상 효과】
+- 고객 정보 통합 관리로 업무 효율성 30% 향상
+- 실시간 정보 공유로 고객 응대 품질 개선
+- 데이터 분석을 통한 마케팅 전략 수립 지원
+
+【소요 예산】
+- 초기 구축비: 500만원
+- 월 유지비: 50만원
+
+위 내용에 대한 승인을 요청드립니다.</textarea>
                 <div class="error-message" id="contentError">내용을 입력해주세요.</div>
             </div>
 
             <!-- 첨부파일 -->
-<!--            <div class="form-group">-->
-<!--                <label class="form-label" for="files">첨부파일</label>-->
-<!--                <div class="file-list" id="fileList">-->
-<!--                    <div class="file-item">-->
-<!--                        <span class="file-name">📎 고객관리시스템_제안서.pdf (2.3MB)</span>-->
-<!--                        <a href="#" class="file-download">다운로드</a>-->
-<!--                    </div>-->
-<!--                    <div class="file-item">-->
-<!--                        <span class="file-name">📊 예산계획서.xlsx (1.1MB)</span>-->
-<!--                        <a href="#" class="file-download">다운로드</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+            <div class="form-group">
+                <label class="form-label" for="files">첨부파일</label>
+                <div class="file-list" id="fileList">
+                    <div class="file-item">
+                        <span class="file-name">📎 고객관리시스템_제안서.pdf (2.3MB)</span>
+                        <a href="#" class="file-download">다운로드</a>
+                    </div>
+                    <div class="file-item">
+                        <span class="file-name">📊 예산계획서.xlsx (1.1MB)</span>
+                        <a href="#" class="file-download">다운로드</a>
+                    </div>
+                </div>
+            </div>
 
             <!-- 버튼 그룹 -->
             <div class="button-group">
@@ -568,12 +592,29 @@
 <script>
     // 목록으로 돌아가기
     function goBack() {
-            location.href = '/';
+        if (confirm('목록 페이지로 돌아가시겠습니까?')) {
+            window.location.href = '/approval-list';
+        }
     }
 
     // 수정하기
     function editForm() {
-        location.href='updateForm.app'
+        if (confirm('이 문서를 수정하시겠습니까?')) {
+            // 읽기 전용 해제
+            document.getElementById('title').readOnly = false;
+            document.getElementById('content').readOnly = false;
+            document.querySelector('.form-textarea').style.backgroundColor = 'white';
+            document.querySelector('.form-textarea').style.cursor = 'text';
+
+            // 버튼 변경
+            const buttonGroup = document.querySelector('.button-group');
+            buttonGroup.innerHTML = `
+                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">취소</button>
+                <button type="submit" class="btn btn-primary">저장하기</button>
+            `;
+
+            alert('수정 모드로 변경되었습니다.');
+        }
     }
 
     // 수정 취소

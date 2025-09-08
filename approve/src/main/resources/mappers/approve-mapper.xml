@@ -12,6 +12,7 @@
         <result column="app_date" property="appDate"/>
         <result column="app_showstatus" property="appShowStatus"/>
         <result column="dept_title" property="deptTitle"/>
+        <result column="job_title" property="jobTitle"/>
     </resultMap>
     <select id="selectListCount" resultType="_int">
         select count(*)
@@ -46,11 +47,31 @@
              , app_date
              , app_showstatus
              , dept_title
+             , job_title
         from app_board
         join employee_tb using (emp_no)
         join department using (dept_code)
+        join job_tb using (job_code)
         where app_showstatus = 'Y'
         and app_no = #{appNo}
-
     </select>
+
+    <insert id="insertBoardApp">
+        insert
+        into app_board
+        (
+        app_no
+        , app_title
+        , emp_no
+        , app_content
+        )
+        values
+        (
+        seq_ano.nextval
+        , #{appNo}
+        , #{appTitle}
+        , #{empNo}
+        , #{appContent}
+        )
+    </insert>
 </mapper>

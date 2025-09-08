@@ -36,7 +36,7 @@
             margin-bottom: 30px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-appContent: space-between;
         }
 
         .header-left {
@@ -52,7 +52,7 @@
             border-radius: 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-appContent: center;
             font-weight: bold;
             font-size: 24px;
             color: white;
@@ -109,7 +109,7 @@
 
         .info-item {
             display: flex;
-            justify-content: space-between;
+            justify-appContent: space-between;
             align-items: center;
         }
 
@@ -156,7 +156,10 @@
             box-shadow: 0 0 0 3px rgba(212, 165, 232, 0.1);
         }
 
-
+        .form-input[readonly] {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
 
         .form-select {
             width: 100%;
@@ -194,7 +197,16 @@
             box-shadow: 0 0 0 3px rgba(212, 165, 232, 0.1);
         }
 
+        .form-textarea[readonly] {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
 
+        #appContent{
+             text-align: left;
+             vertical-align: top;
+             dir: ltr;
+        }
 
         /* 첨부파일 */
         .file-list {
@@ -207,7 +219,7 @@
         .file-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-appContent: space-between;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
@@ -236,78 +248,13 @@
             color: white;
         }
 
-        /* 결재라인 */
-        .approval-line {
-            margin-bottom: 30px;
-        }
 
-        .approval-steps {
-            display: flex;
-            gap: 20px;
-            margin-top: 15px;
-            overflow-x: auto;
-            padding: 10px 0;
-        }
-
-        .approval-step {
-            min-width: 150px;
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px;
-            background: #f8f9fa;
-            border: 2px solid #ddd;
-            position: relative;
-        }
-
-        .approval-step.current {
-            border-color: #ff9500;
-            background: #fff5e6;
-        }
-
-        .approval-step.approved {
-            border-color: #30d158;
-            background: #e6f7ea;
-        }
-
-        .approval-step.rejected {
-            border-color: #ff3b30;
-            background: #ffe6e6;
-        }
-
-        .step-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .step-name {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .step-date {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .step-arrow {
-            position: absolute;
-            right: -15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #ddd;
-            font-size: 20px;
-        }
-
-        .approval-step:last-child .step-arrow {
-            display: none;
-        }
 
         /* 버튼 스타일 */
         .button-group {
             display: flex;
             gap: 15px;
-            justify-content: center;
+            justify-appContent: center;
             margin-top: 40px;
             padding-top: 30px;
             border-top: 1px solid #eee;
@@ -370,7 +317,7 @@
 
         /* 반응형 */
         @media (max-width: 768px) {
-            .header-content {
+            .header-appContent {
                 flex-direction: column;
                 gap: 20px;
             }
@@ -378,7 +325,7 @@
             .nav-menu {
                 flex-wrap: wrap;
                 gap: 15px;
-                justify-content: center;
+                justify-appContent: center;
             }
 
             .nav-item {
@@ -463,81 +410,41 @@
     <div class="page-header">
         <div class="header-left">
             <div class="page-logo">📄</div>
-            <h1 class="page-title">결재 조회</h1>
-        </div>
-        <div class="status-badge status-pending">승인 대기</div>
-    </div>
-
-    <!-- 기본 정보 -->
-    <div class="info-card">
-        <div class="info-grid">
-            <div class="info-item">
-                <span class="info-label">결재 번호:</span>
-                <span class="info-value" th:text="${a.appNo}"></span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">신청일:</span>
-                <span class="info-value" th:text="${a.createDate}"></span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">현재 결재자:</span>
-                <span class="info-value" th:text="|${a.empName} ${a.jobTitle} (${a.deptTitle})|"></span>
-            </div>
+            <h1 class="page-title">결재 신청</h1>
         </div>
     </div>
 
     <!-- 결재라인 -->
-    <div class="approval-line">
-        <label class="form-label">결재라인</label>
-        <div class="approval-steps">
-            <div class="approval-step approved">
-                <div class="step-title">신청</div>
-                <div class="step-name" th:text="|${a.empName} ${a.jobTitle} (${a.deptTitle})|"></div>
-                <div class="step-date" th:text="${a.createDate}"></div>
-                <div class="step-arrow">→</div>
-            </div>
-            <div class="approval-step current">
-                <div class="step-title">1차 승인</div>
-                <div class="step-name">김부장 (영업팀)</div>
-                <div class="step-date">대기 중</div>
-                <div class="step-arrow">→</div>
-            </div>
-            <div class="approval-step">
-                <div class="step-title">최종 승인</div>
-                <div class="step-name">이상무 (경영지원팀)</div>
-                <div class="step-date">-</div>
-            </div>
-        </div>
-    </div>
 
     <!-- 폼 컨테이너 -->
     <div class="form-container">
-        <form id="requestForm" enctype="multipart/form-data">
+        <form id="requestForm" method="post" action="insertBoard.app" enctype="multipart/form-data">
             <!-- 제목 -->
             <div class="form-group">
                 <label class="form-label" for="title">제목<span class="required">*</span></label>
-                <input type="text" id="title" name="title" class="form-input" th:value="${a.appTitle}" required readonly>
-                <div class="error-message" id="titleError">제목을 입력해주세요.</div>
+                <input type="text" id="title" name="appTitle" class="form-input"  required>
+                <div class="error-message" id="titleError"></div>
             </div>
 
             <!-- 작성자 -->
             <div class="form-group">
-                <label class="form-label" for="author">작성자</label>
-                <input type="text" id="author" name="author" class="form-input" th:value="${a.empName}" readonly>
+                <label class="form-label" for="appWriter">작성자</label>
+                <input type="text" id="appWriter" name="appWriter" class="form-input" value="홍길동" readonly>
             </div>
 
             <!-- 작성일 -->
             <div class="form-group">
-                <label class="form-label" for="writeDate">작성일</label>
-                <input type="date" id="writeDate" name="writeDate" class="form-input" th:value="${a.createDate}" readonly>
+                <label class="form-label" for="createDate">작성일</label>
+                <input type="date" id="createDate" name="createDate" class="form-input" readonly>
             </div>
 
             <!-- 작성내용 -->
             <div class="form-group">
-                <label class="form-label" for="content">작성내용<span class="required">*</span></label>
-                <textarea id="content" name="content" class="form-textarea" th:text="${a.appContent}" required readonly></textarea>
+                <label class="form-label" for="appContent">작성내용<span class="required">*</span></label>
+                <textarea id="appContent" name="appContent" class="form-textarea" required placeholder="내용을 입력해 주세요" ></textarea>
                 <div class="error-message" id="contentError">내용을 입력해주세요.</div>
             </div>
+
 
             <!-- 첨부파일 -->
 <!--            <div class="form-group">-->
@@ -556,82 +463,17 @@
 
             <!-- 버튼 그룹 -->
             <div class="button-group">
-                <button type="button" class="btn btn-secondary" onclick="goBack()">목록으로</button>
-                <button type="button" class="btn btn-primary" onclick="editForm()">수정하기</button>
-                <button type="button" class="btn btn-success" onclick="approveRequest()">승인</button>
-                <button type="button" class="btn btn-danger" onclick="rejectRequest()">반려</button>
+                <button type="submit" id="submitBtn" class="btn btn-primary">신청하기</button>
+                <button type="reset" id="resetBtn" class="btn btn-secondary">초기화</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    // 목록으로 돌아가기
-    function goBack() {
-            location.href = '/';
-    }
 
-    // 수정하기
-    function editForm() {
-        location.href='updateForm.app'
-    }
 
-    // 수정 취소
-    function cancelEdit() {
-        if (confirm('수정을 취소하시겠습니까? 변경사항이 저장되지 않습니다.')) {
-            location.reload();
-        }
-    }
 
-    // 승인
-    function approveRequest() {
-        if (confirm('이 문서를 승인하시겠습니까?')) {
-            alert('승인이 완료되었습니다.');
-            // 실제로는 서버로 승인 요청 전송
-            updateApprovalStatus('approved');
-        }
-    }
-
-    // 반려
-    function rejectRequest() {
-        const reason = prompt('반려 사유를 입력해주세요:');
-        if (reason && reason.trim()) {
-            alert('반려 처리가 완료되었습니다.');
-            // 실제로는 서버로 반려 요청 전송
-            updateApprovalStatus('rejected', reason);
-        }
-    }
-
-    // 결재 상태 업데이트
-    function updateApprovalStatus(status, reason = '') {
-        const statusBadge = document.querySelector('.status-badge');
-        const currentStep = document.querySelector('.approval-step.current');
-
-        if (status === 'approved') {
-            statusBadge.className = 'status-badge status-approved';
-            statusBadge.textContent = '승인 완료';
-            currentStep.classList.remove('current');
-            currentStep.classList.add('approved');
-            currentStep.querySelector('.step-date').textContent = new Date().toLocaleDateString();
-        } else if (status === 'rejected') {
-            statusBadge.className = 'status-badge status-rejected';
-            statusBadge.textContent = '반려';
-            currentStep.classList.remove('current');
-            currentStep.classList.add('rejected');
-            currentStep.querySelector('.step-date').textContent = new Date().toLocaleDateString();
-        }
-
-        // 버튼 숨기기 (승인/반려 후)
-        const approveBtn = document.querySelector('.btn-success');
-        const rejectBtn = document.querySelector('.btn-danger');
-        if (approveBtn) approveBtn.style.display = 'none';
-        if (rejectBtn) rejectBtn.style.display = 'none';
-    }
-
-    // 폼 제출 (수정 모드에서)
-    document.getElementById('requestForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-    })
 </script>
 
 </body>
