@@ -33,7 +33,8 @@
     </select>
 
     <select id="selectList" resultMap="employeeResultSet">
-        select emp_id
+        select emp_no
+             , emp_id
              , emp_name
              , emp_resinum
              , emp_id
@@ -56,6 +57,26 @@
          where emp_status = 'Y'
            and e.dept_code = d.dept_code
            and e.job_code = j.job_code
+    </select>
+
+    <select id="selectEmployee" resultMap="employeeResultSet">
+        select emp_picture
+            , emp_name
+            , emp_status
+            , emp_id
+            , emp_phone
+            , emp_address
+            , dept_title
+            , job_title
+            , emp_resinum
+            , emp_email
+            , to_char(hire_date, 'YYYY-MM-DD') as "hire_date"
+            , salary
+            from employee_tb e, department d, job_tb j
+            where e.dept_code = d.dept_code
+            and e.job_code = j.job_code
+            and emp_no = #{empNo}
+
     </select>
 
 </mapper>

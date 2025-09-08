@@ -18,4 +18,9 @@ public interface EmployeeService {
 
     //4. 사원 정보 수정
     int updateEmployee(Employee emp);
+
+    //5. 조직도
+
+
+
 }

@@ -36,11 +36,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee selectEmployee(int empNo) {
-        return null;
+        return empDao.selectEmployee(sqlSession, empNo);
     }
 
     @Override
     public int updateEmployee(Employee emp) {
         return 0;
     }
+
+
+
+
+
+
+
 }

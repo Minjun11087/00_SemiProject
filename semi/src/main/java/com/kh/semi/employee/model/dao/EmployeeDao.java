@@ -28,5 +28,12 @@ public class EmployeeDao {
     }
 
 
+    public Employee selectEmployee(SqlSessionTemplate sqlSession, int empNo) {
+        return sqlSession.selectOne("employeeMapper.selectEmployee", empNo);
+    }
+
+
+
+
 
 }

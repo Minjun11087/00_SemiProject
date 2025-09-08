@@ -26,7 +26,7 @@
         /* 페이지 헤더 */
         .page-header {
             background: linear-gradient(135deg, #e4b6ec, #c299dd);
-            padding: 30px;
+            padding: 15px;
             border-radius: 15px;
             margin-bottom: 30px;
             display: flex;
@@ -189,6 +189,39 @@
             background: #e3f2fd !important;
         }
 
+        /*페이지 선택 버튼*/
+        .empBtn_main{
+            position: relative;
+            display: flex;
+            width: 30%;
+        }
+
+        .empBtn{
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            position: relative;
+
+        }
+
+        .empBtn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .empBtn.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+        .empBtn_main a{
+          text-decoration: none;
+          color: white;
+        }
+
         /* 반응형 */
         @media (max-width: 768px) {
             .header-content {
@@ -245,6 +278,10 @@
         <div class="page-header">
             <div class="page-logo">KH</div>
             <h1 class="page-title">모든 사원 명단</h1>
+            <div class="empBtn_main">
+                <div class="empBtn"><a th:href="list.emp">사원 목록</a></div>
+                <div class="empBtn"><a th:href="zozic.emp">조직도</a></div>
+            </div>
         </div>
 
         <!-- 테이블 컨테이너 -->
@@ -252,6 +289,7 @@
             <table class="data-table">
                 <thead>
                 <tr>
+                    <th>사원 번호</th>
                     <th>사원 이름</th>
                     <th>연락처</th>
                     <th>부서</th>
@@ -264,7 +302,9 @@
                  ============================
                  -->
                 <tbody id="tableBody">
+
                     <tr th:each="emp:${list}">
+                        <td class="eno" th:text="${emp.empNo}"></td>
                         <td>
                             <div class="author" name="">
                                 <span class="author-icon" th:text="${#strings.substring(emp.empName, 0, 1)}"></span>
@@ -302,6 +342,14 @@
     </div>
 
     <script>
+        $(function(){
+            $(".data-table>tbody>tr").click(function(){
+                let eno = $(this).find(".eno").text().trim();
+
+                location.href="detail.emp?eno=" + eno;
+
+            })
+        })
 
         // 페이지네이션 UI 업데이트
         function updatePagination() {

@@ -6,6 +6,7 @@ import com.kh.semi.employee.model.service.EmployeeService;
 import com.kh.semi.employee.model.vo.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,4 +34,26 @@ public class EmployeeController {
 
         return mv;
     }
+
+
+    @GetMapping("detail.emp")
+    public String selectEmployee(int eno, Model model){
+
+         Employee emp = bservice.selectEmployee(eno);
+
+         model.addAttribute("emp", emp);
+         return "employee/empDetailView";
+
+    }
+
+    @GetMapping("zozic.emp")
+    public String zozicPage(){
+
+        return "employee/zozicdoView";
+    }
+
+
+
+
+
 }
