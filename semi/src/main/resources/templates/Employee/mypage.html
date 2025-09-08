@@ -233,13 +233,6 @@
             border-left-color: #e4b6ec;
         }
 
-        .menu-button.active {
-            background-color: #f8f5fa;
-            color: #e4b6ec;
-            border-left-color: #e4b6ec;
-            font-weight: 600;
-        }
-
         /* 메인 콘텐츠 */
         .main-content {
             background: white;
@@ -439,7 +432,7 @@
             </div>
             
             <div class="menu-section">
-                <button class="menu-button active" onclick=" ">개인정보 수정</button>
+                <button class="menu-button" onclick=" ">개인정보 수정</button>
                 <button class="menu-button" onclick=" ">개인서명 신청</button>
                 <button class="menu-button" onclick=" ">개인 서명 변경 신청</button>
             </div>
@@ -455,67 +448,61 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">이름</label>
-                        <input type="text" class="form-input" value="홍길동">
+                        <input type="text" class="form-input" id="empName" name="empName" value="${ loginUser.empName }" readonly>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">사원번호</label>
-                        <input type="text" class="form-input" value="EMP-2024-001" readonly>
+                        <input type="text" class="form-input" id="empNo" name="empNo" value="${loginUser.empNo}"  readonly>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">아이디</label>
-                        <input type="text" class="form-input" value="hong" readonly>
+                        <input type="text" class="form-input" id="empId" name="empId" value="${loginUser.empId}"  readonly>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">생년월일</label>
-                        <input type="date" class="form-input" id="birthDate" value="1990-03-15">
+                        <input type="date" class="form-input" id="empRsinum" name="empRsinum" value="${loginUser.empRsinum}" readonly>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">부서</label>
-                        <select class="form-input" id="department">
+                        <select class="form-input" id="deptCode" name="deptCode" name="deptCode" value="${loginUser.deptCode}" readonly>
                             <option value="">부서 선택</option>
-                            <option value="개발팀" >개발팀</option>
-                            <option value="기획팀">기획팀</option>
-                            <option value="영업팀">영업팀</option>
-                            <option value="디자인팀">디자인팀</option>
-                            <option value="마케팅팀">마케팅팀</option>
-                            <option value="인사팀">인사팀</option>
-                            <option value="재무팀">재무팀</option>
-                            <option value="고객지원팀">고객지원팀</option>
-                            <option value="보안팀">보안팀</option>
+                            <option value="D1" >지점장</option>
+                            <option value="D2">총무부</option>
+                            <option value="D3">인사부</option>
+                            <option value="D4">영업부</option>
+                            <option value="D5">관리부</option>
+                            <option value="D6">지원부</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">직급</label>
-                        <select class="form-input" id="position">
+                        <select class="form-input" id="jobCode" name="jobCode" value="${loginUser.jobCode}"  readonly>
                             <option value="">직급 선택</option>
-                            <option value="인턴">인턴</option>
-                            <option value="사원">사원</option>
-                            <option value="대리">대리</option>
-                            <option value="과장">과장</option>
-                            <option value="차장">차장</option>
-                            <option value="부장">부장</option>
-                            <option value="이사">이사</option>
+                            <option value="J1">지점장</option>
+                            <option value="J2">부장</option>
+                            <option value="J3">팀장</option>
+                            <option value="J4">사원</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">연봉</label>
-                        <input type="text" class="form-input" value="54,000,000원" readonly>
+                        <input type="text" class="form-input" id="salary" name="salary" value="${loginUser.salary}" readonly>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">입사일</label>
-                        <input type="date" class="form-input" id="hireDate" value="2022-03-02">
+                        <input type="date" class="form-input" id="hireDate" name="hireDate" value="${loginUser.hireDate}" readonly>
                     </div>
                     
                     <div class="signature-area">
                         <label class="form-label">개인 서명</label>
-                        <div class="signature-box">
+                        <div class="signature-box" id="empSign" name="empSign" readonly>
                             개인 서명을 등록해주세요
                         </div>
                     </div>

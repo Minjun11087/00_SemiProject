@@ -303,6 +303,7 @@
         }
 
         .enrollForm-btn{
+            display: inline-block;
             width: 49%;
             padding: 16px;
             background: linear-gradient(135deg, #e4b6ec, #d196dd);
@@ -491,6 +492,12 @@
 <div class="bg-circle"></div>
 <div class="bg-circle"></div>
 
+<th:block th:if="${alertMsg != null}">
+    <script th:inline="javascript">
+        alert([[${alertMsg}]]);
+    </script>
+</th:block>
+
 <div class="login-container">
     <!-- 왼쪽 -->
     <div class="left-panel">
@@ -542,8 +549,8 @@
             </div>
 
 
-            <button type="submit" class="login-btn" id="loginBtn" name="login"> 로그인</button>
-            <a href="enrollForm.bo" class="enrollForm-btn" id="enrollFormbtn">회원가입</a>
+            <button type="submit" class="login-btn" id="loginBtn"> 로그인</button>
+            <a href="enrollForm.bo" class="enrollForm-btn" style="text-align:center; text-decoration: none;" id="enrollFormbtn">회원가입</a>
 
         </form>
 

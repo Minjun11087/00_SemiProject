@@ -29,7 +29,7 @@ public class EmployeeController {
 
         if(loginUser != null && bcryptPasswordEncoder.matches(e.getEmpPwd(), loginUser.getEmpPwd())) {
             //로그인 성공
-            return "redirect:/";
+            return "redirect:/menubar";
         }else {
             //로그인 실패
             redirectAttributes.addFlashAttribute("alertMsg", "로그인실패");
@@ -38,13 +38,13 @@ public class EmployeeController {
         
 
     }
-    /*
+
     @RequestMapping("enrollForm.bo")
     public String enrollForm() {
         return "employee/employeeEnrollForm";
 
     }
-    */
+
     @PostMapping("insert.bo")
     // jsp의 name값을 vo의 필드명과 동일하게!!
     public String insertMember(Employee e, Model model, RedirectAttributes redirectAttributes) {
@@ -86,8 +86,8 @@ public class EmployeeController {
             redirectAttributes.addFlashAttribute("alertMsg", "변경 성공!");
             return "redirect:myPage.me";
         }else {//실패
-            model.addAttribute("errorMsg", "정보 변경 실팽!");
-            return "common/errorPage";
+            redirectAttributes.addFlashAttribute("alertMsg", "정보 변경 실패");
+            return "employee/myPage";
 
         }
 
@@ -99,8 +99,8 @@ public class EmployeeController {
         Employee loginUser = (Employee) session.getAttribute("loginUser");
 
         if(loginUser == null && bcryptPasswordEncoder.matches(empPwd, loginUser.getEmpPwd())) {
-            model.addAttribute("errorMsg", "비밀번호 미일치!");
-            return "common/errorPage";
+            redirectAttributes.addFlashAttribute("alertMsg", "비밀번호가 다릅니다.");
+            return "employee/myPage";
 
         }
 
@@ -113,8 +113,8 @@ public class EmployeeController {
             redirectAttributes.addFlashAttribute("alertMsg", "회원탈퇴 성공");
             return "redirect:/";
         }else {//삭제
-            model.addAttribute("errorMsg", "탈퇴실팽!");
-            return "common/errorPage";
+            redirectAttributes.addFlashAttribute("alertMsg", "회원탈퇴 실패");
+            return "employee/myPage";
         }
 
     }

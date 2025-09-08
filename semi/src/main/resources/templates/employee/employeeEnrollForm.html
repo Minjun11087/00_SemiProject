@@ -432,14 +432,15 @@
         }
 
         .enrollForm-btn{
-            width: 49%;
+            width: 30%;
             padding: 16px;
             background: linear-gradient(135deg, #e4b6ec, #d196dd);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
+
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(228, 182, 236, 0.3);
@@ -466,7 +467,7 @@
                 </div>
                 <span>KB BANK</span>
             </div>
-            
+
             <div class="nav-actions">
                 <a href="#" class="nav-btn">시스템 문의</a>
             </div>
@@ -481,7 +482,7 @@
             </div>
 
             <div class="admin-notice">
-                <strong>안내:</strong> 본 시스템은 KB Bank 사원 전용입니다. 
+                <strong>안내:</strong> 본 시스템은 KB Bank 사원 전용입니다.
                 입사일 기준으로 계정이 활성화되며, 인사팀 승인 후 모든 기능을 이용할 수 있습니다.
             </div>
 
@@ -494,7 +495,7 @@
                 <!-- 시스템 계정 정보 섹션 -->
                 <div class="form-section">
                     <h3 class="section-title">시스템 계정정보</h3>
-                    
+
                     <div class="form-row">
                         <div class="form-group full-width">
                             <label class="form-label">로그인 ID <span class="required">*</span></label>
@@ -529,7 +530,7 @@
                 <!-- 사원 기본 정보 섹션 -->
                 <div class="form-section">
                     <h3 class="section-title">사원 기본정보</h3>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">성명 <span class="required">*</span></label>
@@ -555,7 +556,7 @@
                             <label class="form-label">직급 <span class="required">*</span></label>
                             <select class="form-select" id="jobCode" name="jobCode" required>
                                 <option value="">직급 선택</option>
-                                <option value="J1">지접장</option>
+                                <option value="J1">지점장</option>
                                 <option value="J2">부장</option>
                                 <option value="J3">팀장</option>
                                 <option value="J4">사원</option>
@@ -586,7 +587,7 @@
                 <!-- 연락처 정보 섹션 -->
                 <div class="form-section">
                     <h3 class="section-title">연락처 정보</h3>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">휴대폰 번호 <span class="required">*</span></label>
@@ -614,7 +615,7 @@
                 <!-- 이용약관 동의 섹션 -->
                 <div class="form-section">
                     <h3 class="section-title"> 이용약관 동의</h3>
-                    
+
                     <div class="agreement-section">
                         <div class="select-all">
                             <div class="select-all-checkbox">
@@ -640,12 +641,12 @@
                             <div class="agreement-content" id="erpTermsContent">
                                 <strong>제1조 (목적)</strong><br>
                                 본 약관은 KB Bank ERP 시스템 이용에 관한 조건 및 절차, 회사와 사원 간의 권리·의무 관계를 규정함을 목적으로 합니다.<br><br>
-                                
+
                                 <strong>제2조 (시스템 이용 의무)</strong><br>
                                 1. 사원은 할당받은 계정정보를 안전하게 관리할 의무가 있습니다.<br>
                                 2. 타인에게 계정을 양도하거나 공유할 수 없습니다.<br>
                                 3. 부정사용 시 징계조치를 받을 수 있습니다.<br><br>
-                                
+
                                 <strong>제3조 (보안 준수사항)</strong><br>
                                 비밀번호는 정기적으로 변경하며, 회사 보안정책을 준수해야 합니다.
                             </div>
@@ -667,12 +668,12 @@
                                 <strong>1. 수집하는 개인정보 항목</strong><br>
                                 - 필수: 사원번호, 성명, 부서, 직급, 입사일, 연락처<br>
                                 - 선택: 내선번호, 추가 연락처<br><br>
-                                
+
                                 <strong>2. 개인정보 이용목적</strong><br>
                                 - ERP 시스템 계정 관리<br>
                                 - 사내 업무 연락 및 협업<br>
                                 - 근태 및 인사관리<br><br>
-                                
+
                                 <strong>3. 보유기간</strong><br>
                                 퇴사 후 5년간 보관 (관련 법령에 따라)
                             </div>
@@ -695,12 +696,12 @@
                                 - 회사의 정보보안 정책을 준수합니다<br>
                                 - 기밀정보 및 고객정보를 안전하게 관리합니다<br>
                                 - 승인되지 않은 시스템 접근을 하지 않습니다<br><br>
-                                
+
                                 <strong>2. 금지사항</strong><br>
                                 - 업무용 정보의 무단 반출<br>
                                 - 개인용 저장매체 사용<br>
                                 - 승인되지 않은 소프트웨어 설치<br><br>
-                                
+
                                 <strong>3. 위반 시 조치</strong><br>
                                 정보보안 정책 위반 시 사내 규정에 따라 징계조치됩니다.
                             </div>
@@ -708,20 +709,99 @@
                     </div>
                 </div>
 
-                <div>
+                <div style="text-align: center;">
                     <button type="submit" class="enrollForm-btn" id="enrollFormbtn"> 회원가입</button>
                 </div>
 
 
             </form>
-        </div>           
+        </div>
     </div>
+
+
+    <script>
+        // 개별 약관 체크박스 토글 함수
+        function toggleAgreement(agreementType) {
+            const checkbox = document.getElementById(agreementType + 'Checkbox');
+            const checkIcon = document.getElementById(agreementType + 'Check');
+
+            if (checkbox.classList.contains('checked')) {
+                // 체크 해제
+                checkbox.classList.remove('checked');
+                checkIcon.style.display = 'none';
+            } else {
+                // 체크
+                checkbox.classList.add('checked');
+                checkIcon.style.display = 'block';
+            }
+
+            // 전체 선택 상태 업데이트
+            updateSelectAllStatus();
+        }
+
+        // 전체 선택 토글 함수
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const selectAllCheck = document.getElementById('selectAllCheck');
+            const allCheckboxes = ['erpTerms', 'privacy', 'security'];
+
+            if (selectAllCheckbox.classList.contains('checked')) {
+                // 전체 해제
+                selectAllCheckbox.classList.remove('checked');
+                selectAllCheck.style.display = 'none';
+
+                // 모든 개별 체크박스 해제
+                allCheckboxes.forEach(type => {
+                    const checkbox = document.getElementById(type + 'Checkbox');
+                    const checkIcon = document.getElementById(type + 'Check');
+                    checkbox.classList.remove('checked');
+                    checkIcon.style.display = 'none';
+                });
+            } else {
+                // 전체 선택
+                selectAllCheckbox.classList.add('checked');
+                selectAllCheck.style.display = 'block';
+
+                // 모든 개별 체크박스 선택
+                allCheckboxes.forEach(type => {
+                    const checkbox = document.getElementById(type + 'Checkbox');
+                    const checkIcon = document.getElementById(type + 'Check');
+                    checkbox.classList.add('checked');
+                    checkIcon.style.display = 'block';
+                });
+            }
+        }
+
+        // 전체 선택 상태 업데이트 함수
+        function updateSelectAllStatus() {
+            const allCheckboxes = ['erpTerms', 'privacy', 'security'];
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const selectAllCheck = document.getElementById('selectAllCheck');
+
+            // 모든 개별 체크박스가 선택되었는지 확인
+            const allChecked = allCheckboxes.every(type => {
+                const checkbox = document.getElementById(type + 'Checkbox');
+                return checkbox.classList.contains('checked');
+            });
+
+            if (allChecked) {
+                // 모두 선택된 경우 전체 선택도 체크
+                selectAllCheckbox.classList.add('checked');
+                selectAllCheck.style.display = 'block';
+            } else {
+                // 하나라도 선택되지 않은 경우 전체 선택 해제
+                selectAllCheckbox.classList.remove('checked');
+                selectAllCheck.style.display = 'none';
+            }
+        }
+
+    </script>
 
     <script>
         function toggleSlideContent(contentId) {
             const content = document.getElementById(contentId);
             const detailButton = event.target;
-            
+
             if (content.classList.contains('expanded')) {
                 // slideUp
                 content.classList.remove('expanded');
@@ -776,7 +856,7 @@
             });
         })
     </script>
-    
+
 
 </body>
 </html>
