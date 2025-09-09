@@ -20,7 +20,12 @@ public class ProjectController {
     @Autowired
     private ProjectServiceImpl pService;
 
-    @GetMapping("")
+    @GetMapping("/")
+    public String home(){
+        return "project/main";
+    }
+
+    @GetMapping("list.pj")
     public ModelAndView selectProjectList(ModelAndView mv){
         ArrayList<Project> list = pService.selectProjectList();
         mv.addObject("list", list).setViewName("project/projectList");
@@ -40,7 +45,7 @@ public class ProjectController {
 
         if(result>0) {//성공
             redirectAttributes.addFlashAttribute("alertMsg", "성공적으로 게시글 등록");
-            return "redirect:/";
+            return "redirect:/list.pj";
         }else {//실패
             model.addAttribute("errorMsg", "게시글 등록 실패 ");
             return "common/errorPage";

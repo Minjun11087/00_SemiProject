@@ -184,50 +184,7 @@
             text-decoration: underline;
         }
 
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
 
-        .dropdown-toggle::after {
-            content: '';
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            min-width: 120px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .dropdown-menu.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            display: block;
-            padding: 12px 16px;
-            color: #4a5568;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #f7fafc;
-        }
-
-        .dropdown-item:hover {
-            background: #f7fafc;
-            color: #2d3748;
-        }
-
-        .dropdown-item:last-child {
-            border-bottom: none;
-        }
 
         .members-grid {
             display: grid;
@@ -575,7 +532,7 @@
 
 
     <div class="action-buttons">
-        <a href="/" class="btn btn-back">목록으로</a>
+        <a href="list.pj" class="btn btn-back">목록으로</a>
         <button class="btn btn-edit" onclick="manageProject()">수정 및 삭제</button>
     </div>
 </div>
