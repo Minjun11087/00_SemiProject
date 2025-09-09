@@ -21,6 +21,11 @@ public interface EmployeeService {
 
     //5. 조직도
 
+    //6. 검색바
+    ArrayList<Employee> searchEmployee(String keyword, PageInfo pi);
+
+    //7. 검색 결과
+    int selectSearchCount(String keyword);
 
 
 }

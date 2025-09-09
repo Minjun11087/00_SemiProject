@@ -222,6 +222,84 @@
           color: white;
         }
 
+
+        /*검색바 css */
+        .search_box {
+            margin-left: auto; /* 오른쪽 정렬 */
+            display: flex;
+            align-items: center;
+        }
+
+        .sch_group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* 드롭다운 */
+        .sch_group select {
+            border: none;
+            outline: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            background: white;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sch_group select:hover {
+            background: #f3e9fb;
+        }
+
+        /* 검색 입력창 */
+        .sch_group input {
+            border: none;
+            outline: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            width: 180px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .sch_group input:focus {
+            box-shadow: 0 0 0 2px #c299dd;
+        }
+
+        /* 검색 버튼 */
+        .search-btn {
+            border: none;
+            background: linear-gradient(135deg, #e4b6ec, #c299dd);
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .search-btn::before {
+            content: "🔍";
+            font-size: 16px;
+        }
+
+        .search-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(194, 153, 221, 0.4);
+        }
+
+
+
         /* 반응형 */
         @media (max-width: 768px) {
             .header-content {
@@ -277,10 +355,24 @@
         <!-- 페이지 헤더 -->
         <div class="page-header">
             <div class="page-logo">KH</div>
-            <h1 class="page-title">모든 사원 명단</h1>
+            <h1 class="page-title">모든 사원 목록</h1>
             <div class="empBtn_main">
                 <div class="empBtn"><a th:href="list.emp">사원 목록</a></div>
                 <div class="empBtn"><a th:href="zozic.emp">조직도</a></div>
+            </div>
+            <div class="search_box">
+                <form action="search.sc" method="get" autocomplete="off">
+                    <div class="sch_group f1">
+                        <select class="form-select" id="searchType">
+                            <option value="">검색 유형</option>
+                            <option value="name">이름</option>
+                            <option value="dept">부서명</option>
+                            <option value="job">직책명</option>
+                        </select>
+                        <input type="text" id="keyword" name="keyword" placeholder="🔍️검색">
+                        <button type="submit" class="search-btn" onclick="movePage(1)"><i class="fas fa-search"></i><span class="skip_info"></span></button>
+                    </div>
+                </form>
             </div>
         </div>
 

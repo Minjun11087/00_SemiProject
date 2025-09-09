@@ -52,6 +52,24 @@ public class EmployeeController {
         return "employee/zozicdoView";
     }
 
+    @GetMapping("search.sc")
+    public String searchEmployee(
+            @RequestParam(value="cpage", defaultValue= "1") int currentPage,
+            @RequestParam("keyword") String keyword, Model model){
+
+        int listCount = bservice.selectSearchCount(keyword);
+        PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
+
+        ArrayList<Employee> list = bservice.searchEmployee(keyword, pi);
+
+        model.addAttribute("list", list);
+        model.addAttribute("pi", pi);
+        model.addAttribute("keyword", keyword);
+
+        return "employee/empListView";
+
+    }
+
 
 
 

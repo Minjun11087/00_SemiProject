@@ -33,7 +33,19 @@ public class EmployeeDao {
     }
 
 
+    public ArrayList<Employee> searchEmployee(SqlSessionTemplate sqlSession, String keyword, PageInfo pi) {
+
+        int offset = (pi.getCurrentPage() -1) * pi.getBoardLimit();
+        int limit = pi.getBoardLimit();
+
+        RowBounds rowBounds = new RowBounds(offset, limit);
+
+        return (ArrayList)sqlSession.selectList("employeeMapper.searchEmployee", keyword, rowBounds);
+    }
 
 
+    public int selectSearchCount(SqlSessionTemplate sqlSession, String keyword) {
 
+        return sqlSession.selectOne("employeeMapper.selectSearchCount", keyword);
+    }
 }

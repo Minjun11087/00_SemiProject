@@ -79,4 +79,28 @@
 
     </select>
 
+    <select id="searchEmployee" resultMap="employeeResultSet">
+        select emp_no
+            , emp_name
+            , emp_phone
+            , to_char(hire_date, 'YYYY-MM-DD') as "hire_date"
+            , dept_title
+            , job_title
+            from employee_tb e, department d, job_tb j
+            where emp_status = 'Y'
+            and e.dept_code = d.dept_code
+            and e.job_code = j.job_code
+            and emp_name LIKE '%' || #{keyword} || '%'
+    </select>
+
+    <select id="selectSearchCount" resultType="_int">
+        select count(*)
+            from employee_tb e, department d, job_tb j
+            where emp_status = 'Y'
+            and e.dept_code = d.dept_code
+            and e.job_code = j.job_code
+            and emp_name LIKE '%' || #{keyword} || '%'
+
+    </select>
+
 </mapper>

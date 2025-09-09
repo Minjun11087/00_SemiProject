@@ -8,18 +8,18 @@ import lombok.*;
 @Setter
 @ToString
 public class CustomerController {
-    CUS_NO  private int cusNo;
-    CUS_NAME private String cusName;
-    CUS_GENDER private String cusGender;
-    CUS_AGE
-    CUS_RESINUM
-    CUS_ADDRESS
-    CUS_PHONE
-    CUS_EMAIL
-    CUS_JOB
-    LOAN
-    AMOUNT
-    INTEREST
-    RATING
+    private int cusNo;
+    private String cusName;
+    private String cusGender;
+    private int cusAge;
+    private int cusResinum;
+    private String cusAddress;
+    private int cusPhone;
+    private String cusEmail;
+    private String cusJob;
+    private String loan; // 대출 현황
+    private int amount; // 대출 금액
+    private double interest; // 이자율
+    private int rating; // 신용등급
 
 }

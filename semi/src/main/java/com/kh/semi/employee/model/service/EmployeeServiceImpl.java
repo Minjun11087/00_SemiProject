@@ -44,10 +44,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return 0;
     }
 
+    @Override
+    public ArrayList<Employee> searchEmployee(String keyword, PageInfo pi) {
+        return empDao.searchEmployee(sqlSession, keyword, pi);
+    }
 
-
-
-
+    @Override
+    public int selectSearchCount(String keyword) {
+        return empDao.selectSearchCount(sqlSession, keyword);
+    }
 
 
 }
