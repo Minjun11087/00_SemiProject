@@ -28,7 +28,7 @@ public class ApproveDao {
     }
 
 
-    public int insertBoardApp(SqlSessionTemplate sqlSession, Approvement a) {
-        return sqlSession.insert("approveMapper.insertBoardApp", a);
+    public int insertAppBoard(SqlSessionTemplate sqlSession, Approvement a) {
+        return sqlSession.insert("approveMapper.insertAppBoard", a);
     }
 }

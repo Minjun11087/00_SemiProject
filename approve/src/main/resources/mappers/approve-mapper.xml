@@ -56,7 +56,7 @@
         and app_no = #{appNo}
     </select>
 
-    <insert id="insertBoardApp">
+    <insert id="insertAppBoard">
         insert
         into app_board
         (

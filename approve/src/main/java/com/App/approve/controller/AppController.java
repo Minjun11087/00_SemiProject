@@ -48,8 +48,8 @@ public class AppController {
     }
 
     @PostMapping("insertBoard.app")
-    public String insertBoardApp(Approvement a, Model model, RedirectAttributes reattr){
-        int result = aService.insertBoardApp(a);
+    public String insertAppBoard(Approvement a, Model model, RedirectAttributes reattr){
+        int result = aService.insertAppBoard(a);
 
         if(result>0){
             reattr.addFlashAttribute("alertMsg", "결재신청 성공");
@@ -63,6 +63,11 @@ public class AppController {
     @GetMapping("updateForm.app")
     public String appUpdateForm(Approvement a, Model model, RedirectAttributes reattr){
         return "appBoard/appUpdateForm";
+    }
+
+    @PostMapping("update.app")
+    public String updateAppBoard(){
+
     }
 
 
