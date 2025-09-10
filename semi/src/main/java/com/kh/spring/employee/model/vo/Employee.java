@@ -2,7 +2,7 @@ package com.kh.spring.employee.model.vo;
 
 import lombok.*;
 
-import java.util.Date;
+import java.sql.Date;
 
 
 @NoArgsConstructor
@@ -26,8 +26,8 @@ public class Employee {
     private String empSign;
     private int salary;
     private int bonus;
-    private String hireDate;
-    private String modifyDate;
+    private Date hireDate;
+    private Date modifyDate;
     private String empPicture;
     private String messengerStatus;
 }
