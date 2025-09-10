@@ -24,18 +24,22 @@ public class EmployeeController {
     private PasswordEncoder bcryptPasswordEncoder;
 
     @PostMapping("login.bo")
-    public String loginMember(Employee e, HttpSession session, RedirectAttributes redirectAttributes) {
+    public ModelAndView loginMember(Employee e, HttpSession session, RedirectAttributes redirectAttributes, ModelAndView mv) {
         Employee loginUser = eService.loginMember(e);
+        System.out.println(loginUser);
 
         if(loginUser != null && bcryptPasswordEncoder.matches(e.getEmpPwd(), loginUser.getEmpPwd())) {
             //로그인 성공
-            return "redirect:/menubar";
+            session.setAttribute("loginUser", loginUser);
+            mv.setViewName("Employee/mypage");
         }else {
             //로그인 실패
-            redirectAttributes.addFlashAttribute("alertMsg", "로그인실패");
-            return "redirect:/";
+            mv.addObject("errorMsg", "로그인실패");
+            mv.setViewName("redirect:/");
+
         }
-        
+
+        return mv;
 
     }
 
@@ -66,14 +70,14 @@ public class EmployeeController {
 
     }
 
-    @GetMapping("myPage.me")
+    @GetMapping("myPage.bo")
     public String myPage() {
 
-        return "employee/myPage";
+        return "Employee/mypage";
 
     }
 
-    @PostMapping("update.me")
+    @PostMapping("update.bo")
     public String updateMember(Employee e, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
 
         int result = eService.updateMember(e);
@@ -84,23 +88,23 @@ public class EmployeeController {
             session.setAttribute("loginUser", updateMem);
 
             redirectAttributes.addFlashAttribute("alertMsg", "변경 성공!");
-            return "redirect:myPage.me";
+            return "Employee/mypage";
         }else {//실패
             redirectAttributes.addFlashAttribute("alertMsg", "정보 변경 실패");
-            return "employee/myPage";
+            return "Employee/myPage";
 
         }
 
     }
 
-    @PostMapping("delete.me")
+    @PostMapping("delete.bo")
     public String deleteMember(String empId, String empPwd, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
 
         Employee loginUser = (Employee) session.getAttribute("loginUser");
 
         if(loginUser == null && bcryptPasswordEncoder.matches(empPwd, loginUser.getEmpPwd())) {
             redirectAttributes.addFlashAttribute("alertMsg", "비밀번호가 다릅니다.");
-            return "employee/myPage";
+            return "Employee/myPage";
 
         }
 
@@ -114,7 +118,7 @@ public class EmployeeController {
             return "redirect:/";
         }else {//삭제
             redirectAttributes.addFlashAttribute("alertMsg", "회원탈퇴 실패");
-            return "employee/myPage";
+            return "Employee/myPage";
         }
 
     }
