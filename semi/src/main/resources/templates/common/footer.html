@@ -1,40 +1,41 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org/"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      th:fragment="footer">
+<html lang="en" xmlns:th="http://wwww.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
+      th:fragment="footer"
+>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
         /* div{border:1px solid red;} */
-        #footer {
-            width:80%;
-            height:200px;
-            margin:auto;
-            margin-top:50px;
-        }
-        #footer-1 {
-            width:100%;
-            height:20%;
-            border-top:1px solid lightgray;
-            border-bottom:1px solid lightgray;
-        }
-        #footer-2 {width:100%; height:80%;}
-        #footer-1, #footer-2 {padding-left:50px;}
-        #footer-1>a {
-            text-decoration:none;
-            font-weight:600;
-            margin:10px;
-            line-height:40px;
-            color:black;
-        }
-        #footer-2>p {
-            margin:0;
-            padding:10px;
-            font-size:13px;
-        }
-        #p2 {text-align:center;}
+    #footer {
+    max-width: 1400px;   /* 최대 폭 1400px */
+    width: 100%;         /* 부모(브라우저 폭)에 맞게 늘어나되 1400px 이상은 안됨 */
+    height: 200px;
+    margin: 50px auto 0; /* 위쪽 50px, 좌우 auto로 가운데 정렬 */
+    }
+
+    #footer-1 {
+        width:100%;
+        height:20%;
+        border-top:1px solid lightgray;
+        border-bottom:1px solid lightgray;
+    }
+    #footer-2 {width:100%; height:80%;}
+    #footer-1, #footer-2 {padding-left:50px;}
+    #footer-1>a {
+        text-decoration:none;
+        font-weight:600;
+        margin:10px;
+        line-height:40px;
+        color:black;
+    }
+    #footer-2>p {
+        margin:0;
+        padding:10px;
+        font-size:13px;
+    }
+    #p2 {text-align:center;}
     </style>
 </head>
 <body>
@@ -47,11 +48,14 @@
 
     <div id="footer-2">
         <p id="p1">
-            강남 지점 : 서울특별시 강남구 테헤란로14길 6 남도빌딩 1F, 2F <br>
+            지원부 : 1111-1111 &nbsp&nbsp
+            총무부 : 2222-2222 &nbsp&nbsp
+            인사과 : 3333-3333 &nbsp&nbsp
+            영업부 : 4444-4444 &nbsp&nbsp
+            관리부 : 5555-5555 &nbsp&nbsp
         </p>
         <p id="p2">Copyright © 1998-2025 KH Information Educational Institute All Right Reserved</p>
     </div>
 </div>
-
 </body>
 </html>
