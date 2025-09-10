@@ -26,6 +26,7 @@
         <result column="JOB_TITLE" property="jobTitle"/>
     </resultMap>
 
+
     <select id="selectListCount" resultType="_int">
         SELECT count(*)
           FROM employee_tb
@@ -57,6 +58,8 @@
          where emp_status = 'Y'
            and e.dept_code = d.dept_code
            and e.job_code = j.job_code
+         order
+            by emp_no desc
     </select>
 
     <select id="selectEmployee" resultMap="employeeResultSet">
@@ -86,19 +89,19 @@
             , to_char(hire_date, 'YYYY-MM-DD') as "hire_date"
             , dept_title
             , job_title
-            from employee_tb e, department d, job_tb j
-            where emp_status = 'Y'
-            and e.dept_code = d.dept_code
-            and e.job_code = j.job_code
-            <if test="empName != null" >
-                and emp_name LIKE '%' || #{keyword} || '%'
-            </if>
-            <if test="deptTitle != null">
-                and dept_title LIKE '%' || #{keyword} || '%'
-            </if>
-            <if test="jobTitle != null">
-                and job_title LIKE '%' || #{keyword} || '%'
-            </if>
+         from employee_tb e, department d, job_tb j
+        where emp_status = 'Y'
+          and e.dept_code = d.dept_code
+          and e.job_code = j.job_code
+          and (emp_name LIKE '%' || #{keyword} || '%'
+           or dept_title LIKE '%' || #{keyword} || '%'
+           or job_title LIKE '%' || #{keyword} || '%')
+        order
+           by emp_no desc
+
+
+
+
     </select>
 
     <select id="selectSearchCount" resultType="_int">
