@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="projectMapper">
+
+	<resultMap type="Project" id="projectResultSet">
+		<result column="pjt_no" property="pjtNo"/>
+		<result column="emp_no" property="empNo"/>
+		<result column="pjt_name" property="pjtName"/>
+        <result column="pjt_startdate" property="pjtStartDate"/>
+        <result column="pjt_enddate" property="pjtEndDate"/>
+		<result column="pjt_enrolldate" property="pjtEnrollDate"/>
+		<result column="pjt_count" property="pjtCount"/>
+		<result column="pjt_status" property="pjtStatus"/>
+		<result column="pjt_content" property="pjtContent"/>
+        <result column="emp_name" property="empName"/>
+	</resultMap>
+
+	<select id="selectProjectList" resultMap="projectResultSet">
+		select
+		       pjt_no
+		     , emp_name
+		     , pjt_name
+             , pjt_startdate
+             , pjt_enddate
+		     , pjt_enrolldate
+		     , pjt_count
+		     , pjt_status
+             , pjt_content
+		  from project_tb
+          join employee_tb using (emp_no)
+		 where pjt_status in('p','c','e','o')
+	</select>
+
+    <insert id="insertProject">
+        insert
+          into project_tb
+             (
+               pjt_no
+             , emp_no
+             , pjt_name
+             , pjt_startdate
+             , pjt_enddate
+             , pjt_enrolldate
+             , pjt_count
+             , pjt_status
+             , pjt_content
+             )
+             values
+             (
+               seq_pno.nextval
+             , #{empNo}
+             , #{pjtName}
+             , #{pjtStartDate}
+             , #{pjtEndDate}
+             , #{pjtEnrollDate}
+             , #{pjtCount}
+             , #{pjtStatus}
+             , #{pjtContent}
+             )
+    </insert>
+
+    <select id="selectProject" resultMap="projectResultSet">
+        select
+              pjt_no
+            , emp_no
+            , emp_name
+            , pjt_name
+            , pjt_startdate
+            , pjt_enddate
+            , pjt_enrolldate
+            , pjt_count
+            , pjt_status
+            , pjt_content
+         from project_tb
+         join employee_tb using (emp_no)
+        where pjt_no = #{pno}
+    </select>
+
+</mapper>

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스케줄 달력</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+          font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+          background-color: #f8f9fa;
+          color: #333;
+        }
+
+        .main-container {
+          display: flex;
+          gap: 2rem;
+          padding: 2rem;
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+
+        .calendar-section {
+          flex: 1;
+          background: white;
+          border-radius: 20px;
+          padding: 2rem;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+          position: relative;
+        }
+
+        .calendar-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+        }
+
+        .calendar-nav { display: flex; align-items: center; gap: 1rem; }
+        .nav-btn {
+          width: 40px; height: 40px; border: none; border-radius: 50%;
+          background: #f3f4f6; cursor: pointer; display: flex; align-items: center; justify-content: center;
+          transition: all 0.3s ease; font-size: 1.2rem;
+        }
+        .nav-btn:hover { background: #e4b6ec; color: white; }
+        .current-month { font-size: 1.5rem; font-weight: bold; color: #1f2937; }
+
+        /* 달력 컨테이너 - 상대 위치 지정 */
+        .calendar-container {
+          position: relative;
+        }
+
+        .calendar-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 1.1px;
+          background: #e5e7eb;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        .calendar-header-cell {
+          background: #e4b6ec; color: white; text-align: center;
+          padding: 1rem; font-weight: 600;
+        }
+
+        .calendar-cell {
+          background: white; min-height: 150px; padding: 0.4rem;
+          position: relative; transition: all 0.3s ease;
+        }
+
+        .calendar-cell:hover { background: #f8fafc; }
+        .calendar-cell.other-month { color: #9ca3af; background: #f9fafb; }
+        .calendar-cell.today { background: white; }
+
+        .date-number {
+          font-weight: bold;
+          margin-bottom: 0.25rem;
+          position: relative;
+          z-index: 10;
+          height: 15px;
+          display: flex;
+          align-items: center;
+        }
+
+        .today .date-number {
+          color: #dc2626;
+          font-weight: bold;
+        }
+
+        /* 일정 오버레이 컨테이너 - 달력 전체에 걸쳐 위치 */
+        .schedule-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+          z-index: 5;
+        }
+
+        /* 일정 바 스타일 - 절대 위치로 전체 달력에 걸쳐 배치 */
+        .schedule-bar {
+          position: absolute;
+          height: 18px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          border-radius: 5px;
+          overflow: hidden;
+          z-index: 15;
+          pointer-events: auto;
+          font-size: 9px;
+        }
+
+        .schedule-bar:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          z-index: 25;
+        }
+
+        .schedule-label {
+          font-size: 0.7rem;
+          color: white;
+          font-weight: 600;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+          white-space: nowrap;
+          padding: 0 6px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+        }
+
+        /* 프로젝트별 색상 */
+        .project1 { background: linear-gradient(135deg,#8B5CF6 0%,#A78BFA 50%,#C4B5FD 100%); }
+        .project2 { background: linear-gradient(135deg,#06B6D4 0%,#67E8F9 50%,#A5F3FC 100%); }
+        .project3 { background: linear-gradient(135deg,#10B981 0%,#34D399 50%,#6EE7B7 100%); }
+        .project4 { background: linear-gradient(135deg,#F97316 0%,#FB923C 50%,#FDBA74 100%); }
+        .meeting1 { background: linear-gradient(135deg,#F59E0B 0%,#FCD34D 50%,#FDE68A 100%); }
+        .meeting2 { background: linear-gradient(135deg,#EF4444 0%,#F87171 50%,#FCA5A5 100%); }
+        .event1 { background: linear-gradient(135deg,#84CC16 0%,#A3E635 50%,#BEF264 100%); }
+        .event2 { background: linear-gradient(135deg,#F97316 0%,#FB923C 50%,#FDBA74 100%); }
+        .event3 { background: linear-gradient(135deg,#6366F1 0%,#818CF8 50%,#A5B4FC 100%); }
+        .event4 { background: linear-gradient(135deg,#10B981 0%,#818CF8 50%,#A5B4FC 100%); }
+        .event5 { background: linear-gradient(135deg,#8B5CF6 0%,#818CF8 50%,#A5B4FC 100%); }
+        .expired1 { background: linear-gradient(135deg,#DC2626 0%,#EF4444 50%,#F87171 100%); }
+
+
+        /* 우측 사이드바 */
+        .sidebar { width: 280px; display: flex; flex-direction: column; gap: 1.5rem; }
+        .project-details, .upcoming-projects {
+          background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .details-title { font-size: 1.125rem; font-weight: bold; margin-bottom: 1rem; color: #1f2937; }
+        .detail-item { margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; }
+        .detail-label { font-size: 0.8rem; color: #6b7280; margin-bottom: 0.25rem; }
+        .detail-value { font-weight: 600; color: #1f2937; }
+
+        .status-badge {
+          display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px;
+          font-size: 0.75rem; font-weight: 600; color: white;
+        }
+
+        .status-badge.pending { background: #f59e0b; }
+        .status-badge.completed { background: #10b981; }
+        .status-badge.overdue { background: #ef4444; }
+
+        .project-item {
+          padding: 1rem; border-left: 4px solid #e4b6ec; background: #f8fafc;
+          border-radius: 8px; margin-bottom: 1rem; transition: all 0.3s ease; cursor: pointer;
+        }
+
+        .project-item:hover { transform: translateX(4px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .project-time { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; }
+        .project-title { font-weight: 600; color: #1f2937; margin-bottom: 0.25rem; }
+        .project-manager { font-size: 0.75rem; color: #6b7280; }
+
+        /* 모달 */
+        .modal {
+          display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+          background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+          background-color: white; margin: 5% auto; padding: 2rem; border-radius: 15px;
+          width: 80%; max-width: 600px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative;
+        }
+        .close {
+          color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;
+          position: absolute; right: 1rem; top: 1rem;
+        }
+        .close:hover { color: #000; }
+        .modal-title { font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1.5rem; padding-right: 2rem; }
+        .modal-section { margin-bottom: 1.5rem; }
+
+        .modal-section-title {
+          font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;
+          border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;
+        }
+
+        .modal-detail { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .modal-detail-label { color: #6b7280; }
+        .modal-detail-value { font-weight: 600; color: #1f2937; }
+
+        @media (max-width: 1500px) {
+          .main-container { flex-direction: column; }
+          .sidebar { width: 100%; }
+        }
+
+    </style>
+</head>
+<body>
+<main class="main-container">
+    <section class="calendar-section">
+        <div class="calendar-header">
+            <div class="calendar-nav">
+                <button class="nav-btn" onclick="previousMonth()">◀</button>
+                <span class="current-month" id="currentMonth">2025년 8월</span>
+                <button class="nav-btn" onclick="nextMonth()">▶</button>
+            </div>
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar-grid" id="calendarGrid">
+                <div class="calendar-header-cell">일</div>
+                <div class="calendar-header-cell">월</div>
+                <div class="calendar-header-cell">화</div>
+                <div class="calendar-header-cell">수</div>
+                <div class="calendar-header-cell">목</div>
+                <div class="calendar-header-cell">금</div>
+                <div class="calendar-header-cell">토</div>
+            </div>
+            <div class="schedule-overlay" id="scheduleOverlay"></div>
+        </div>
+    </section>
+
+    <aside class="sidebar">
+        <div class="project-details">
+            <h3 class="details-title">프로젝트 상세정보</h3>
+            <div id="projectDetailContent">
+                <p style="color: #6b7280; text-align: center; padding: 2rem;">프로젝트를 선택하면 상세정보가 표시됩니다</p>
+            </div>
+        </div>
+
+        <div class="upcoming-projects">
+            <h3 class="details-title">다가오는 프로젝트</h3>
+            <div class="project-item" onclick="showProjectDetail('project1')">
+                <div class="project-time">2025.08.05 - 2025.09.15</div>
+                <div class="project-title">[프로젝트] 모바일 앱 개선</div>
+                <div class="project-manager">담당자: 김개발 과장</div>
+            </div>
+            <div class="project-item" onclick="showProjectDetail('project2')">
+                <div class="project-time">2025.08.12 - 2025.10.20</div>
+                <div class="project-title">[프로젝트] AI 상담 시스템</div>
+                <div class="project-manager">담당자: 이분석 대리</div>
+            </div>
+            <div class="project-item" onclick="showProjectDetail('project3')">
+                <div class="project-time">2025.08.20 - 2025.11.30</div>
+                <div class="project-title">[프로젝트] 보안 강화</div>
+                <div class="project-manager">담당자: 박보안 차장</div>
+            </div>
+        </div>
+    </aside>
+</main>
+
+<!-- 모달 -->
+<div id="projectModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 class="modal-title" id="modalTitle">프로젝트 상세정보</h2>
+
+        <div class="modal-section">
+            <h4 class="modal-section-title">기본 정보</h4>
+            <div class="modal-detail">
+                <span class="modal-detail-label">프로젝트명:</span>
+                <span class="modal-detail-value" id="modalProjectName">-</span>
+            </div>
+            <div class="modal-detail">
+                <span class="modal-detail-label">시작일:</span>
+                <span class="modal-detail-value" id="modalStartDate">-</span>
+            </div>
+            <div class="modal-detail">
+                <span class="modal-detail-label">종료일:</span>
+                <span class="modal-detail-value" id="modalEndDate">-</span>
+            </div>
+            <div class="modal-detail">
+                <span class="modal-detail-label">상태:</span>
+                <span class="modal-detail-value" id="modalStatus">-</span>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <h4 class="modal-section-title">담당자 정보</h4>
+            <div class="modal-detail">
+                <span class="modal-detail-label">프로젝트 매니저:</span>
+                <span class="modal-detail-value" id="modalManager">-</span>
+            </div>
+            <div class="modal-detail">
+                <span class="modal-detail-label">사원번호:</span>
+                <span class="modal-detail-value" id="modalEmployeeId">-</span>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <h4 class="modal-section-title">프로젝트 설명</h4>
+            <p id="modalDescription" style="color: #374151; line-height: 1.6;">-</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 현재 날짜로 초기화 (시스템 현재 날짜)
+    let currentDate = new Date();
+    let calendarGrid = null;
+
+    const allSchedules = {
+        'project1': {
+            name: '[프로젝트] 모바일 앱 개선',
+            startDate: '2025-08-05',
+            endDate: '2025-09-15',
+            status: '진행중',
+            manager: '김개발 과장',
+            employeeId: 'EMP-20230801',
+            description: '기존 모바일 뱅킹 앱의 사용자 경험을 개선하고 새로운 기능을 추가하는 프로젝트입니다.',
+            type: 'project'
+        },
+        'project2': {
+            name: '[프로젝트] AI 상담 시스템',
+            startDate: '2025-08-12',
+            endDate: '2025-10-20',
+            status: '계획중',
+            manager: '이분석 대리',
+            employeeId: 'EMP-20230612',
+            description: 'AI 챗봇 시스템을 구축하여 고객 상담 업무를 자동화합니다.',
+            type: 'project'
+        },
+        'project3': {
+            name: '[프로젝트] 보안 강화',
+            startDate: '2025-08-20',
+            endDate: '2025-11-30',
+            status: '계획중',
+            manager: '박보안 차장',
+            employeeId: 'EMP-20230920',
+            description: '전사 시스템의 보안을 강화하고 정기적인 점검 프로세스를 수립합니다.',
+            type: 'project'
+        },
+        'meeting1': {
+            name: '[회의] 킥오프 미팅',
+            startDate: '2025-08-07',
+            endDate: '2025-08-07',
+            status: '완료',
+            manager: '김개발 과장',
+            employeeId: 'EMP-20230801',
+            description: '모바일 앱 개선 프로젝트의 공식 시작을 알리는 킥오프 미팅입니다.',
+            type: 'meeting'
+        },
+        'event1': {
+            name: '[행사] 신입사원 환영회',
+            startDate: '2025-08-09',
+            endDate: '2025-08-09',
+            status: '완료',
+            manager: '최인사 과장',
+            employeeId: 'EMP-20210405',
+            description: '2025년 하반기 신입사원들을 환영하는 사내 행사입니다.',
+            type: 'event'
+        },
+        'event2': {
+            name: '[행사] 여름 워크샵',
+            startDate: '2025-08-18',
+            endDate: '2025-08-18',
+            status: '예정',
+            manager: '박교육 차장',
+            employeeId: 'EMP-20190815',
+            description: '전직원 대상 여름 워크샵입니다.',
+            type: 'event'
+        },
+        'event3': {
+            name: '[행사] 단체 간담회 및 회식',
+            startDate: '2025-08-23',
+            endDate: '2025-08-23',
+            status: '예정',
+            manager: '김놀자 차장',
+            employeeId: 'EMP-20190825',
+            description: '전직원 간담회 및 회식입니다.',
+            type: 'event'
+        }
+    };
+
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        document.getElementById('currentMonth').textContent = `${year}년 ${month + 1}월`;
+
+        // 달력 시작 날짜 계산
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDate = new Date(firstDay);
+        startDate.setDate(firstDay.getDate() - firstDay.getDay());
+
+        // 기존 셀 삭제
+        const grid = document.getElementById('calendarGrid');
+        const existingCells = grid.querySelectorAll('.calendar-cell');
+        existingCells.forEach(cell => cell.remove());
+
+        // 필요한 주 수 계산 (현재 달이 포함된 주만)
+        const weeksNeeded = getWeeksNeeded(year, month);
+        const totalCells = weeksNeeded * 7;
+
+        // 달력 셀 생성
+        const cells = [];
+        for (let i = 0; i < totalCells; i++) {
+            const cellDate = new Date(startDate);
+            cellDate.setDate(startDate.getDate() + i);
+
+            const cellElement = document.createElement('div');
+            cellElement.className = 'calendar-cell';
+            cellElement.dataset.cellIndex = i;
+
+            if (cellDate.getMonth() !== month) {
+                cellElement.classList.add('other-month');
+            }
+
+            const today = new Date();
+            if (cellDate.toDateString() === today.toDateString()) {
+                cellElement.classList.add('today');
+            }
+
+            cellElement.innerHTML = `<div class="date-number">${cellDate.getDate()}</div>`;
+
+            grid.appendChild(cellElement);
+            cells.push({
+                element: cellElement,
+                date: new Date(cellDate)
+            });
+        }
+
+        calendarGrid = grid;
+
+        // 일정 배치
+        renderSchedules(cells, startDate, year, month);
+    }
+
+    function getWeeksNeeded(year, month) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+
+        // 첫째 날이 속한 주의 일요일
+        const startOfFirstWeek = new Date(firstDay);
+        startOfFirstWeek.setDate(firstDay.getDate() - firstDay.getDay());
+
+        // 마지막 날이 속한 주의 토요일
+        const endOfLastWeek = new Date(lastDay);
+        endOfLastWeek.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+
+        // 주 수 계산
+        const diffTime = endOfLastWeek.getTime() - startOfFirstWeek.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return Math.ceil(diffDays / 7);
+    }
+
+    function renderSchedules(cells, startDate, currentYear, currentMonth) {
+        const scheduleOverlay = document.getElementById('scheduleOverlay');
+        scheduleOverlay.innerHTML = '';
+
+        // 각 셀의 스케줄 행 관리
+        const cellScheduleRows = cells.map(() => []);
+
+        // 현재 달의 첫째 날과 마지막 날
+        const monthStart = new Date(currentYear, currentMonth, 1);
+        const monthEnd = new Date(currentYear, currentMonth + 1, 0);
+
+        // 일정을 시작일 기준으로 정렬
+        const sortedSchedules = Object.entries(allSchedules)
+            .filter(([_, schedule]) => {
+                const scheduleStart = new Date(schedule.startDate);
+                const scheduleEnd = new Date(schedule.endDate);
+
+                // 현재 달과 교집합이 있는지 확인
+                return scheduleEnd >= monthStart && scheduleStart <= monthEnd;
+            })
+            .sort((a, b) => {
+                return new Date(a[1].startDate) - new Date(b[1].startDate);
+            });
+
+        sortedSchedules.forEach(([scheduleId, schedule]) => {
+            const scheduleStart = new Date(schedule.startDate);
+            const scheduleEnd = new Date(schedule.endDate);
+
+            // 일정이 여러 주에 걸치는 경우 각 주별로 바를 생성
+            createMultiRowScheduleBars(cells, scheduleId, schedule, scheduleStart, scheduleEnd, startDate, cellScheduleRows, currentMonth);
+        });
+    }
+
+    function createMultiRowScheduleBars(cells, scheduleId, schedule, scheduleStart, scheduleEnd, calendarStartDate, cellScheduleRows, currentMonth) {
+        // 달력 범위 내에서 일정의 실제 시작과 끝 계산
+        const calendarEndDate = new Date(calendarStartDate.getTime() + (cells.length - 1) * 24 * 60 * 60 * 1000);
+        const actualStart = scheduleStart < calendarStartDate ? calendarStartDate : scheduleStart;
+        const actualEnd = scheduleEnd > calendarEndDate ? calendarEndDate : scheduleEnd;
+
+        // 시작과 끝 셀 인덱스 계산
+        const startCellIndex = Math.floor((actualStart - calendarStartDate) / (1000 * 60 * 60 * 24));
+        const endCellIndex = Math.floor((actualEnd - calendarStartDate) / (1000 * 60 * 60 * 24));
+
+        // 현재 달에 속하는 셀만 필터링
+        let currentMonthStartIndex = -1;
+        let currentMonthEndIndex = -1;
+
+        for (let i = startCellIndex; i <= endCellIndex && i < cells.length; i++) {
+            if (!cells[i].element.classList.contains('other-month')) {
+                if (currentMonthStartIndex === -1) {
+                    currentMonthStartIndex = i;
+                }
+                currentMonthEndIndex = i;
+            }
+        }
+
+        // 현재 달에 속하는 셀이 없으면 일정 바를 생성하지 않음
+        if (currentMonthStartIndex === -1) {
+            return;
+        }
+
+        // 각 주별로 일정 바 생성 (현재 달 범위만)
+        let currentIndex = currentMonthStartIndex;
+
+        while (currentIndex <= currentMonthEndIndex) {
+            const currentRow = Math.floor(currentIndex / 7);
+            const rowStart = currentRow * 7;
+            const rowEnd = Math.min(rowStart + 6, currentMonthEndIndex);
+
+            // 이 주에서 일정이 차지할 셀 범위 (현재 달만)
+            let weekStart = Math.max(currentIndex, rowStart);
+            let weekEnd = Math.min(currentMonthEndIndex, rowEnd);
+
+            // 주의 시작점과 끝점에서 다른 달 셀 제외
+            while (weekStart <= weekEnd && cells[weekStart].element.classList.contains('other-month')) {
+                weekStart++;
+            }
+            while (weekEnd >= weekStart && cells[weekEnd].element.classList.contains('other-month')) {
+                weekEnd--;
+            }
+
+            // 이 주에 현재 달 셀이 없으면 다음 주로
+            if (weekStart > weekEnd) {
+                currentIndex = rowEnd + 1;
+                continue;
+            }
+
+            // 사용 가능한 행 찾기
+            let assignedRow = 0;
+            while (true) {
+                let canUseRow = true;
+                for (let cellIndex = weekStart; cellIndex <= weekEnd; cellIndex++) {
+                    if (cellScheduleRows[cellIndex][assignedRow]) {
+                        canUseRow = false;
+                        break;
+                    }
+                }
+                if (canUseRow) break;
+                assignedRow++;
+            }
+
+            // 이 주의 셀들을 예약 (현재 달만)
+            for (let cellIndex = weekStart; cellIndex <= weekEnd; cellIndex++) {
+                if (!cells[cellIndex].element.classList.contains('other-month')) {
+                    cellScheduleRows[cellIndex][assignedRow] = scheduleId;
+                }
+            }
+
+            // 일정 바 생성
+            createScheduleBar(cells, scheduleId, schedule, weekStart, weekEnd, assignedRow);
+
+            // 다음 주로 이동
+            currentIndex = rowEnd + 1;
+        }
+    }
+
+    function createScheduleBar(cells, scheduleId, schedule, startIndex, endIndex, row) {
+        // 시작과 끝 인덱스가 모두 현재 달에 속하는지 확인
+        const startCell = cells[startIndex];
+        const endCell = cells[endIndex];
+
+        // 현재 달에 속하는 셀들만 찾기
+        let actualStartIndex = startIndex;
+        let actualEndIndex = endIndex;
+
+        // 시작점이 다른 달이면 현재 달의 첫 번째 셀부터 시작
+        while (actualStartIndex <= endIndex && cells[actualStartIndex].element.classList.contains('other-month')) {
+            actualStartIndex++;
+        }
+
+        // 끝점이 다른 달이면 현재 달의 마지막 셀까지만
+        while (actualEndIndex >= startIndex && cells[actualEndIndex].element.classList.contains('other-month')) {
+            actualEndIndex--;
+        }
+
+        // 현재 달에 속하는 셀이 없으면 일정 바를 생성하지 않음
+        if (actualStartIndex > actualEndIndex) {
+            return;
+        }
+
+        const actualStartCell = cells[actualStartIndex];
+        const actualEndCell = cells[actualEndIndex];
+
+        // 달력 그리드의 위치 정보 얻기
+        const startCellRect = actualStartCell.element.getBoundingClientRect();
+        const endCellRect = actualEndCell.element.getBoundingClientRect();
+
+
+        // 상대적 위치 계산 (달력 컨테이너 기준)
+        const containerRect = calendarGrid.parentElement.getBoundingClientRect();
+
+        const left = startCellRect.left - containerRect.left;
+        const right = endCellRect.right - containerRect.left;
+        const width = right - left;
+
+        // 행 위치 계산 (헤더 높이 + 각 셀에서의 오프셋)
+        const headerHeight = 57; // 헤더 셀 높이
+        const cellTopOffset = 25; // 날짜 숫자 아래 여백
+        const rowHeight = 20;
+
+        // 현재 셀 높이를 동적으로 계산
+        const currentCellHeight = actualStartCell.element.offsetHeight;
+        const newCellHeight = currentCellHeight || 150;
+
+        const weekRowIndex = Math.floor(actualStartIndex / 7);
+        const top = headerHeight + (weekRowIndex * (newCellHeight + 1)) + cellTopOffset + (row * rowHeight);
+
+        // 일정 바 생성
+        const bar = document.createElement('div');
+        bar.className = `schedule-bar ${scheduleId}`;
+
+        bar.style.left = `${left + 4}px`; // 셀 패딩만큼 조정
+        bar.style.top = `${top}px`;
+        bar.style.width = `${width - 6}px`; // 양쪽 패딩만큼 빼기
+
+        // 텍스트를 중앙 정렬하기 위한 스타일 직접 적용
+        bar.style.display = 'flex';
+        bar.style.alignItems = 'center';
+        bar.style.justifyContent = 'center';
+        bar.style.textAlign = 'center';
+
+        // 첫 번째 바에만 전체 텍스트 표시, 나머지는 생략
+        const displayText = schedule.name;
+        bar.innerHTML = `<span class="schedule-label" style="width: 100%; text-align: center; display: flex; align-items: center; justify-content: center;">${displayText}</span>`;
+
+        bar.onclick = (e) => {
+            e.stopPropagation();
+            showScheduleDetail(scheduleId);
+        };
+        bar.title = `${schedule.name} (${schedule.startDate} ~ ${schedule.endDate})`;
+
+        document.getElementById('scheduleOverlay').appendChild(bar);
+    }
+
+    function showScheduleDetail(scheduleId) {
+        if (!allSchedules[scheduleId]) return;
+
+        const schedule = allSchedules[scheduleId];
+
+        const detailContent = document.getElementById('projectDetailContent');
+        detailContent.innerHTML = `
+            <div class="detail-item">
+                <div class="detail-label">${schedule.type === 'project' ? '프로젝트명' : schedule.type === 'meeting' ? '회의명' : '행사명'}</div>
+                <div class="detail-value">${schedule.name}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">담당자</div>
+                <div class="detail-value">${schedule.manager}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">시작일</div>
+                <div class="detail-value">${schedule.startDate}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">종료일</div>
+                <div class="detail-value">${schedule.endDate}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">상태</div>
+                <div class="detail-value">
+                    <span class="status-badge ${
+                        schedule.status === '진행' ? 'completed' :
+                        schedule.status === '완료' ? 'completed' :
+                        schedule.status === '검토' ? 'pending' : 'pending'
+                    }">
+                        ${schedule.status}
+                    </span>
+                </div>
+            </div>
+        `;
+
+        openModal(scheduleId);
+    }
+
+    function showProjectDetail(scheduleId) {
+        showScheduleDetail(scheduleId);
+    }
+
+    function openModal(scheduleId) {
+        const schedule = allSchedules[scheduleId];
+        if (!schedule) return;
+
+        document.getElementById('modalTitle').textContent = schedule.name;
+        document.getElementById('modalProjectName').textContent = schedule.name;
+        document.getElementById('modalStartDate').textContent = schedule.startDate;
+        document.getElementById('modalEndDate').textContent = schedule.endDate;
+
+        let statusClass = 'pending';
+        if (schedule.status === '진행중' || schedule.status === '완료') {
+            statusClass = 'completed';
+        } else if (schedule.status === '계획중') {
+            statusClass = 'pending';
+        }
+
+        document.getElementById('modalStatus').innerHTML = `
+            <span class="status-badge ${statusClass}">
+                ${schedule.status}
+            </span>
+        `;
+        document.getElementById('modalManager').textContent = schedule.manager;
+        document.getElementById('modalEmployeeId').textContent = schedule.employeeId;
+        document.getElementById('modalDescription').textContent = schedule.description;
+
+        document.getElementById('projectModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('projectModal').style.display = 'none';
+    }
+
+    function previousMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    }
+
+    function nextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('projectModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    // 키보드 지원
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // 창 크기 변경 시 일정 바 재배치
+    window.addEventListener('resize', () => {
+        setTimeout(renderCalendar, 100);
+    });
+
+    // 달력 초기화 - DOM 로드 후 현재 날짜로 렌더링
+    document.addEventListener('DOMContentLoaded', function() {
+        renderCalendar();
+    });
+
+    // 폴백: DOMContentLoaded가 이미 발생했을 경우
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderCalendar);
+    } else {
+        renderCalendar();
+    }
+</script>
+</body>
+</html>
