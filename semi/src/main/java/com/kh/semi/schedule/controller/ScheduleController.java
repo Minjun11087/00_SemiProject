@@ -1,4 +1,4 @@
-package com.kh.semi.schdule.controller;
+package com.kh.semi.schedule.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
