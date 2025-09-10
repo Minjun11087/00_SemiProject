@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .main-container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .breadcrumb {
+            background: #f7fafc;
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #e4b6ec;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e4b6ec;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: #ef4444;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #e4b6ec;
+            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
+            background: #fefefe;
+        }
+
+        .form-input:read-only {
+            background-color: #f9fafb;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: #10b981;
+            color: white;
+        }
+
+        .status-badge.expired {
+            background: #ef4444;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #d196dd, #c084d4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 182, 236, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* 기술 태그 관련 스타일 */
+        .tag-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background: #e4b6ec;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .tag-remove:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* 팀원 관련 스타일 */
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .member-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e4b6ec;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .member-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .member-details p {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        /* 첨부파일 관련 스타일 */
+        .file-input-container {
+            border: 2px dashed #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-input-container:hover {
+            border-color: #e4b6ec;
+            background: #fefefe;
+        }
+
+        .file-input-container.dragover {
+            border-color: #e4b6ec;
+            background: #f0f9ff;
+        }
+
+        .file-list {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            background: #e4b6ec;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .tag-input-container {
+                flex-direction: column;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-container {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+<main class="main-container">
+    <div class="breadcrumb">
+        <a href="#">프로젝트 관리</a> > <span>새 프로젝트 생성</span>
+    </div>
+
+    <div class="page-header">
+        <h1 class="page-title">프로젝트 생성신청</h1>
+        <p class="page-subtitle">새로운 프로젝트를 생성하고 팀원들과 함께 진행하세요</p>
+    </div>
+
+    <form class="form-container" id="projectForm" action="insert.pj" enctype="multipart/form-data" method="post">
+        <!-- Hidden 필드들 (서버에서 자동 생성되거나 세션에서 가져올 값들) -->
+        <input type="hidden" id="empNo" name="empNo" value="100"> <!-- 세션에서 가져올 현재 사용자 사번 -->
+        <input type="hidden" id="pjtEnrollDate" name="pjtEnrollDate"> <!-- 서버에서 현재 날짜/시간으로 설정 -->
+        <input type="hidden" id="pjtCount" name="pjtCount" value="0"> <!-- 기본값 0 -->
+        <input type="hidden" id="pjtStatus" name="pjtStatus" value="c"> <!-- 기본 상태 -->
+
+        <div class="form-section">
+            <h3 class="section-title">프로젝트 정보</h3>
+
+            <div class="form-group">
+                <label class="form-label required">프로젝트 제목</label>
+                <input type="text" class="form-input" id="pjtName" name="pjtName" placeholder="예: 디지털 뱅킹 시스템 개발" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label required">프로젝트 설명</label>
+                <textarea class="form-textarea" id="pjtContent" name="pjtContent" placeholder="프로젝트의 상세 내용과 목표를 입력해주세요" required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required">시작일</label>
+                    <input type="datetime-local" class="form-input" id="pjtStartDate" name="pjtStartDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">종료일</label>
+                    <input type="datetime-local" class="form-input" id="pjtEndDate" name="pjtEndDate" required>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label class="form-label">기술 태그</label>
+                <div class="tag-input-container">
+                    <input type="text" class="form-input" id="tagInput" placeholder="기술명을 입력하고 Enter를 누르세요" style="flex: 1;">
+                    <button type="button" class="btn btn-secondary btn-small" onclick="addTag()">추가</button>
+                </div>
+                <div class="tag-container" id="tagContainer">
+                    <!-- 태그가 여기에 표시됩니다 -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">첨부 파일</label>
+                <div class="file-input-container" onclick="document.getElementById('upfiles').click()">
+                    <div>📎 파일을 클릭하거나 드래그하여 업로드하세요</div>
+                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.5rem;">
+                        지원 형식: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, PNG (최대 10MB)
+                    </div>
+                </div>
+                <input type="file" id="upfiles" name="upfiles"  multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx, .png" style="display: none;">
+                <div class="file-list" id="fileList">
+                    <!-- 업로드된 파일들이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">프로젝트 구성원</h3>
+
+            <div class="form-group">
+                <label class="form-label">팀원 추가</label>
+                <div class="tag-input-container">
+                    <input type="text" class="form-input" id="memberName" placeholder="사원명" style="flex: 1;">
+                    <select class="form-select" id="memberPosition" style="flex: 1;">
+                        <option value="">직급 선택</option>
+                        <option value="지점장">지점장</option>
+                        <option value="부장">부장</option>
+                        <option value="팀장">팀장</option>
+                        <option value="대리">대리</option>
+                        <option value="사원">사원</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="addMember()">추가</button>
+                </div>
+                <div id="memberList">
+                    <div class="member-item">
+                        <div class="member-info">
+                            <div class="member-avatar">조</div>
+                            <div class="member-details">
+                                <h4>조인순</h4>
+                                <p>부장 • 프로젝트 리더</p>
+                            </div>
+                        </div>
+                        <span class="status-badge">PL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">
+                ✅ 프로젝트 생성
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                🔄 초기화
+            </button>
+            <a href="list.pj" class="btn btn-secondary">
+                📋 목록으로
+            </a>
+        </div>
+    </form>
+
+</main>
+<script>
+    let tags = [];
+    let members = [];
+    let uploadedFiles = [];
+
+    // 현재 날짜/시간 설정
+    function setCurrentDateTime() {
+        const now = new Date();
+        const currentDateTime = now.toISOString().slice(0, 16);
+
+        document.getElementById('pjtStartDate').value = currentDateTime;
+
+        const oneWeekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        document.getElementById('pjtEndDate').value = oneWeekLater.toISOString().slice(0, 16);
+
+        // 등록일시도 현재 시간으로 설정
+        document.getElementById('pjtEnrollDate').value = now.toISOString();
+    }
+
+    // 기술 태그 추가
+    function addTag() {
+        const tagInput = document.getElementById('tagInput');
+        const tagValue = tagInput.value.trim();
+
+        if (tagValue && !tags.includes(tagValue)) {
+            tags.push(tagValue);
+            updateTagDisplay();
+            tagInput.value = '';
+        }
+    }
+
+    // 태그 표시 업데이트
+    function updateTagDisplay() {
+        const tagContainer = document.getElementById('tagContainer');
+        tagContainer.innerHTML = '';
+
+        tags.forEach((tag, index) => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'tag';
+            tagElement.innerHTML = `
+                ${tag}
+                <span class="tag-remove" onclick="removeTag(${index})">×</span>
+            `;
+            tagContainer.appendChild(tagElement);
+        });
+    }
+
+    // 태그 제거
+    function removeTag(index) {
+        tags.splice(index, 1);
+        updateTagDisplay();
+    }
+
+    // Enter 키로 태그 추가
+    document.getElementById('tagInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTag();
+        }
+    });
+
+    // 팀원 추가 (중복 생성 문제 해결)
+    function addMember() {
+        const nameInput = document.getElementById('memberName');
+        const positionSelect = document.getElementById('memberPosition');
+        const name = nameInput.value.trim();
+        const position = positionSelect.value;
+
+        if (name && position) {
+            // 중복 체크 - 이름이 같은 팀원이 있는지 확인
+            const existingMember = members.find(member => member.name === name);
+            if (existingMember) {
+                alert('이미 추가된 팀원입니다.');
+                return;
+            }
+
+            const member = {
+                name: name,
+                position: position
+            };
+
+            members.push(member);
+            updateMemberDisplay();
+            nameInput.value = '';
+            positionSelect.value = '';
+        } else {
+            alert('사원명과 직급을 모두 입력해주세요.');
+        }
+    }
+
+    // 팀원 표시 업데이트 (완전 재생성 방식으로 중복 방지)
+    function updateMemberDisplay() {
+        const memberList = document.getElementById('memberList');
+
+        // 기본 프로젝트 리더 유지하고 추가된 팀원들만 표시
+        memberList.innerHTML = `
+            <div class="member-item">
+                <div class="member-info">
+                    <div class="member-avatar">조</div>
+                    <div class="member-details">
+                        <h4>조인순</h4>
+                        <p>부장 • 프로젝트 리더</p>
+                    </div>
+                </div>
+                <span class="status-badge">PL</span>
+            </div>
+        `;
+
+        // 추가된 팀원들 표시
+        members.forEach((member, index) => {
+            const memberElement = document.createElement('div');
+            memberElement.className = 'member-item';
+            memberElement.innerHTML = `
+                <div class="member-info">
+                    <div class="member-avatar">${member.name.charAt(0)}</div>
+                    <div class="member-details">
+                        <h4>${member.name}</h4>
+                        <p>${member.position}</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-small" onclick="removeMember(${index})">제거</button>
+            `;
+            memberList.appendChild(memberElement);
+        });
+    }
+
+    // 팀원 제거
+    function removeMember(index) {
+        members.splice(index, 1);
+        updateMemberDisplay();
+    }
+
+    // 파일 업로드 처리
+    document.getElementById('upfiles').addEventListener('change', function(e) {
+        handleFiles(e.target.files);
+    });
+
+    // 드래그 앤 드롭 처리
+    const fileContainer = document.querySelector('.file-input-container');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileContainer.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileContainer.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileContainer.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        fileContainer.classList.add('dragover');
+    }
+
+    function unhighlight(e) {
+        fileContainer.classList.remove('dragover');
+    }
+
+    fileContainer.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+    }
+
+    // 파일 처리
+    function handleFiles(files) {
+        [...files].forEach(uploadFile);
+    }
+
+    function uploadFile(file) {
+        if (file.size > 10 * 1024 * 1024) { // 10MB 제한
+            alert('파일 크기는 10MB를 초과할 수 없습니다.');
+            return;
+        }
+
+        const fileObj = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            id: Date.now() + Math.random()
+        };
+
+        uploadedFiles.push(fileObj);
+        updateFileDisplay();
+    }
+
+    // 파일 표시 업데이트
+    function updateFileDisplay() {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+
+        uploadedFiles.forEach((file, index) => {
+            const fileElement = document.createElement('div');
+            fileElement.className = 'file-item';
+
+            const fileExtension = file.name.split('.').pop().toUpperCase();
+            const fileSize = (file.size / 1024 / 1024).toFixed(2) + 'MB';
+
+            fileElement.innerHTML = `
+                <div class="file-info">
+                    <div class="file-icon">${fileExtension}</div>
+                    <div class="file-details">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${file.name}</h4>
+                        <p style="font-size: 0.8rem; color: #6b7280;">${fileSize}</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-small" onclick="removeFile(${index})">제거</button>
+            `;
+            fileList.appendChild(fileElement);
+        });
+    }
+
+    // 파일 제거
+    function removeFile(index) {
+        uploadedFiles.splice(index, 1);
+        updateFileDisplay();
+    }
+
+    // 폼 초기화
+    function resetForm() {
+        if (confirm('입력한 내용이 모두 삭제됩니다. 계속하시겠습니까?')) {
+            document.getElementById('pjtName').value = '';
+            document.getElementById('pjtContent').value = '';
+            document.getElementById('tagInput').value = '';
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberPosition').value = '';
+
+            tags = [];
+            members = [];
+            uploadedFiles = [];
+
+            updateTagDisplay();
+            updateMemberDisplay();
+            updateFileDisplay();
+            setCurrentDateTime();
+        }
+    }
+
+    // 폼 제출 처리
+    document.getElementById('projectForm').addEventListener('submit', function(e) {
+
+        const pjtName = document.getElementById('pjtName').value.trim();
+        const pjtContent = document.getElementById('pjtContent').value.trim();
+        const pjtStartDate = document.getElementById('pjtStartDate').value;
+        const pjtEndDate = document.getElementById('pjtEndDate').value;
+
+        // 필수 입력 검증
+        if (!pjtName) {
+            alert('프로젝트 제목을 입력해주세요.');
+            document.getElementById('pjtName').focus();
+            return;
+        }
+
+        if (!pjtContent) {
+            alert('프로젝트 설명을 입력해주세요.');
+            document.getElementById('pjtContent').focus();
+            return;
+        }
+
+        if (!pjtStartDate || !pjtEndDate) {
+            alert('프로젝트 시작일과 종료일을 모두 입력해주세요.');
+            return;
+        }
+
+        // 날짜 유효성 검증
+        const start = new Date(pjtStartDate);
+        const end = new Date(pjtEndDate);
+
+        if (start >= end) {
+            alert('종료일은 시작일보다 늦어야 합니다.');
+            document.getElementById('pjtEndDate').focus();
+            return;
+        }
+
+        // 성공 메시지
+        alert('프로젝트가 성공적으로 생성되었습니다!');
+
+        // 실제로는 서버로 데이터를 전송하는 코드가 여기에 들어갑니다.
+        console.log({
+            empNo: document.getElementById('empNo').value,
+            pjtName: pjtName,
+            pjtContent: pjtContent,
+            pjtStartDate: pjtStartDate,
+            pjtEndDate: pjtEndDate,
+            pjtEnrollDate: document.getElementById('pjtEnrollDate').value,
+            pjtCount: document.getElementById('pjtCount').value,
+            pjtStatus: document.getElementById('pjtStatus').value,
+            tags: tags,
+            members: members,
+            files: uploadedFiles
+        });
+    });
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        setCurrentDateTime();
+        // 페이지 로드 시 기본 팀원 표시
+        updateMemberDisplay();
+    });
+</script>
+
+</body>
+</html>
