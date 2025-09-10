@@ -17,16 +17,16 @@ import java.util.ArrayList;
 public class EmployeeController {
 
     @Autowired
-    private EmployeeService bservice;
+    private EmployeeService empService;
 
     @GetMapping("list.emp")
     public ModelAndView selectList(@RequestParam(value="cpage", defaultValue = "1") int currentPage, ModelAndView mv){
 
-        int listCount = bservice.selectListCount();
+        int listCount = empService.selectListCount();
 
         PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
 
-        ArrayList<Employee> list = bservice.selectList(pi);
+        ArrayList<Employee> list = empService.selectList(pi);
 
         mv.addObject("pi", pi)
                 .addObject("list", list)
@@ -39,7 +39,7 @@ public class EmployeeController {
     @GetMapping("detail.emp")
     public String selectEmployee(int eno, Model model){
 
-         Employee emp = bservice.selectEmployee(eno);
+         Employee emp = empService.selectEmployee(eno);
 
          model.addAttribute("emp", emp);
          return "employee/empDetailView";
@@ -57,10 +57,10 @@ public class EmployeeController {
             @RequestParam(value="cpage", defaultValue= "1") int currentPage,
             @RequestParam("keyword") String keyword, Model model){
 
-        int listCount = bservice.selectSearchCount(keyword);
+        int listCount = empService.selectSearchCount(keyword);
         PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
 
-        ArrayList<Employee> list = bservice.searchEmployee(keyword, pi);
+        ArrayList<Employee> list = empService.searchEmployee(keyword, pi);
 
         model.addAttribute("list", list);
         model.addAttribute("pi", pi);
