@@ -27,7 +27,7 @@
     select
           emp_no
         , emp_name
-        , to_char(emp_resinum, 'yyMMdd') as "emp_resinum"
+        , emp_resinum
         , emp_id
         , emp_pwd
         , emp_gender
@@ -40,9 +40,10 @@
         , emp_sign
         , salary
         , bonus
-        , to_char(hire_date, 'yyyy-MM-dd') as "hire_date"
+        , to_date(hire_date, 'yyyy-MM-dd') as "hire_date"
         , modify_date
         , emp_picture
+        , messenger_status
         from EMPLOYEE_TB
         where emp_status = 'Y'
         and emp_id = #{ empId }
