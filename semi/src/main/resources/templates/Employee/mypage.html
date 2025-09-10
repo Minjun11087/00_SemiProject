@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org/"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -227,7 +232,27 @@
             font-weight: 500;
         }
 
+        .menu{
+            width: 240px;
+            background: none;
+            border: none;
+            padding: 16px 24px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            color: #475569;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
         .menu-button:hover {
+            background-color: #f1f5f9;
+            color: #e4b6ec;
+            border-left-color: #e4b6ec;
+        }
+
+        .menu:hover{
             background-color: #f1f5f9;
             color: #e4b6ec;
             border-left-color: #e4b6ec;
@@ -374,114 +399,73 @@
 
 </head>
 <body>
-   <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon">
-                    <img src="https://postfiles.pstatic.net/MjAyNTA4MjdfMjYy/MDAxNzU2Mjc3NTc3NjM0.-R8HMgHxhKRBFZdL9HK5a_VaeNuRw5qInVugnP2vG6kg.3q5rf9CTO_2RruzKh3cFdQEf69NFdaZjhRkL0afVzLMg.JPEG/fdsafda.jpg?type=w773">
-                </div>
-                <span>KH BANK</span>
+
+<div class="container">
+    <!-- 왼쪽 사이드바 -->
+    <div class="sidebar">
+        <div class="profile-section">
+            <div class="profile-box">
+                사원<br>사진
             </div>
-            <nav class="nav-menu">
-                <div class="nav-item active has-dropdown">
-                    프로젝트 관리
-                    <div class="dropdown-menu">
-                        <a href="#" class="dropdown-item">📋 프로젝트 목록</a>
-                        <a href="#" class="dropdown-item">✨ 프로젝트 생성</a>
-                        <a href="#" class="dropdown-item">✏️ 프로젝트 수정/삭제</a>
-                    </div>
-                </div>
-                <div class="nav-item">사내 일정</div>
-                <div class="nav-item">고객 관리</div>
-                <div class="nav-item">조직도</div>
-                <div class="nav-item">결재 내역</div>
-                <div class="nav-item">마이페이지</div>
-            </nav>
-            <div class="user-profile">
-                <div class="notification-badge">3</div>
-                <div class="profile-avatar">조</div>
-                <span>조인순 부장</span>
-            </div>
-        </div>
-    </header>
-
-
-
-    <script>
-        // 탭 클릭 이벤트
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-    </script>
-
-    <div class="container">
-        <!-- 왼쪽 사이드바 -->
-        <div class="sidebar">
-            <div class="profile-section">
-                <div class="profile-box">
-                    사원<br>사진
-                </div>
-                <div class="profile-info">
-                    <div class="profile-name">홍길동</div>
-                    <div class="profile-dept">개발팀 · 대리</div>
-                </div>
-            </div>
-            
-            <div class="menu-section">
-                <button class="menu-button" onclick=" ">개인정보 수정</button>
-                <button class="menu-button" onclick=" ">개인서명 신청</button>
-                <button class="menu-button" onclick=" ">개인 서명 변경 신청</button>
+            <div class="profile-info">
+                <div class="profile-name">홍길동</div>
+                <div class="profile-dept">개발팀 · 대리</div>
             </div>
         </div>
 
-        <!-- 메인 콘텐츠 -->
-        <div class="main-content">
-            <div class="content-header">
-                <h2 class="content-title">개인정보 관리</h2>
-            </div>
-            
+        <div class="menu-section">
+            <a href="update.bo" class="menu" style="text-decoration: none;">개인정보 수정</a>
+            <button class="menu-button" onclick="">개인서명 신청</button>
+            <button class="menu-button" onclick="">개인 서명 변경 신청</button>
+        </div>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+        <div class="content-header">
+            <h2 class="content-title">개인정보 관리</h2>
+        </div>
+
+        <!-- Form 태그 추가 -->
+        <form id="empInfoForm" action="mypage.bo" method="post" enctype="multipart/form-data">
             <div class="content-body">
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">이름</label>
-                        <input type="text" class="form-input" id="empName" name="empName" value="${ loginUser.empName }" readonly>
+                        <input type="text" class="form-input" id="empName" name="empName" readonly>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">사원번호</label>
-                        <input type="text" class="form-input" id="empNo" name="empNo" value="${loginUser.empNo}"  readonly>
+                        <input type="text" class="form-input" id="empNo" name="empNo" readonly>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">아이디</label>
-                        <input type="text" class="form-input" id="empId" name="empId" value="${loginUser.empId}"  readonly>
+                        <input type="text" class="form-input" id="empId" name="empId" readonly>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">생년월일</label>
-                        <input type="date" class="form-input" id="empRsinum" name="empRsinum" value="${loginUser.empRsinum}" readonly>
+                        <input type="date" class="form-input" id="empRsinum" name="empRsinum" readonly>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">부서</label>
-                        <select class="form-input" id="deptCode" name="deptCode" name="deptCode" value="${loginUser.deptCode}" readonly>
+                        <select class="form-input" id="deptCode" name="deptCode" readonly disabled>
                             <option value="">부서 선택</option>
-                            <option value="D1" >지점장</option>
-                            <option value="D2">총무부</option>
+                            <option value="D1">지점장</option>
+                            <option value="D2">이무부</option>
                             <option value="D3">인사부</option>
                             <option value="D4">영업부</option>
                             <option value="D5">관리부</option>
                             <option value="D6">지원부</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">직급</label>
-                        <select class="form-input" id="jobCode" name="jobCode" value="${loginUser.jobCode}"  readonly>
+                        <select class="form-input" id="jobCode" name="jobCode" readonly disabled>
                             <option value="">직급 선택</option>
                             <option value="J1">지점장</option>
                             <option value="J2">부장</option>
@@ -489,33 +473,34 @@
                             <option value="J4">사원</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">연봉</label>
-                        <input type="text" class="form-input" id="salary" name="salary" value="${loginUser.salary}" readonly>
+                        <input type="text" class="form-input" id="salary" name="salary" readonly>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">입사일</label>
-                        <input type="date" class="form-input" id="hireDate" name="hireDate" value="${loginUser.hireDate}" readonly>
+                        <input type="date" class="form-input" id="hireDate" name="hireDate" readonly>
                     </div>
-                    
+
                     <div class="signature-area">
                         <label class="form-label">개인 서명</label>
-                        <div class="signature-box" id="empSign" name="empSign" readonly>
+                        <div class="signature-box" id="empSignDisplay">
                             개인 서명을 등록해주세요
                         </div>
+                        <input type="file" id="empSign" name="empSign" accept="image/*" style="margin-top: 10px;">
                     </div>
                 </div>
             </div>
-            
+
             <div class="action-buttons">
-                <button class="btn btn-secondary">취소</button>
-                <button class="btn btn-primary">저장</button>
+                <button type="submit" class="btn btn-secondary">저장</button>
+                <button type="reset" class="btn btn-primary">취소</button>
             </div>
-        </div>
+        </form>
     </div>
-    
-    
+</div>
+
 </body>
 </html>
