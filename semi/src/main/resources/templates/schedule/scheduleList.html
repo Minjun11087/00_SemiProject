@@ -353,8 +353,10 @@
         const lastDay = new Date(year, month + 1, 0);
         const startOfFirstWeek = new Date(firstDay);
         startOfFirstWeek.setDate(firstDay.getDate() - firstDay.getDay());
+
         const endOfLastWeek = new Date(lastDay);
         endOfLastWeek.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+
         const diffTime = endOfLastWeek.getTime() - startOfFirstWeek.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return Math.ceil(diffDays / 7);
@@ -363,9 +365,12 @@
     function renderSchedules(cells, startDate, currentYear, currentMonth) {
         const scheduleOverlay = document.getElementById('scheduleOverlay');
         scheduleOverlay.innerHTML = '';
+
         const cellScheduleRows = cells.map(() => []);
+
         const monthStart = new Date(currentYear, currentMonth, 1);
         const monthEnd = new Date(currentYear, currentMonth + 1, 0);
+
         Object.entries(allSchedulesObj).forEach(([scheduleId, schedule]) => {
             const scheduleStart = new Date(schedule.schStartDate);
             const scheduleEnd = new Date(schedule.schEndDate);
@@ -373,6 +378,7 @@
                 createMultiRowScheduleBars(cells, scheduleId, schedule, scheduleStart, scheduleEnd, startDate, cellScheduleRows, currentMonth);
             }
         });
+
     }
 
     function createMultiRowScheduleBars(cells, scheduleId, schedule, scheduleStart, scheduleEnd, calendarStartDate, cellScheduleRows, currentMonth) {
