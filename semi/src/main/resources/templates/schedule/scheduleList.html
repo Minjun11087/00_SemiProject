@@ -9,6 +9,7 @@
     <title>스케줄 달력</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
           font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
           background-color: #f8f9fa;
@@ -129,7 +130,7 @@
           font-size: 0.75rem; font-weight: 600; color: white;
         }
         .status-badge.progressing { background: #10b981; }
-        .status-badge.reviewing { background: #3B82F6; }
+        .status-badge.checking { background: #3B82F6; }
         .status-badge.expired { background: #ef4444; }
         .schedule-item {
           padding: 1rem; border-left: 4px solid #e4b6ec; background: #f8fafc;
@@ -177,6 +178,7 @@
                 <button class="nav-btn" onclick="nextMonth()">▶</button>
             </div>
         </div>
+
         <div class="calendar-container">
             <div class="calendar-grid" id="calendarGrid">
                 <div class="calendar-header-cell">일</div>
@@ -187,12 +189,14 @@
                 <div class="calendar-header-cell">금</div>
                 <div class="calendar-header-cell">토</div>
             </div>
-            <div class="schedule-overlay" id="scheduleOverlay"></div>
+            <div class="schedule-overlay" id="scheduleOverlay">
+            </div>
         </div>
+
     </section>
     <aside class="sidebar">
         <div class="schedule-details">
-            <h3 class="details-title">일정 상세정보</h3>
+            <h3 class="details-title">일정 상세 정보</h3>
             <div id="scheduleDetailContent">
                 <p style="color: #6b7280; text-align: center; padding: 2rem;">일정을 선택하면 상세정보가 표시됩니다</p>
             </div>
@@ -203,6 +207,7 @@
         </div>
     </aside>
 </main>
+
 <div id="scheduleModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
@@ -250,9 +255,9 @@
 
 <script th:inline="javascript">
     const allSchedules = /*[[${plist}]]*/ [];
-
     let currentDate = new Date();
     let calendarGrid = null;
+
     const allSchedulesObj = {};
     allSchedules.forEach(schedule => {
         allSchedulesObj[`schedule${schedule.schNo}`] = schedule;
@@ -268,9 +273,9 @@
             return { text: '만료', class: 'expired' };
         } else {
             switch (schedule.schStatus) {
-                case 'p': return { text: '진행중', class: 'progressing' };
-                case 'c': return { text: '검토중', class: 'reviewing' };
-                default: return { text: '검토중', class: 'reviewing' };
+                case 'p': return { text: '진행', class: 'progressing' };
+                case 'c': return { text: '검토', class: 'checking' };
+                default: return { text: '검토', class: 'checking' };
             }
         }
     }
@@ -285,7 +290,7 @@
             return 'e'; // 만료 상태
         } else {
             // 상태값 정리 (공백 제거, 소문자 변환)
-            const status = String(schedule.schStatus).trim().toLowerCase();
+            const status = String(schedule.schStatus).toLowerCase();
             return status; // 원래 상태 사용
         }
     }
@@ -302,29 +307,38 @@
         document.getElementById('currentMonth').textContent = `${year}년 ${month + 1}월`;
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
+
         const startDate = new Date(firstDay);
         startDate.setDate(firstDay.getDate() - firstDay.getDay());
+
         const grid = document.getElementById('calendarGrid');
         const existingCells = grid.querySelectorAll('.calendar-cell');
         existingCells.forEach(cell => cell.remove());
+
         const weeksNeeded = getWeeksNeeded(year, month);
         const totalCells = weeksNeeded * 7;
         const cells = [];
+
         for (let i = 0; i < totalCells; i++) {
             const cellDate = new Date(startDate);
             cellDate.setDate(startDate.getDate() + i);
+
             const cellElement = document.createElement('div');
             cellElement.className = 'calendar-cell';
             cellElement.dataset.cellIndex = i;
+
             if (cellDate.getMonth() !== month) {
                 cellElement.classList.add('other-month');
             }
+
             const today = new Date();
             if (cellDate.toDateString() === today.toDateString()) {
                 cellElement.classList.add('today');
             }
+
             cellElement.innerHTML = `<div class="date-number">${cellDate.getDate()}</div>`;
             grid.appendChild(cellElement);
+
             cells.push({
                 element: cellElement,
                 date: new Date(cellDate)
@@ -567,7 +581,6 @@ function renderUpcomingSchedules() {
     });
 }
 
-
     window.onclick = function(event) {
         const modal = document.getElementById('scheduleModal');
         if (event.target === modal) {
@@ -590,6 +603,5 @@ function renderUpcomingSchedules() {
         renderUpcomingSchedules();
     });
 </script>
-
 </body>
 </html>
