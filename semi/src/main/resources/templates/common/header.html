@@ -182,20 +182,20 @@
 
             <div class="nav-item has-dropdown">고객 관리
                 <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item">고객 정보조회</a>
-                    <a href="#" class="dropdown-item">고객 추가</a>
+                    <a href="list.cus" class="dropdown-item">고객 정보조회</a>
+                    <a href="insert.cus" class="dropdown-item">고객 추가</a>
                 </div>
             </div>
             <div class="nav-item has-dropdown">사원 관리
                 <div class="dropdown-menu">
-                    <a href="chart.emp" class="dropdown-item">사원 조직도</a>
                     <a href="list.emp" class="dropdown-item">사원 목록</a>
+                    <a href="zozic.emp" class="dropdown-item">사원 조직도</a>
                 </div>
             </div>
             <div class="nav-item has-dropdown">결재 내역
                 <div class="dropdown-menu">
-                    <a href="list.ap" class="dropdown-item">결재 게시판</a>
-                    <a href="#" class="dropdown-item">결재 신청</a>
+                    <a href="list.app" class="dropdown-item">결재 게시판</a>
+                    <a href="enrollForm.app" class="dropdown-item">결재 신청</a>
                 </div>
             </div>
             <div class="nav-item has-dropdown">마이페이지
@@ -208,8 +208,8 @@
         </nav>
         <div class="user-profile">
             <div class="notification-badge">3</div>
-            <div class="profile-avatar">조</div>
-            <span th:text="${session.loginUser.empName}">조인순 부장</span>
+            <div class="profile-avatar" th:text="${session.loginUser.empName.substring(0, 1)}">조</div>
+            <span  th:text="${session.loginUser.empName}">조인순 부장</span>
         </div>
     </div>
 </header>
