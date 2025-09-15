@@ -295,11 +295,17 @@
         }
     }
 
-    function formatDate(dateStr) {
-        if (!dateStr) return '-';
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('ko-KR');
-    }
+      function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
+        }
+
 
     function renderCalendar() {
         const year = currentDate.getFullYear();
@@ -405,18 +411,22 @@
             const currentRow = Math.floor(currentIndex / 7);
             const rowStart = currentRow * 7;
             const rowEnd = Math.min(rowStart + 6, currentMonthEndIndex);
+
             let weekStart = Math.max(currentIndex, rowStart);
             let weekEnd = Math.min(currentMonthEndIndex, rowEnd);
             while (weekStart <= weekEnd && cells[weekStart].element.classList.contains('other-month')) {
                 weekStart++;
             }
+
             while (weekEnd >= weekStart && cells[weekEnd].element.classList.contains('other-month')) {
                 weekEnd--;
             }
+
             if (weekStart > weekEnd) {
                 currentIndex = rowEnd + 1;
                 continue;
             }
+
             let assignedRow = 0;
             while (true) {
                 let canUseRow = true;
@@ -429,11 +439,13 @@
                 if (canUseRow) break;
                 assignedRow++;
             }
+
             for (let cellIndex = weekStart; cellIndex <= weekEnd; cellIndex++) {
                 if (!cells[cellIndex].element.classList.contains('other-month')) {
                     cellScheduleRows[cellIndex][assignedRow] = scheduleId;
                 }
             }
+
             createScheduleBar(cells, scheduleId, schedule, weekStart, weekEnd, assignedRow);
             currentIndex = rowEnd + 1;
         }
@@ -487,7 +499,7 @@
             e.stopPropagation();
             showScheduleDetail(scheduleId);
         };
-        bar.title = `${schedule.schName} (${schedule.schStartDate} ~ ${schedule.schEndDate})`;
+        bar.title = `${schedule.schName} (${formatDate(schedule.schStartDate)} ~ ${formatDate(schedule.schEndDate)})`;
         document.getElementById('scheduleOverlay').appendChild(bar);
     }
 
@@ -509,11 +521,11 @@
             </div>
             <div class="detail-item">
                 <div class="detail-label">시작일</div>
-                <div class="detail-value">${schedule.schStartDate}</div>
+                <div class="detail-value">${formatDate(schedule.schStartDate)}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">종료일</div>
-                <div class="detail-value">${schedule.schEndDate}</div>
+                <div class="detail-value">${formatDate(schedule.schEndDate)}</div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">상태</div>
@@ -537,8 +549,8 @@
         const status = getScheduleStatus(schedule);
         document.getElementById('modalTitle').textContent = schedule.schName;
         document.getElementById('modalSchName').textContent = schedule.schName;
-        document.getElementById('modalSchStartDate').textContent = schedule.schStartDate;
-        document.getElementById('modalSchEndDate').textContent = schedule.schEndDate;
+        document.getElementById('modalSchStartDate').textContent = formatDate(schedule.schStartDate);
+        document.getElementById('modalSchEndDate').textContent = formatDate(schedule.schEndDate);
         document.getElementById('modalSchCount').textContent = schedule.schCount;
 
 
@@ -578,7 +590,7 @@ function renderUpcomingSchedules() {
             scheduleItem.className = 'schedule-item';
             scheduleItem.onclick = () => showScheduleDetail(scheduleId);
             scheduleItem.innerHTML = `
-                <div class="schedule-time">${schedule.schStartDate} - ${schedule.schEndDate}</div>
+                <div class="schedule-time">${formatDate(schedule.schStartDate)} - ${formatDate(schedule.schEndDate)}</div>
                 <div class="schedule-title">${schedule.schName}</div>
                 <div class="schedule-manager">작성자: ${schedule.empName}</div>
             `;

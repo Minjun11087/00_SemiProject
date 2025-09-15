@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://wwww.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
       th:fragment="header"
 >
@@ -209,7 +209,7 @@
         <div class="user-profile">
             <div class="notification-badge">3</div>
             <div class="profile-avatar">조</div>
-            <span>조인순 부장</span>
+            <span th:text="${session.loginUser.empName}">조인순 부장</span>
         </div>
     </div>
 </header>

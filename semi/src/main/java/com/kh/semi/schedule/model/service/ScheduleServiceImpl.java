@@ -19,4 +19,9 @@ public class ScheduleServiceImpl implements ScheduleService{
     public ArrayList<Schedule> selectScheduleList() {
         return sDao.selectScheduleList(sqlSession);
     }
+
+    @Override
+    public int insertSchedule(Schedule s) {
+        return sDao.insertSchedule(s, sqlSession);
+    }
 }

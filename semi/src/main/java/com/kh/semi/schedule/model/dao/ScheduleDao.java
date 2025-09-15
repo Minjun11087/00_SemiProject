@@ -12,4 +12,9 @@ public class ScheduleDao {
         return (ArrayList)sqlSession.selectList("scheduleMapper.selectScheduleList");
 
     }
+
+    public int insertSchedule(Schedule s, SqlSessionTemplate sqlSession) {
+        return sqlSession.insert("scheduleMapper.insertSchedule", s);
+
+    }
 }
