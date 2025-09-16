@@ -432,7 +432,7 @@ CREATE TABLE SCHEDULE ( -- 일정 테이블
     EMP_NO NUMBER REFERENCES EMPLOYEE_TB(EMP_NO) NOT NULL, -- 작성자 사원번호
     SCH_ENROLLDATE DATE DEFAULT SYSDATE NOT NULL, -- 등록일    
     SCH_COUNT NUMBER DEFAULT 0 NOT NULL, -- 조회수
-    SCH_STATUS CHAR(1) DEFAULT 'c' NOT NULL CHECK (SCH_STATUS IN ('p','c','e')) -- 일정 상태(진행중(p) | 검토중(c) | 만료(e))| 삭제(n)
+    SCH_STATUS CHAR(1) DEFAULT 'c' NOT NULL CHECK (SCH_STATUS IN ('p','c','e','n')) -- 일정 상태(진행중(p) | 검토중(c) | 만료(e))| 삭제(n)
 );
 
 --=================================================

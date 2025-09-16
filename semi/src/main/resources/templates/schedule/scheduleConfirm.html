@@ -110,66 +110,12 @@
     </div>
 </div>
 
-<script>
-    // 샘플 데이터 (Java Schedule 클래스와 일치, schStatus: p(승인), c(검토), n(반려))
-    const requests = [
-        {
-            schNo: 1,
-            schName: "월간 실적 검토 회의",
-            schContent: "8월 실적 분석 및 9월 목표 설정을 위한 부서별 회의",
-            empName: "조인순 부장",
-            empNo: 100,
-            schStartDate: "2025-08-30 09:00",
-            schEndDate: "2025-08-30 11:00",
-            schEnrollDate: "2025-08-26 14:30",
-            schStatus: "c", // 검토(c), 승인(p), 반려(n)
-            schCount: 0,
-            actionDate: null,
-            actionReason: null
-        },
-        {
-            schNo: 2,
-            schName: "신입사원 교육",
-            schContent: "2025년 하반기 신입사원 오리엔테이션 및 기초 교육",
-            empName: "박교육 차장",
-            empNo: 101,
-            schStartDate: "2025-09-02 10:00",
-            schEndDate: "2025-09-02 17:00",
-            schEnrollDate: "2025-08-25 11:20",
-            schStatus: "p",
-            schCount: 0,
-            actionDate: "2025-08-26 09:15",
-            actionReason: "교육 계획이 체계적으로 수립되어 승인합니다."
-        },
-        {
-            schNo: 3,
-            schName: "시스템 정기점검",
-            schContent: "서버 및 네트워크 장비 정기점검으로 인한 시스템 중단",
-            empName: "이개발 대리",
-            empNo: 102,
-            schStartDate: "2025-08-31 02:00",
-            schEndDate: "2025-08-31 06:00",
-            schEnrollDate: "2025-08-24 16:45",
-            schStatus: "n",
-            schCount: 0,
-            actionDate: "2025-08-25 13:30",
-            actionReason: "고객 업무시간과 중복되어 다른 시간대로 조정 필요합니다."
-        },
-        {
-            schNo: 4,
-            schName: "고객 서비스 개선 워크샵",
-            schContent: "고객 만족도 향상을 위한 서비스 개선 아이디어 도출 워크샵",
-            empName: "최서비스 과장",
-            empNo: 103,
-            schStartDate: "2025-09-05 13:00",
-            schEndDate: "2025-09-05 18:00",
-            schEnrollDate: "2025-08-26 10:15",
-            schStatus: "c",
-            schCount: 0,
-            actionDate: null,
-            actionReason: null
-        }
-    ];
+<script th:inline="javascript">
+    const confirmSchedules=  /*[[${clist}]]*/ [];
+    const confirmSchedulesObj = {};
+    confirmSchedules.forEach(request => {
+        confirmSchedulesObj[`request${request.schNo}`]= request;
+    });
 
     let currentFilter = 'all';
     let selectedRequest = null;
@@ -178,22 +124,21 @@
     // 일정 목록 렌더링
     function renderRequests() {
         const container = document.getElementById('requestList');
-        const filteredRequests = requests.filter(req =>
+        const filteredRequests = confirmSchedules.filter(req =>
             currentFilter === 'all' ||
             (currentFilter === 'pending' && req.schStatus === 'c') ||
             (currentFilter === 'approved' && req.schStatus === 'p') ||
             (currentFilter === 'rejected' && req.schStatus === 'n')
         );
-
         if (filteredRequests.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
-                    <h3>해당하는 신청이 없습니다</h3>
-                    <p>다른 필터를 선택해보세요</p>
+                    <h3>해당하는 일정이 없습니다</h3>
                 </div>
             `;
             return;
         }
+
 
         container.innerHTML = filteredRequests.map(req => `
             <div class="request-card ${getCardClass(req.schStatus)}">
@@ -201,7 +146,7 @@
                     <div>
                         <div class="request-title">${req.schName}</div>
                         <div class="request-meta">
-                            <span>신청자: ${req.empName} (${getDepartment(req.empNo)})</span>
+                            <span>신청자: ${req.empName} </span>
                             <span>신청일: ${formatDate(req.schEnrollDate)}</span>
                         </div>
                     </div>
@@ -261,6 +206,7 @@
         `).join('');
     }
 
+
     // 상태 관련 함수
     function getCardClass(status) {
         const classMap = { 'c': 'pending', 'p': 'approved', 'n': 'rejected' };
@@ -277,21 +223,17 @@
         return textMap[status];
     }
 
-    function getDepartment(empNo) {
-        const deptMap = {
-            100: '영업부',
-            101: '교육팀',
-            102: 'IT부',
-            103: '고객서비스부'
-        };
-        return deptMap[empNo] || '기타';
+    function formatDate(dateStr) {
+             if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
     }
 
-    function formatDate(dateStr) {
-        if (!dateStr) return '-';
-        const date = new Date(dateStr);
-        return date.toLocaleString('ko-KR');
-    }
 
     // 필터 함수
     function filterRequests(filter) {
@@ -304,13 +246,12 @@
     }
 
     // 모달 함수
-    function openActionModal(schNo, action) {
-        selectedRequest = requests.find(req => req.schNo === schNo);
-        actionType = action;
+   function openActionModal(schNo, action) {
+        selectedRequest = confirmSchedules.find(req => req.schNo === schNo);
+        actionType = action; // actionType을 함수 파라미터로 받은 action 값으로 설정
         const modal = document.getElementById('actionModal');
         const title = document.getElementById('modalTitle');
         const confirmBtn = document.getElementById('confirmBtn');
-
         if (action === 'approve') {
             title.textContent = '일정 승인';
             confirmBtn.textContent = '승인';
@@ -320,15 +261,8 @@
             confirmBtn.textContent = '반려';
             confirmBtn.className = 'btn btn-reject';
         }
-
         document.getElementById('actionReason').value = '';
         modal.style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('actionModal').style.display = 'none';
-        selectedRequest = null;
-        actionType = null;
     }
 
     function confirmAction() {
@@ -337,20 +271,29 @@
             alert('처리 사유를 입력해주세요.');
             return;
         }
-
-        selectedRequest.schStatus = actionType === 'approve' ? 'p' : 'n';
-        selectedRequest.actionDate = new Date().toLocaleString('ko-KR');
+        // actionType을 다시 확인
+        const currentActionType = actionType;
+        console.log("Action Type:", currentActionType);
+        const status = currentActionType === 'approve' ? 'p' : 'n';
+        selectedRequest.schStatus = status;
+        selectedRequest.actionDate = new Date().toISOString();
         selectedRequest.actionReason = reason;
-
         closeModal();
         renderRequests();
-        const actionText = actionType === 'approve' ? '승인' : '반려';
+        const actionText = currentActionType === 'approve' ? '승인' : '반려';
+        console.log("Action Text:", actionText);
         alert(`일정이 ${actionText} 처리되었습니다.`);
     }
 
     function viewDetails(schNo) {
-        const request = requests.find(req => req.schNo === schNo);
+        const request = confirmSchedules.find(req => req.schNo === schNo);
         alert(`일정명: ${request.schName}\n신청자: ${request.empName}\n상태: ${getStatusText(request.schStatus)}\n처리사유: ${request.actionReason || '-'}`);
+    }
+
+     function closeModal() {
+        document.getElementById('actionModal').style.display = 'none';
+        selectedRequest = null;
+        actionType = null;
     }
 
     // 모달 외부 클릭 시 닫기
@@ -366,5 +309,6 @@
         renderRequests();
     });
 </script>
+
 </body>
 </html>
