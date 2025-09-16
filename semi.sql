@@ -479,6 +479,28 @@ BEGIN
     );
 END;
 /
+
+-- ============================================
+-- 일정 상태 변경 시 프로젝트 상태도 함께 변경하는 트리거
+-- ============================================
+CREATE OR REPLACE TRIGGER TRG_SCHEDULE_TO_PROJECT
+    AFTER UPDATE ON SCHEDULE
+    FOR EACH ROW
+BEGIN
+    -- 일정 상태가 변경되었을 때만 실행
+    IF :OLD.SCH_STATUS != :NEW.SCH_STATUS THEN
+        -- 해당 일정 이름과 동일한 프로젝트 이름이 있는지 확인하고 업데이트
+        UPDATE PROJECT_TB
+        SET PJT_STATUS = :NEW.SCH_STATUS
+        WHERE PJT_NAME = :NEW.SCH_NAME
+        AND EXISTS (SELECT 1 FROM PROJECT_TB WHERE PJT_NAME = :NEW.SCH_NAME);
+
+        -- 디버깅용 로그 (선택사항)
+        DBMS_OUTPUT.PUT_LINE('일정 이름 ' || :NEW.SCH_NAME || ' 상태 변경: ' || :OLD.SCH_STATUS || ' -> ' || :NEW.SCH_STATUS);
+    END IF;
+END;
+/
+
 -- ============================================
 -- PROJECT_TB 샘플 데이터
 -- ============================================
