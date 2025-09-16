@@ -273,15 +273,15 @@
         }
         // actionType을 다시 확인
         const currentActionType = actionType;
-        console.log("Action Type:", currentActionType);
+
         const status = currentActionType === 'approve' ? 'p' : 'n';
         selectedRequest.schStatus = status;
         selectedRequest.actionDate = new Date().toISOString();
         selectedRequest.actionReason = reason;
         closeModal();
         renderRequests();
+
         const actionText = currentActionType === 'approve' ? '승인' : '반려';
-        console.log("Action Text:", actionText);
         alert(`일정이 ${actionText} 처리되었습니다.`);
     }
 
