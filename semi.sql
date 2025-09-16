@@ -596,4 +596,29 @@ VALUES (SEQ_RNO.NEXTVAL, 3, 103, '요청제목3', '요청내용3');
 INSERT INTO REQUIREMENT_TB (REQ_NO, ATT_NO, EMP_NO, REQ_TITLE, REQ_CONTENT)
 VALUES (SEQ_RNO.NEXTVAL, 4, 104, '요청제목4', '요청내용4');
 
+
+UPDATE SCHEDULE SET SCH_STATUS = 'e' WHERE SCH_ENDDATE < TRUNC(SYSDATE);
+
 COMMIT;
+
+
+-- ============================================
+-- 스케줄러: 매일 자정에 만료된 일정 업데이트
+-- ============================================
+-- 1. 기존 스케줄러 삭제
+BEGIN
+  DBMS_SCHEDULER.DROP_JOB('UPDATE_EXPIRED_SCHEDULES');
+END;
+/
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+    job_name        => 'UPDATE_EXPIRED_SCHEDULES',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'BEGIN UPDATE SCHEDULE SET SCH_STATUS = ''e'' WHERE SCH_ENDDATE < TRUNC(SYSDATE) AND SCH_STATUS != ''e''; COMMIT; END;',
+    start_date      => SYSTIMESTAMP,
+    repeat_interval => 'FREQ=DAILY; BYHOUR=0; BYMINUTE=0; BYSECOND=0',
+    enabled         => TRUE,
+    comments        => '매일 자정에 만료된 일정을 ''e''로 업데이트'
+  );
+END;
+/

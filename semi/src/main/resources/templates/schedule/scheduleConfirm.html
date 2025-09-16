@@ -1,13 +1,370 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://wwww.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
       layout:fragment="content">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>사내일정 승인관리</title>
+    <style>
+        /* (이전 스타일 코드는 동일하게 유지) */
+        .main-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .breadcrumb { background: #f7fafc; color: #718096; font-size: 14px; margin-bottom: 20px; padding: 0.75rem 1rem; border-radius: 8px; }
+        .breadcrumb a { color: #e4b6ec; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .page-header { background: white; border-radius: 20px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .page-title { font-size: 2rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem; }
+        .page-subtitle { color: #6b7280; font-size: 1.1rem; }
+        .request-list { background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #e4b6ec; }
+        .list-title { font-size: 1.5rem; font-weight: bold; color: #1f2937; }
+        .filter-tabs { display: flex; gap: 0.5rem; background: #f3f4f6; padding: 0.25rem; border-radius: 10px; }
+        .filter-tab { padding: 0.5rem 1rem; border: none; background: transparent; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-size: 0.875rem; }
+        .filter-tab.active { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #e4b6ec; font-weight: 600; }
+        .request-card { background: #fafafa; border: 2px solid #e5e7eb; border-radius: 15px; padding: 1.5rem; margin-bottom: 1.5rem; transition: all 0.3s ease; position: relative; }
+        .request-card:hover { border-color: #e4b6ec; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .request-card.pending { border-left: 5px solid #f59e0b; }
+        .request-card.approved { border-left: 5px solid #10b981; }
+        .request-card.rejected { border-left: 5px solid #ef4444; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .request-title { font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem; }
+        .request-meta { display: flex; gap: 1rem; font-size: 0.875rem; color: #6b7280; }
+        .status-badge { padding: 0.375rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #d1fae5; color: #059669; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+        .card-content { margin: 1rem 0; }
+        .content-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem; }
+        .content-item { display: flex; flex-direction: column; gap: 0.25rem; }
+        .content-label { font-size: 0.875rem; font-weight: 600; color: #374151; }
+        .content-value { font-size: 0.95rem; color: #1f2937; }
+        .card-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-approve { background: #10b981; color: white; }
+        .btn-approve:hover { background: #059669; transform: translateY(-2px); }
+        .btn-reject { background: #ef4444; color: white; }
+        .btn-reject:hover { background: #dc2626; transform: translateY(-2px); }
+        .btn-view { background: #6366f1; color: white; }
+        .btn-view:hover { background: #4f46e5; transform: translateY(-2px); }
+        .btn-secondary { background: #f3f4f6; color: #6b7280; }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .empty-state { text-align: center; padding: 3rem; color: #6b7280; }
+        .empty-state h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; border-radius: 20px; padding: 2rem; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { margin-bottom: 1.5rem; }
+        .modal-title { font-size: 1.5rem; font-weight: bold; color: #1f2937; }
+        .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151; }
+        .form-textarea { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 10px; resize: vertical; min-height: 100px; }
+        @media (max-width: 768px) {
+            .main-container { padding: 0 1rem; }
+            .content-row { grid-template-columns: 1fr; gap: 1rem; }
+            .card-actions { flex-direction: column; }
+            .filter-tabs { overflow-x: auto; }
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .request-card { animation: fadeIn 0.6s ease forwards; }
+    </style>
 </head>
 <body>
+<main class="main-container">
+    <div class="breadcrumb">
+        <a href="#">프로젝트 관리</a> > <span>일정 승인</span>
+    </div>
+    <div class="page-header">
+        <h1 class="page-title">사내일정 승인관리</h1>
+        <p class="page-subtitle">사내 일정을 검토하고 승인/반려 처리하세요(인사과)</p>
+    </div>
+    <div class="request-list">
+        <div class="list-header">
+            <h2 class="list-title">일정 신청 목록</h2>
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterRequests('all')">전체</button>
+                <button class="filter-tab" onclick="filterRequests('pending')">검토</button>
+                <button class="filter-tab" onclick="filterRequests('approved')">승인</button>
+                <button class="filter-tab" onclick="filterRequests('rejected')">반려</button>
+            </div>
+        </div>
+        <div id="requestList">
+            <!-- 신청 항목들이 여기에 동적으로 생성됩니다 -->
+        </div>
+    </div>
+</main>
 
+<!-- 승인/반려 모달 -->
+<div class="modal" id="actionModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">일정 승인</h3>
+        </div>
+        <div class="form-group">
+            <label class="form-label">처리 사유</label>
+            <textarea class="form-textarea" id="actionReason" placeholder="승인 또는 반려 사유를 입력해주세요"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+            <button class="btn" id="confirmBtn" onclick="confirmAction()">확인</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 샘플 데이터 (Java Schedule 클래스와 일치, schStatus: p(승인), c(검토), n(반려))
+    const requests = [
+        {
+            schNo: 1,
+            schName: "월간 실적 검토 회의",
+            schContent: "8월 실적 분석 및 9월 목표 설정을 위한 부서별 회의",
+            empName: "조인순 부장",
+            empNo: 100,
+            schStartDate: "2025-08-30 09:00",
+            schEndDate: "2025-08-30 11:00",
+            schEnrollDate: "2025-08-26 14:30",
+            schStatus: "c", // 검토(c), 승인(p), 반려(n)
+            schCount: 0,
+            actionDate: null,
+            actionReason: null
+        },
+        {
+            schNo: 2,
+            schName: "신입사원 교육",
+            schContent: "2025년 하반기 신입사원 오리엔테이션 및 기초 교육",
+            empName: "박교육 차장",
+            empNo: 101,
+            schStartDate: "2025-09-02 10:00",
+            schEndDate: "2025-09-02 17:00",
+            schEnrollDate: "2025-08-25 11:20",
+            schStatus: "p",
+            schCount: 0,
+            actionDate: "2025-08-26 09:15",
+            actionReason: "교육 계획이 체계적으로 수립되어 승인합니다."
+        },
+        {
+            schNo: 3,
+            schName: "시스템 정기점검",
+            schContent: "서버 및 네트워크 장비 정기점검으로 인한 시스템 중단",
+            empName: "이개발 대리",
+            empNo: 102,
+            schStartDate: "2025-08-31 02:00",
+            schEndDate: "2025-08-31 06:00",
+            schEnrollDate: "2025-08-24 16:45",
+            schStatus: "n",
+            schCount: 0,
+            actionDate: "2025-08-25 13:30",
+            actionReason: "고객 업무시간과 중복되어 다른 시간대로 조정 필요합니다."
+        },
+        {
+            schNo: 4,
+            schName: "고객 서비스 개선 워크샵",
+            schContent: "고객 만족도 향상을 위한 서비스 개선 아이디어 도출 워크샵",
+            empName: "최서비스 과장",
+            empNo: 103,
+            schStartDate: "2025-09-05 13:00",
+            schEndDate: "2025-09-05 18:00",
+            schEnrollDate: "2025-08-26 10:15",
+            schStatus: "c",
+            schCount: 0,
+            actionDate: null,
+            actionReason: null
+        }
+    ];
+
+    let currentFilter = 'all';
+    let selectedRequest = null;
+    let actionType = null;
+
+    // 일정 목록 렌더링
+    function renderRequests() {
+        const container = document.getElementById('requestList');
+        const filteredRequests = requests.filter(req =>
+            currentFilter === 'all' ||
+            (currentFilter === 'pending' && req.schStatus === 'c') ||
+            (currentFilter === 'approved' && req.schStatus === 'p') ||
+            (currentFilter === 'rejected' && req.schStatus === 'n')
+        );
+
+        if (filteredRequests.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>해당하는 신청이 없습니다</h3>
+                    <p>다른 필터를 선택해보세요</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredRequests.map(req => `
+            <div class="request-card ${getCardClass(req.schStatus)}">
+                <div class="card-header">
+                    <div>
+                        <div class="request-title">${req.schName}</div>
+                        <div class="request-meta">
+                            <span>신청자: ${req.empName} (${getDepartment(req.empNo)})</span>
+                            <span>신청일: ${formatDate(req.schEnrollDate)}</span>
+                        </div>
+                    </div>
+                    <span class="status-badge status-${getStatusClass(req.schStatus)}">
+                        ${getStatusText(req.schStatus)}
+                    </span>
+                </div>
+                <div class="card-content">
+                    <div class="content-row">
+                        <div class="content-item">
+                            <span class="content-label">일정 내용</span>
+                            <span class="content-value">${req.schContent}</span>
+                        </div>
+                        <div class="content-item">
+                            <span class="content-label">사원번호</span>
+                            <span class="content-value">${req.empNo}</span>
+                        </div>
+                    </div>
+                    <div class="content-row">
+                        <div class="content-item">
+                            <span class="content-label">시작일시</span>
+                            <span class="content-value">${formatDate(req.schStartDate)}</span>
+                        </div>
+                        <div class="content-item">
+                            <span class="content-label">종료일시</span>
+                            <span class="content-value">${formatDate(req.schEndDate)}</span>
+                        </div>
+                    </div>
+                    ${req.schStatus !== 'c' ? `
+                        <div class="content-row">
+                            <div class="content-item">
+                                <span class="content-label">처리일시</span>
+                                <span class="content-value">${formatDate(req.actionDate)}</span>
+                            </div>
+                            <div class="content-item">
+                                <span class="content-label">처리사유</span>
+                                <span class="content-value">${req.actionReason || '-'}</span>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="card-actions">
+                    ${req.schStatus === 'c' ? `
+                        <button class="btn btn-approve" onclick="openActionModal(${req.schNo}, 'approve')">
+                            승인
+                        </button>
+                        <button class="btn btn-reject" onclick="openActionModal(${req.schNo}, 'reject')">
+                            반려
+                        </button>
+                    ` : `
+                        <button class="btn btn-view" onclick="viewDetails(${req.schNo})">
+                            상세보기
+                        </button>
+                    `}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 상태 관련 함수
+    function getCardClass(status) {
+        const classMap = { 'c': 'pending', 'p': 'approved', 'n': 'rejected' };
+        return classMap[status];
+    }
+
+    function getStatusClass(status) {
+        const classMap = { 'c': 'pending', 'p': 'approved', 'n': 'rejected' };
+        return classMap[status];
+    }
+
+    function getStatusText(status) {
+        const textMap = { 'c': '검토', 'p': '승인', 'n': '반려' };
+        return textMap[status];
+    }
+
+    function getDepartment(empNo) {
+        const deptMap = {
+            100: '영업부',
+            101: '교육팀',
+            102: 'IT부',
+            103: '고객서비스부'
+        };
+        return deptMap[empNo] || '기타';
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleString('ko-KR');
+    }
+
+    // 필터 함수
+    function filterRequests(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        renderRequests();
+    }
+
+    // 모달 함수
+    function openActionModal(schNo, action) {
+        selectedRequest = requests.find(req => req.schNo === schNo);
+        actionType = action;
+        const modal = document.getElementById('actionModal');
+        const title = document.getElementById('modalTitle');
+        const confirmBtn = document.getElementById('confirmBtn');
+
+        if (action === 'approve') {
+            title.textContent = '일정 승인';
+            confirmBtn.textContent = '승인';
+            confirmBtn.className = 'btn btn-approve';
+        } else {
+            title.textContent = '일정 반려';
+            confirmBtn.textContent = '반려';
+            confirmBtn.className = 'btn btn-reject';
+        }
+
+        document.getElementById('actionReason').value = '';
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('actionModal').style.display = 'none';
+        selectedRequest = null;
+        actionType = null;
+    }
+
+    function confirmAction() {
+        const reason = document.getElementById('actionReason').value.trim();
+        if (!reason) {
+            alert('처리 사유를 입력해주세요.');
+            return;
+        }
+
+        selectedRequest.schStatus = actionType === 'approve' ? 'p' : 'n';
+        selectedRequest.actionDate = new Date().toLocaleString('ko-KR');
+        selectedRequest.actionReason = reason;
+
+        closeModal();
+        renderRequests();
+        const actionText = actionType === 'approve' ? '승인' : '반려';
+        alert(`일정이 ${actionText} 처리되었습니다.`);
+    }
+
+    function viewDetails(schNo) {
+        const request = requests.find(req => req.schNo === schNo);
+        alert(`일정명: ${request.schName}\n신청자: ${request.empName}\n상태: ${getStatusText(request.schStatus)}\n처리사유: ${request.actionReason || '-'}`);
+    }
+
+    // 모달 외부 클릭 시 닫기
+    window.onclick = function(event) {
+        const modal = document.getElementById('actionModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        renderRequests();
+    });
+</script>
 </body>
 </html>

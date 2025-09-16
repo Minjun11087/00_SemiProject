@@ -3,6 +3,7 @@ package com.kh.semi.schedule.controller;
 import com.kh.semi.project.model.vo.Project;
 import com.kh.semi.schedule.model.service.ScheduleServiceImpl;
 import com.kh.semi.schedule.model.vo.Schedule;
+import jakarta.servlet.http.HttpSession;
 import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,6 +47,18 @@ public class ScheduleController {
             return "common/errorPage";
         }
 
+    }
+
+
+    @GetMapping("confirm.sd")
+    public String confirmSchedule(HttpSession session, Model model) {
+        Employee loginUser = (Employee) session.getAttribute("loginUser");
+        if (loginUser == null || !"D3".equals(loginUser.getDeptCode())) {
+            model.addAttribute("errorMsg", "접근할 수 있는 권한이 없습니다.");
+            return "common/errorPage";
+        } else {
+            return "schedule/scheduleConfirm";
+        }
     }
 
 
