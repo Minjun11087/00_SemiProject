@@ -247,7 +247,7 @@ COMMENT ON COLUMN EMPLOYEE_TB.MESSENGER_STATUS IS '메신저접속상태';
 -- ============================================
 INSERT INTO EMPLOYEE_TB (EMP_NO, EMP_NAME, EMP_RESINUM, EMP_ID, EMP_PWD, EMP_GENDER,
     DEPT_CODE, JOB_CODE, EMP_PHONE, EMP_EMAIL, EMP_ADDRESS, EMP_SIGN, SALARY, BONUS, EMP_PICTURE)
-VALUES (SEQ_ENO.NEXTVAL,'홍길동','900101','hong','pass123','M','D1','J1','010-1234-5678','hong@company.com','서울시 강남구','홍길동서명', 3000000, 0.3, '/images/hong.jpg');
+VALUES (SEQ_ENO.NEXTVAL,'홍길동','900101','hong','$2a$10$0S3hzbGoNfS6BR8NxtsIN.C7jIw.7GGyXKHEVlxpyWjBTqllMxOjq','M','D1','J1','010-1234-5678','hong@company.com','서울시 강남구','홍길동서명', 3000000, 0.3, '/images/hong.jpg');
 INSERT INTO EMPLOYEE_TB (EMP_NO, EMP_NAME, EMP_RESINUM, EMP_ID, EMP_PWD, EMP_GENDER,
     DEPT_CODE, JOB_CODE, EMP_PHONE, EMP_EMAIL, EMP_ADDRESS, EMP_SIGN, SALARY, BONUS, EMP_PICTURE)
 VALUES (SEQ_ENO.NEXTVAL,'김철수','900102','kim','pass123','M','D2','J2','010-1234-4124','kim@company.com','서울시 용산구','김철수서명', 3000000, 0.3, '/images/kim.jpg');
@@ -320,7 +320,8 @@ CREATE TABLE PROJECT_TB ( -- 프로젝트 테이블
     PJT_ENROLLDATE DATE DEFAULT SYSDATE NOT NULL, -- 프로젝트 작성일
     PJT_COUNT NUMBER DEFAULT 0, -- 조회수
     PJT_STATUS CHAR(1) DEFAULT 'c' NOT NULL CHECK (PJT_STATUS IN ('p','c','e','n')), -- 프로젝트 상태(진행중(p) | 검토중(c) | 만료(e) | 삭제(n))
-    PJT_CONTENT VARCHAR2(4000) NOT NULL -- 프로젝트 내용
+    PJT_CONTENT VARCHAR2(4000) NOT NULL, -- 프로젝트 내용
+    PJT_TAGS VARCHAR2(1000) DEFAULT ' ' NOT NULL
 );
 
 --=================================================
@@ -431,7 +432,6 @@ CREATE TABLE SCHEDULE ( -- 일정 테이블
     SCH_ENDDATE DATE NOT NULL, -- 일정 종료일
     EMP_NO NUMBER REFERENCES EMPLOYEE_TB(EMP_NO) NOT NULL, -- 작성자 사원번호
     SCH_ENROLLDATE DATE DEFAULT SYSDATE NOT NULL, -- 등록일    
-    SCH_COUNT NUMBER DEFAULT 0 NOT NULL, -- 조회수
     SCH_STATUS CHAR(1) DEFAULT 'c' NOT NULL CHECK (SCH_STATUS IN ('p','c','e','n')) -- 일정 상태(진행중(p) | 검토중(c) | 만료(e))| 삭제(n)
 );
 
@@ -464,7 +464,6 @@ BEGIN
         SCH_ENDDATE,
         EMP_NO,
         SCH_ENROLLDATE,        
-        SCH_COUNT,
         SCH_STATUS
     ) VALUES (
         :NEW.PJT_NO,                    -- 프로젝트 번호를 일정 번호로 사용
@@ -473,8 +472,7 @@ BEGIN
         :NEW.PJT_STARTDATE,             -- 프로젝트 시작일을 일정 시작일로 사용
         :NEW.PJT_ENDDATE,               -- 프로젝트 종료일을 일정 종료일로 사용
         :NEW.EMP_NO,                    -- 프로젝트 작성자를 일정 작성자로 사용
-        :NEW.PJT_ENROLLDATE,            -- 프로젝트 작성일을 일정 등록일로 사용                    
-        :NEW.PJT_COUNT,                             
+        :NEW.PJT_ENROLLDATE,            -- 프로젝트 작성일을 일정 등록일로 사용                                              
         :NEW.PJT_STATUS                 -- 프로젝트 상태를 일정 상태로 사용
     );
 END;
@@ -644,3 +642,5 @@ BEGIN
   );
 END;
 /
+
+
