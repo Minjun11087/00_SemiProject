@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout}"
+        layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+            * {
+               margin: 0;
+               padding: 0;
+               box-sizing: border-box;
+           }
+
+           body {
+               font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+               background-color: #f8f9fa;
+               padding: 20px;
+           }
+
+           .container {
+               max-width: 900px;
+               margin: 0 auto;
+               background: white;
+               border-radius: 12px;
+               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+               overflow: hidden;
+           }
+
+           .header {
+               background: linear-gradient(135deg, #e4b6ec 30%, #ed91fd 90%);
+               color: white;
+               padding: 25px 30px;
+               display: flex;
+               justify-content: space-between;
+               align-items: center;
+           }
+
+           .header h1 {
+               font-size: 24px;
+               font-weight: 600;
+           }
+
+           .breadcrumb {
+               font-size: 14px;
+               opacity: 0.9;
+           }
+
+           .main-info {
+               padding: 30px;
+               border-bottom: 1px solid #e9ecef;
+               background: #fafbfc;
+           }
+
+           .employee-card {
+               display: flex;
+               align-items: flex-start;
+               gap: 30px;
+           }
+
+           .photo-section {
+               flex-shrink: 0;
+           }
+
+           .photo-placeholder {
+               width: 150px;
+               height: 200px;
+               background: #f1f3f4;
+               border: 2px dashed #dadce0;
+               border-radius: 8px;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               flex-direction: column;
+               color: #5f6368;
+               font-size: 14px;
+               text-align: center;
+           }
+
+           .photo-placeholder .icon {
+               font-size: 48px;
+               margin-bottom: 10px;
+               opacity: 0.5;
+           }
+
+           .basic-info {
+               flex: 1;
+               display: grid;
+               grid-template-columns: 1fr 1fr;
+               gap: 20px;
+           }
+
+           .info-item {
+               display: flex;
+               flex-direction: column;
+           }
+
+           .info-label {
+               font-size: 13px;
+               color: #6c757d;
+               margin-bottom: 6px;
+               font-weight: 500;
+           }
+
+           .info-value {
+               font-size: 16px;
+               color: #212529;
+               font-weight: 600;
+               padding: 8px 0;
+           }
+
+           .name-value {
+               font-size: 24px;
+               color: #2c3e50;
+               font-weight: 700;
+           }
+
+           .section-title {
+               font-size: 18px;
+               font-weight: 600;
+               color: #495057;
+               margin-bottom: 20px;
+               padding-left: 30px;
+               padding-top: 25px;
+           }
+
+           .additional-info {
+               padding: 0 30px 30px 30px;
+           }
+
+           .info-grid {
+               display: grid;
+               grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+               gap: 20px;
+           }
+
+           .position-tag {
+               background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+               color: white;
+               padding: 8px 24px;
+               border-radius: 25px;
+               font-weight: 600;
+               font-size: 14px;
+               display: inline-block;
+               box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+           }
+
+           .action-buttons {
+               padding: 20px 30px;
+               background: #f8f9fa;
+               display: flex;
+               justify-content: flex-end;
+               gap: 10px;
+           }
+
+           .btn {
+               padding: 10px 20px;
+               border: none;
+               border-radius: 6px;
+               font-weight: 500;
+               cursor: pointer;
+               transition: all 0.2s;
+           }
+
+           .btn-secondary {
+               background: #6c757d;
+               color: white;
+           }
+
+           .btn-warning {
+               background: #ffc107;
+               color: #212529;
+           }
+
+           .btn-danger {
+               background: #dc3545;
+               color: white;
+           }
+
+           .btn:hover {
+               transform: translateY(-2px);
+               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+           }
+
+           .status-badge {
+               background: #28a745;
+               color: white;
+               padding: 4px 12px;
+               border-radius: 12px;
+               font-size: 12px;
+               font-weight: 600;
+               margin-left: 10px;
+           }
+
+           @media (max-width: 768px) {
+               .employee-card {
+                   flex-direction: column;
+                   align-items: center;
+                   text-align: center;
+               }
+
+               .basic-info {
+                   grid-template-columns: 1fr;
+               }
+
+               .info-grid {
+                   grid-template-columns: 1fr;
+               }
+           }
+    </style>
+</head>
+<body>
+    <div style="height:20px;"></div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>사원 상세정보</h1>
+            <div class="breadcrumb">사원 관리 > 상세보기</div>
+        </div>
+
+        <!-- Main Info Section -->
+        <div class="main-info">
+            <div class="employee-card">
+                <!-- Photo Section -->
+                <div class="photo-section">
+                    <div class="photo-placeholder">
+                        <div class="icon">👤</div>
+                        <div>사진을 등록해주세요</div>
+                    </div>
+                </div>
+
+                <!-- Basic Info -->
+                <div class="basic-info" th:each="e:${emp}">
+                    <div class="info-item">
+                        <div class="info-label">이름</div>
+                        <div class="info-value name-value" th:text="${e.empName}">
+                        </div>
+                            <div><span class="status-badge" th:if="${e.empStatus == 'Y'}">재직중</span></div>
+                            <div><span class="status-badge" th:unless="${e.empStatus == 'Y'}">퇴사</span></div>
+
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">사원 아이디</div>
+                        <div class="info-value" th:text="${e.empId}">EMP001</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">연락처</div>
+                        <div class="info-value" th:text="${e.empPhone}">010-1234-5678</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">주소</div>
+                        <div class="info-value" th:text="${e.empAddress}">서울시 강남구 테헤란로 123</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">부서</div>
+                        <div class="info-value" th:text="${e.deptTitle}">개발팀</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info Section -->
+        <div class="section-title">부가 정보</div>
+        <div class="additional-info">
+            <div class="info-grid" th:each="e:${emp}">
+                <div class="info-item">
+                    <div class="info-label">직급</div>
+                    <div class="info-value" >
+                        <div><span class="position-tag" th:text="${e.jobTitle}"></span></div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">생일</div>
+                    <div class="info-value" th:text="${e.empResinum}">1995-03-15</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">이메일</div>
+                    <div class="info-value" th:text="${e.empEmail}">minsu.kim@company.com</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">입사일</div>
+                    <div class="info-value" th:text="${e.hireDate}">2022-01-10</div>
+                </div>
+                <div class="info-item">
+                <!--
+                <div class="info-item" th:if="${session.loginUser.empId == e.empId && session.loginUser.dept_title == '총무부'}">
+                -->
+                    <div class="info-label">급여</div>
+                    <div class="info-value" th:text="${e.salary}">4,500만원</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-secondary">← 목록으로</button>
+            <button class="btn btn-warning">✏️ 수정</button>
+            <button class="btn btn-danger">🗑️ 삭제</button>
+        </div>
+    </div>
+
+</body>
+</html>

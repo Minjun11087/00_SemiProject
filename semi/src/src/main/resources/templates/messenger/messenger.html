@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- jQuery 라이브러리 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- 부트스트랩에서 제공하고 있는 스타일 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- 부트스트랩에서 제공하고 있는 스크립트 -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #f5f5f5;
+        }
+
+        /* 채팅방 목록 */
+        .chat-list {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: #e4b6ec;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-box {
+            padding: 15px;
+            background: #e4b6ec;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.9);
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .chat-rooms {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-room {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-left: none; /* 기본값 명시 */
+        }
+
+        .chat-room:hover {
+            background-color: #f5f5f5;
+        }
+
+        .chat-room.active {
+            background-color: #e3f2fd !important;
+            border-left: 4px solid #2196f3 !important;
+        }
+
+        .chat-room.active .chat-name {
+            font-weight: bold !important;
+            color: #2196f3 !important;
+        }
+
+        .profile-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 15px;
+        }
+
+        .chat-preview {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .chat-time {
+            font-size: 11px;
+            color: #999;
+            margin-left: 10px;
+        }
+
+        /* 채팅 영역 */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-area-header {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .current-chat-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header-row {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* 이름과 상태 표시기 사이 간격 */
+        }
+
+        .current-chat-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .chat-members {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f8f8;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .message.my-message {
+            justify-content: flex-end;
+        }
+
+        .message.my-message .message-bubble {
+            background: #e4b6ec;
+            color: white;
+            order: 2;
+        }
+
+        .message.my-message .message-time {
+            order: 1;
+        }
+
+        .message-bubble {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+            word-wrap: break-word;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #999;
+            margin: 0 5px;
+        }
+
+        .input-area {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            resize: none;
+            max-height: 100px;
+        }
+
+        .message-input:focus {
+            border-color: #e4b6ec;
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            background: #e4b6ec;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #e4b6ec;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            background-color: #e4b6ec;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .sidebar-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .participant-count {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .search-participants {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .participants-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .participant:hover {
+            cursor: pointer;
+        }
+
+        .participants-section {
+            padding: 15px 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .participant {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .participant-profile {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .participant-name {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .online-status {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+        }
+
+        .offline-status {
+            width: 8px;
+            height: 8px;
+            background: #ccc;
+            border-radius: 50%;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .chat-list {
+                width: 100px;
+            }
+
+            .chat-name, .chat-preview {
+                display: none;
+            }
+
+            .chat-room {
+                justify-content: center;
+            }
+        }
+
+        /* 스크롤바 스타일링 */
+        .chat-rooms::-webkit-scrollbar,
+        .messages-container::-webkit-scrollbar,
+        .participants-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-rooms::-webkit-scrollbar-track,
+        .messages-container::-webkit-scrollbar-track,
+        .participants-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-rooms::-webkit-scrollbar-thumb,
+        .messages-container::-webkit-scrollbar-thumb,
+        .participants-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .chat-rooms::-webkit-scrollbar-thumb:hover,
+        .messages-container::-webkit-scrollbar-thumb:hover,
+        .participants-container::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+    </style>
+</head>
+<body>
+
+<th:block th:if="${alertMsg != null}">
+    <script th:inline="javascript">
+        alert([[${alertMsg}]]);
+    </script>
+</th:block>
+
+<div class="chat-list">
+    <div class="chat-header">
+        <span class="chat-title">채팅방</span>
+        <div class="header-icons">
+            <span class="icon">+</span>
+            <span class="icon">⚙</span>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="채팅방 검색" id="chatSearch">
+            <span class="search-clear" onclick="clearChatSearch()">×</span>
+        </div>
+    </div>
+
+    <div class="chat-rooms" id="chatRoomsList">
+
+    </div>
+</div>
+
+<!-- 채팅 영역 -->
+<div class="chat-area">
+
+    <div class="chat-area-header">
+
+        <div class="current-chat-info">
+            <div id="chatHeader" style="display: none;">
+                <div class="chat-header-row">
+                    <div class="current-chat-name" id="currentChatName"></div>
+                    <!-- 온라인 / 오프라인 조건넣기 -->
+                    <div id="otherEmpStatus" class="status-indicator">
+                        <div class="status-dot"></div>
+                    </div>
+                </div>
+
+                <div class="chat-members">대화상대 <span id="chatMemberCount">1</span>명</div>
+
+            </div>
+
+            <div id="defaultMessage">
+                대화할 상대를 눌러 메신저를 시작하세요!
+            </div>
+        </div>
+
+        <div class="chatExit">
+            <button class="btn btn-danger" onclick="checkExit()">나가기</button>
+        </div>
+    </div>
+
+
+
+    <form action="" method="post" id="chatExit">
+        <input type="hidden" id="exitEmpId" name="exitEmpId" th:value="${session.loginUser.empId}">
+        <input type="hidden" id="exitEmpRno" name="exitEmpRno" value="">
+        <input type="hidden" id="exitEmpSno" name="exitEmpSno" value="">
+    </form>
+
+    <div class="messages-container" id="messagesContainer">
+        <div class="message" id="otherMessage">
+
+        </div>
+
+        <div class="message my-message" id="myMessage">
+
+        </div>
+
+    </div>
+
+    <div class="input-area">
+        <input type="text" class="message-input" placeholder="메시지를 입력하세요..." id="messageInput" name="msgContent">
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- 사이드바 -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-title">
+            <span>사원</span>
+            <span class="participant-count" id="empCount">4</span>
+        </div>
+        <div class="search-box">
+            <div class="search-container">
+                <input type="text" class="search-participants" placeholder="사원 검색" id="empSearch">
+                <span class="search-clear" onclick="clearEmpSearch()">×</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="participants-container" id="participants-container">
+        <div class="participants-section" id="participants-section">
+            <div class="section-title">온라인 - <span id="onlineCount"></span></div>
+            <div class="participantList" id="participantList">
+
+            </div>
+        </div>
+
+        <div class="participants-section">
+            <div class="section-title">오프라인 - <span id="offlineCount"></span></div>
+            <div class="offlineList" id="offlineList">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:if="${session.loginUser != null}">
+    <script th:inline="javascript">
+        let myNo = [[${session.loginUser.empNo}]]
+        let otherEmpNo = 0
+    </script>
+</th:block>
+
+<script>
+    $(document).ready(function() {
+        // 이벤트 설정 (한 번만)
+        setupEmployeeListEvents(); // 사원 목록 이벤트
+        setupChatRoomEvents();     // 채팅방 목록 이벤트
+
+        // 초기 데이터 로드
+        empList();
+        wholeChatRoom();
+
+        // 정기적 업데이트
+        setInterval(empList, 500);      // 사원 목록 업데이트
+    });
+
+    function sendMessage() {
+        $.ajax({
+            url: "send.ms",
+            data: {
+                empRno: otherEmpNo,
+                empSno: myNo,
+                msgContent: $("#messageInput").val(),
+            },
+            type: "post",
+            success: data => {
+                if(data == 'success'){
+                    const message = $.trim(data);
+                    addMessage(message, true);
+                    $("#messageInput").val('');
+                    updateSendButton();
+                }else{
+                    console.log("메세지 실패");
+                }
+
+                chatList();
+                wholeChatRoom();
+            },
+            error: err => {
+                console.error("메시지 전송 실패", err);
+            }
+        });
+    }
+
+    function chatList() {
+        if(otherEmpNo === 0 || otherEmpNo === null) {
+            console.log("채팅할 상대방이 선택되지 않았습니다.");
+            $("#messagesContainer").html(""); // 메시지 컨테이너 비우기
+            return;
+        }
+
+        $.ajax({
+            url: "chatList.ms",
+            data: {
+                myEmpNo : myNo,
+                otherEmpNo : otherEmpNo
+            },
+            type: "post",
+            success: chatList => {
+
+                $('#chatHeader').show();
+                $('#defaultMessage').hide();
+
+                $('#exitEmpRno').val(otherEmpNo);  // 받는 사람 (상대방)
+                $('#exitEmpSno').val(myNo);        // 보내는 사람 (나)
+
+                let sendName = "";
+                let allMessages = ""; // 모든 메시지를 순서대로 담을 변수
+
+                for(let i = 0; i < chatList.length; i++){
+
+                    // 내가 보낸 메시지인지 확인
+                    if(chatList[i].empSno == myNo) {
+                        // 내 메시지 (오른쪽 정렬)
+                        allMessages += "<div class='message my-message'>" +
+                                          "<div class='message-time'>" + chatList[i].msgDate + "</div>" +
+                                          "<div class='message-bubble'>" + chatList[i].msgContent + "</div>" +
+                                       "</div>";
+                    } else {
+                        // 상대방 메시지 (왼쪽 정렬)
+                        allMessages += "<div class='message'>" +
+                                          "<div class='message-bubble'>" + chatList[i].msgContent + "</div>" +
+                                          "<div class='message-time'>" + chatList[i].msgDate + "</div>" +
+                                       "</div>";
+                    }
+                }
+
+                // 채팅 상대방 이름 설정 (첫 번째 메시지의 상대방 이름)
+                if(chatList.length > 0) {
+                    // 상대방 이름 찾기
+                    let otherName = "";
+                    for(let i = 0; i < chatList.length; i++) {
+                        if(chatList[i].empRno == myNo) {
+                            otherName = chatList[i].sendEmpName;
+                            break;
+                        }else if(chatList[i].empSno == myNo) {
+                            otherName = chatList[i].receiveEmpName;
+                            break;
+                        }
+                    }
+                    $("#currentChatName").html(otherName);
+                }
+
+                // 모든 메시지를 메시지 컨테이너에 추가
+                $("#messagesContainer").html(allMessages);
+
+                // 채팅창을 맨 아래로 스크롤
+                $("#messagesContainer").scrollTop($("#messagesContainer")[0].scrollHeight);
+
+                //채팅방 목록 새로고침
+                wholeChatRoom();
+
+            },
+            error: err => {
+                console.error("채팅 목록 불러오기 실패", err);
+            }
+        });
+    }
+
+
+    function empList() {
+        $.ajax({
+            url: "empList.ms",
+            type: "get",
+            success: function (empList) {
+                let result1 = "";
+                let result2 = "";
+                let count1 = 0;
+                let count2 = 0;
+                let count3 = 0;
+
+
+                for (let i = 0; i < empList.length; i++) {
+                    if(empList[i].messengerStatus == 'Y') {
+                        result1 += "<div class='participant' id='" + empList[i].empNo + "'>" +
+                                    "<div class='participant-profile'>" + empList[i].empName.substring(0, 1) + "</div>" +
+                                    "<span class='participant-name'>" + empList[i].empName + "</span>" +
+                                    "<div class='online-status'></div>" +
+                                    "</div>";
+                        if(empList[i].messengerStatus === 'Y') {
+                            count1++;
+                        }
+                    }else {
+                        result2 += "<div class='participant' id='" + empList[i].empNo + "'>" +
+                                    "<div class='participant-profile'>" + empList[i].empName.substring(0, 1) + "</div>" +
+                                    "<span class='participant-name'>" + empList[i].empName + "</span>" +
+                                    "<div class='offline-status'></div>" +
+                                    "</div>";
+                        if(empList[i].messengerStatus === 'N') {
+                            count2++;
+                        }
+                    }
+                    count3 = count1 + count2;
+                }
+
+                $("#participantList").html(result1);
+                $("#offlineList").html(result2);
+                $("#onlineCount").html(count1);
+                $("#offlineCount").html(count2);
+                $("#empCount").html(count3);
+
+            },
+            error: function () {
+                console.log("참여자 목록 조회 실패");
+            }
+        });
+    }
+
+    function wholeChatRoom() {
+        $.ajax({
+            url: "wcr.ms",
+            data: {
+                empRno: myNo,
+                empSno: myNo,
+            },
+            type: "post",
+            success: wChatRoom => {
+
+                wChatRoom.sort((a, b) => {
+                    // sort_date 또는 msgDate 사용 (실제 날짜 데이터)
+                    return new Date(b.sortDate || b.msgDate) - new Date(a.sortDate || a.msgDate);
+                });
+
+                let result = "";
+
+                for(let i = 0; i < wChatRoom.length; i++) {
+                    // chatPartnerName 사용
+                    const partnerName = wChatRoom[i].chatPartnerName;
+                    const messageType = wChatRoom[i].messageType;
+
+                    // 메시지 앞에 보낸/받은 구분 표시 (선택사항)
+                    const prefix = messageType === 'SENT' ? '나: ' : '';
+
+                    result += "<div class='chat-room' data-room-id='" + (i+1) + "' data-room-name='" + partnerName + "' data-emp-no='" + wChatRoom[i].chatPartnerNo + "'>"
+                           + "<div class='profile-img'>" + partnerName.substring(0, 1) + "</div>"
+                           + "<div class='chat-info'>"
+                           + "<div class='chat-name'>" + partnerName + "</div>"
+                           + "<div class='chat-preview'>" + prefix + wChatRoom[i].msgContent + "</div>"
+                           + "</div>"
+                           + "<div class='chat-time'>" + wChatRoom[i].msgDate + "</div>"
+                           + "</div>";
+                }
+
+                $("#chatRoomsList").html(result);
+
+                // HTML 생성 완료 후 현재 활성화된 채팅방에만 active 클래스 추가
+                if (otherEmpNo) {
+                    $(`.chat-room[data-emp-no='${otherEmpNo}']`).addClass('active');
+                }
+
+            },
+            error: wChatRoom => {
+                console.log("채팅방 목록 불러오기 실패");
+            }
+        });
+    }
+
+    function checkExit() {
+        if (confirm("정말 채팅방을 나가시겠습니까? \n\n나가면 모든 대화내용이 삭제됩니다.")){
+            chatExit();
+        }else {
+
+        }
+    }
+
+    function chatExit() {
+        $("#chatExit").attr("action", "exitChatRoom.ms").submit();
+    }
+
+    function startChatWithEmployee(empNo, empName) {
+        console.log("채팅 시작:", empName, "사원번호:", empNo);
+
+        // 채팅방 이름 설정
+        $("#currentChatName").html(empName);
+
+        // 현재 선택된 사원과 같으면 중복 처리 방지
+        if (otherEmpNo === empNo) {
+            console.log("이미 선택된 사원입니다.");
+            return;
+        }
+
+        // 사원번호 저장
+        otherEmpNo = empNo;
+
+        // 모든 선택 상태 초기화
+        $(".participant").removeClass('selected');
+        $(".chat-room").removeClass('active');
+
+        // 선택된 사원 표시
+        $("#" + empNo).addClass('selected');
+
+        // 현재 채팅방 활성화 (채팅방 목록에서)
+        const currentChatRoom = $(".chat-room[data-emp-no='" + empNo + "']");
+        if (currentChatRoom.length > 0) {
+            currentChatRoom.addClass('active');
+        }
+
+        // 상대방 온라인 상태 업데이트
+        updateOtherEmployeeStatus(empNo);
+
+        // 즉시 채팅 내역 로드
+        chatList();
+    }
+
+    function updateOtherEmployeeStatus(empNo) {
+        // 온라인 사원 목록에서 확인
+        const isOnline = $("#participantList #" + empNo).length > 0;
+        const statusDiv = $("#otherEmpStatus");
+
+        if (isOnline) {
+            statusDiv.removeClass('offline-status').addClass('online-status');
+        } else {
+            statusDiv.removeClass('online-status').addClass('offline-status');
+        }
+    }
+
+    // 사원 목록 이벤트 설정 (이벤트 위임 방식)
+    function setupEmployeeListEvents() {
+        // 기존 이벤트 제거
+        $("#participantList, #offlineList").off('click', '.participant');
+
+        // 온라인 사원 목록 이벤트
+        $("#participantList").on('click', '.participant', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const empNo = this.id;
+            const empName = $(this).find('.participant-name').text();
+
+            if (empNo && empNo !== "") {
+                console.log('온라인 사원 선택:', empName, empNo);
+                startChatWithEmployee(empNo, empName);
+            }
+        });
+
+        // 오프라인 사원 목록 이벤트
+        $("#offlineList").on('click', '.participant', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const empNo = this.id;
+            const empName = $(this).find('.participant-name').text();
+
+            if (empNo && empNo !== "") {
+                console.log('오프라인 사원 선택:', empName, empNo);
+                startChatWithEmployee(empNo, empName);
+            }
+        });
+    }
+
+    // 채팅방 클릭 이벤트 추가 함수
+    function setupChatRoomEvents() {
+        // 기존 이벤트 종료
+        $("#chatRoomsList").off('click', '.chat-room');
+
+        // 채팅방 클릭 이벤트
+        $("#chatRoomsList").on('click', '.chat-room', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const empNo = $(this).data("emp-no");
+            const roomName = $(this).data("room-name");
+
+            if (empNo) {
+                console.log("채팅방 선택:", roomName, empNo);
+                startChatWithEmployee(empNo, roomName);
+            }
+        });
+    }
+
+    function startNewChatWithEmployee(empNo, empName) {
+        console.log("새 채팅 시작:", empName, empNo);
+
+        // 기존 채팅이 있는지 확인
+        const existingChat = $(".chat-room[data-emp-no='" + empNo + "']");
+
+        if (existingChat.length > 0) {
+            // 기존 채팅이 있으면 해당 채팅방으로 이동
+            existingChat.click();
+        } else {
+            // 새 채팅 시작
+            startChatWithEmployee(empNo, empName);
+        }
+    }
+
+    // 메시지 추가
+    function addMessage(text, isMine) {
+        const container = document.getElementById('messagesContainer');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message' + (isMine ? ' my-message' : '');
+
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const period = hours >= 12 ? '오후' : '오전';
+        const displayHours = hours > 12 ? hours - 12 : (hours === 0 ? 12 : hours);
+        const timeStr = `${period} ${displayHours}:${minutes}`;
+
+        messageDiv.innerHTML = isMine
+            ? `<div class="message-time">${timeStr}</div><div class="message-bubble">${text}</div>`
+            : `<div class="message-bubble">${text}</div><div class="message-time">${timeStr}</div>`;
+
+        container.appendChild(messageDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // 전송 버튼 상태 업데이트
+    function updateSendButton() {
+        const input = document.getElementById('messageInput');
+        const button = document.getElementById('sendBtn');
+        button.disabled = input.value.trim() === '';
+    }
+
+    // 채팅방 검색
+    function searchChatRooms() {
+        const searchTerm = document.getElementById('chatSearch').value.toLowerCase();
+        const chatRooms = document.querySelectorAll('.chat-room');
+
+        chatRooms.forEach(room => {
+            const chatName = room.querySelector('.chat-name').textContent.toLowerCase();
+            room.style.display = chatName.includes(searchTerm) ? 'flex' : 'none';
+        });
+    }
+
+    // 사원 검색
+    function searchEmpOfList() {
+        const searchTerm = document.getElementById('empSearch').value.toLowerCase();
+        const empList = document.querySelectorAll('.participant');
+
+        empList.forEach(emp => {
+            const empOne = emp.querySelector('.participant-name').textContent.toLowerCase();
+            emp.style.display = empOne.includes(searchTerm) ? 'flex' : 'none';
+        });
+    }
+
+    // 채팅방 검색 초기화
+    function clearChatSearch() {
+        const searchInput = document.getElementById('chatSearch');
+        searchInput.value = '';
+        searchChatRooms();
+    }
+
+    // 사원 검색 초기화
+    function clearEmpSearch() {
+        const searchInput = document.getElementById('empSearch');
+        searchInput.value = '';
+        searchEmpOfList();
+    }
+
+    // 채팅방 선택
+    function selectChatRoom(roomElement) {
+        // 이전 선택 해제
+        document.querySelector('.chat-room.active')?.classList.remove('active');
+
+        // 새로운 채팅방 선택
+        roomElement.classList.add('active');
+
+        // 채팅방 이름 업데이트
+        const chatName = roomElement.dataset.roomName;
+        document.getElementById('currentChatName').textContent = chatName;
+
+        // 메시지 초기화
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.innerHTML = `
+            <div class="message">
+                <div class="message-bubble">${chatName}님과의 채팅을 시작합니다.</div>
+                <div class="message-time">지금</div>
+            </div>
+        `;
+    }
+
+    // 메신저 상태 업데이트
+    window.addEventListener('beforeunload', function(event) {
+        // AJAX로 상태 업데이트
+        navigator.sendBeacon('updateStatus.ms', new URLSearchParams({
+                'empId': '[[${session.loginUser.empId}]]',
+                'messengerStatus': 'Y' // 오프라인
+            }));
+        });
+
+    // 페이지 로드 시 온라인 상태로 변경
+    window.addEventListener('load', function() {
+        updateMsStatusToOnline();
+    });
+
+    function updateMsStatusToOnline() {
+        $.ajax({
+            url: 'updateStatus.ms',
+            type: 'POST',
+            data: {
+                empId: '[[${session.loginUser.empId}]]',
+                messengerStatus: 'N' // 온라인
+            },
+            success: function(response) {
+                console.log('온라인 상태로 변경됨');
+            }
+        });
+    }
+
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', function () {
+        // Enter 키로 메시지 전송
+        document.getElementById('messageInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // 입력 상태에 따른 전송 버튼 활성화
+        document.getElementById('messageInput').addEventListener('input', updateSendButton);
+
+        // 채팅방 검색
+        document.getElementById('chatSearch').addEventListener('input', searchChatRooms);
+
+        // 사원 검색
+        document.getElementById('empSearch').addEventListener('input', searchEmpOfList);
+
+        // 채팅방 선택
+        document.getElementById('chatRoomsList').addEventListener('click', function(e) {
+            // 클릭된 요소가 채팅방인지 확인
+            const chatRoom = e.target.closest('.chat-room');
+            if (chatRoom) {
+                const empNo = chatRoom.dataset.empNo;
+                const empName = chatRoom.dataset.roomName;
+                startChatWithEmployee(parseInt(empNo), empName);
+            }
+        });
+
+        // 초기 전송 버튼 상태 설정
+        updateSendButton();
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="employeeMapper">
+    <resultMap type="Employee" id="employeeResultSet">
+        <result column="emp_no" property="empNo" />
+        <result column="emp_name" property="empName" />
+        <result column="emp_id" property="empId" />
+        <result column="emp_pwd" property="empPwd" />
+        <result column="emp_gender" property="empGender" />
+        <result column="dept_code" property="deptCode" />
+        <result column="job_code" property="jobCode" />
+        <result column="emp_phone" property="empPhone" />
+        <result column="emp_email" property="empEmail" />
+        <result column="emp_address" property="empAddress" />
+        <result column="emp_status" property="empStatus" />
+        <result column="emp_sign" property="empSign" />
+        <result column="salary" property="salary" />
+        <result column="bonus" property="bonus" />
+        <result column="hire_date" property="hireDate" />
+        <result column="modify_date" property="modifyDate" />
+        <result column="emp_picture" property="empPicture" />
+        <result column="messenger_status" property="messengerStatus" />
+        <result column="EMP_RESINUM" property="empResinum"/>
+        <result column="DEPT_TITLE" property="deptTitle"/>
+        <result column="JOB_TITLE" property="jobTitle"/>
+    </resultMap>
+
+    <select id="selectEmpListMs" resultMap="employeeResultSet">
+        select
+                emp_no
+                , emp_id
+                , emp_name
+                , messenger_status
+                from employee_tb
+    </select>
+
+    <select id="loginMember" resultMap="employeeResultSet">
+        select
+                emp_no
+                , emp_name
+                , emp_resinum
+                , emp_id
+                , emp_pwd
+                , emp_gender
+                , dept_code
+                , job_code
+                , emp_phone
+                , emp_email
+                , emp_address
+                , emp_status
+                , emp_sign
+                , salary
+                , bonus
+                , to_date(hire_date, 'yyyy-MM-dd') as "hire_date"
+                , modify_date
+                , emp_picture
+                , messenger_status
+                , job_title
+                from EMPLOYEE_TB
+                join job_tb using (job_code)
+                where emp_status = 'Y'
+                and emp_id = #{ empId }
+    </select>
+
+    <insert id="insertMember">
+        insert
+        into EMPLOYEE_TB
+        (
+        emp_id
+        , emp_pwd
+        , emp_no
+        , emp_name
+        , dept_code
+        , job_code
+        , hire_date
+        , emp_resinum
+        , emp_gender
+        , emp_address
+        , emp_phone
+        , emp_email
+        )
+        values
+        (
+        #{ empId }
+        , #{ empPwd }
+        , SEQ_ENO.NEXTVAL
+        , #{ empName }
+        , #{ deptCode }
+        , #{ jobCode }
+        , #{ hireDate }
+        , #{ empResinum }
+        , #{empGender}
+        , #{empAddress}
+        , #{empPhone}
+        , #{empEmail}
+        )
+    </insert>
+
+    <update id="updateMember">
+        update EMPLOYEE_TB
+        set emp_name = #{empName}
+        , emp_no = #{empNo}
+        , emp_id = #{empId}
+        , emp_resinum = #{empResinum}
+        , dept_code = #{deptCode}
+        , job_code = job_code
+        , salary = salary
+        , modify_date = sysdate
+        where emp_id = #{empId}
+    </update>
+
+    <update id="deleteMember">
+        update EMPLOYEE_TB
+        set status = 'N'
+        where emp_id = #{ empId }
+        and status = 'Y'
+    </update>
+
+    <select id="idCheck" resultType="_int">
+        select
+        count(*)
+        from EMPLOYEE_TB
+        where emp_id = #{checkId}
+    </select>
+
+
+
+    <select id="selectListCount" resultType="_int">
+        SELECT count(*)
+        FROM employee_tb
+        WHERE emp_status = 'Y'
+    </select>
+
+    <select id="selectList" resultMap="employeeResultSet">
+        select emp_no
+        , emp_id
+        , emp_name
+        , emp_resinum
+        , emp_id
+        , emp_pwd
+        , emp_gender
+        , e.dept_code
+        , e.job_code
+        , emp_phone
+        , emp_email
+        , emp_address
+        , emp_status
+        , emp_sign
+        , salary
+        , bonus
+        , to_char(hire_date, 'YYYY-MM-DD') as "hire_date"
+        , modify_date
+        , dept_title
+        , job_title
+        from employee_tb e, department d, job_tb j
+        where emp_status = 'Y'
+        and e.dept_code = d.dept_code
+        and e.job_code = j.job_code
+        order
+        by emp_no desc
+    </select>
+
+    <select id="selectEmployee" resultMap="employeeResultSet">
+        select emp_picture
+        , emp_name
+        , emp_status
+        , emp_id
+        , emp_phone
+        , emp_address
+        , dept_title
+        , job_title
+        , emp_resinum
+        , emp_email
+        , to_char(hire_date, 'YYYY-MM-DD') as "hire_date"
+        , salary
+        from employee_tb e, department d, job_tb j
+        where e.dept_code = d.dept_code
+        and e.job_code = j.job_code
+        and emp_no = #{empNo}
+
+    </select>
+
+    <select id="searchEmployee" resultMap="employeeResultSet">
+        select emp_no
+        , emp_name
+        , emp_phone
+        , to_char(hire_date, 'YYYY-MM-DD') as "hire_date"
+        , dept_title
+        , job_title
+        from employee_tb e, department d, job_tb j
+        where emp_status = 'Y'
+        and e.dept_code = d.dept_code
+        and e.job_code = j.job_code
+        and (emp_name LIKE '%' || #{keyword} || '%'
+        or dept_title LIKE '%' || #{keyword} || '%'
+        or job_title LIKE '%' || #{keyword} || '%')
+        order
+        by emp_no desc
+
+    </select>
+
+    <select id="selectSearchCount" resultType="_int">
+        select count(*)
+        from employee_tb e, department d, job_tb j
+        where emp_status = 'Y'
+        and e.dept_code = d.dept_code
+        and e.job_code = j.job_code
+        and emp_name LIKE '%' || #{keyword} || '%'
+
+    </select>
+
+    <select id="listProjectMember" resultMap="employeeResultSet">
+    select
+              emp_no
+            , emp_name
+            , job_code
+            , job_title
+            , dept_code
+            , dept_title
+     from employee_tb
+      join department using (dept_code)
+      join job_tb using (job_code)
+  where not emp_id = #{myId}
+    </select>
+
+</mapper>

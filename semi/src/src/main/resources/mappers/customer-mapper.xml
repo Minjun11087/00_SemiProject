@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="customerMapper">
+
+    <resultMap type="Customer" id="customerResultSet">
+        <result column="cus_no" property="cusNo"/>
+        <result column="cus_name" property="cusName"/>
+        <result column="cus_gender" property="cusGender"/>
+        <result column="cus_age" property="cusAge"/>
+        <result column="cus_resinum" property="cusResinum"/>
+        <result column="cus_address" property="cusAddress"/>
+        <result column="cus_phone" property="cusPhone"/>
+        <result column="cus_email" property="cusEmail"/>
+        <result column="cus_job" property="cusJob"/>
+        <result column="loan" property="loan"/>
+        <result column="amount" property="amount"/>
+        <result column="interest" property="interest"/>
+        <result column="rating" property="rating"/>
+    </resultMap>
+
+    <select id="selectCusListCount" resultType="_int">
+        select count(*)
+          from customer_tb
+    </select>
+
+    <select id="selectCusList" resultMap="customerResultSet">
+        select cus_no
+             , cus_name
+             , cus_gender
+             , cus_age
+             , cus_resinum
+             , cus_address
+             , cus_phone
+             , cus_email
+             , cus_job
+             , loan
+             , amount
+             , interest
+             , rating
+          from customer_tb
+         order
+            by cus_no desc
+
+    </select>
+</mapper>
