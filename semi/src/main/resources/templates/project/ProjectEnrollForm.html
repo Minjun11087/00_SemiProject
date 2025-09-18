@@ -321,6 +321,7 @@
         <input type="hidden" id="pjtCount" name="pjtCount" value="0"> <!-- 기본값 0 -->
         <input type="hidden" id="pjtStatus" name="pjtStatus" value="c"> <!-- 기본 상태 -->
         <input type="hidden" id="members" name="members" ><!-- members 넘기기 -->
+        <input type="hidden" id="attCategory" name="attCategory" value="0" >
 
         <div class="form-section">
             <h3 class="section-title">프로젝트 정보</h3>
@@ -546,163 +547,178 @@
         members.splice(index, 1);
         updateMemberDisplay();
     }
-    // 파일 업로드 처리
-    document.getElementById('upfiles').addEventListener('change', function(e) {
-        handleFiles(e.target.files);
-    });
-    // 드래그 앤 드롭 처리
-    const fileContainer = document.querySelector('.file-input-container');
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        fileContainer.addEventListener(eventName, preventDefaults, false);
-    });
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    ['dragenter', 'dragover'].forEach(eventName => {
-        fileContainer.addEventListener(eventName, highlight, false);
-    });
-    ['dragleave', 'drop'].forEach(eventName => {
-        fileContainer.addEventListener(eventName, unhighlight, false);
-    });
-    function highlight(e) {
-        fileContainer.classList.add('dragover');
-    }
-    function unhighlight(e) {
-        fileContainer.classList.remove('dragover');
-    }
-    fileContainer.addEventListener('drop', handleDrop, false);
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles(files);
-    }
-    // 파일 처리
-    function handleFiles(files) {
-        [...files].forEach(uploadFile);
-    }
-    function uploadFile(file) {
-        if (file.size > 10 * 1024 * 1024) { // 10MB 제한
-            alert('파일 크기는 10MB를 초과할 수 없습니다.');
-            return;
-        }
-        uploadedFiles.push({
-            name: file.name,
-            size: file.size,
-            type: file.type
-        });
-        updateFileDisplay();
-    }
-    // 파일 표시 업데이트
-    function updateFileDisplay() {
-        const fileList = document.getElementById('fileList');
-        fileList.innerHTML = '';
-        uploadedFiles.forEach((file, index) => {
-            const fileElement = document.createElement('div');
-            fileElement.className = 'file-item';
-            const fileExtension = file.name.split('.').pop().toUpperCase();
-            const fileSize = (file.size / 1024 / 1024).toFixed(2) + 'MB';
-            fileElement.innerHTML = `
-                <div class="file-info">
-                    <div class="file-icon">${fileExtension}</div>
-                    <div class="file-details">
-                        <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${file.name}</h4>
-                        <p style="font-size: 0.8rem; color: #6b7280;">${fileSize}</p>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-secondary btn-small" onclick="removeFile(${index})">제거</button>
-            `;
-            fileList.appendChild(fileElement);
-        });
-    }
-    // 파일 제거
-    function removeFile(index) {
-        uploadedFiles.splice(index, 1);
-        updateFileDisplay();
-    }
-    // 폼 초기화
-    function resetForm() {
-        if (confirm('입력한 내용이 모두 삭제됩니다. 계속하시겠습니까?')) {
-            document.getElementById('pjtName').value = '';
-            document.getElementById('pjtContent').value = '';
-            document.getElementById('tagInput').value = '';
-            document.getElementById('memberName').value = '';
-            document.getElementById('memberPosition').value = '';
-            tags = [];
-            members = [];
-            uploadedFiles = [];
-            updateTagDisplay();
-            updateMemberDisplay();
+
+
+            // 파일 업로드 처리 - 수정된 부분
+        document.getElementById('upfiles').addEventListener('change', function(e) {
+            // 기존 파일들을 유지하면서 새 파일들 추가
+            Array.from(e.target.files).forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB 제한
+                    alert('파일 크기는 10MB를 초과할 수 없습니다: ' + file.name);
+                    return;
+                }
+                uploadedFiles.push(file); // 실제 File 객체 저장
+            });
             updateFileDisplay();
-            setCurrentDateTime();
-        }
-    }
-    // 폼 제출 처리
-    document.getElementById('projectForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // 폼 기본 제출 동작 방지
-
-        const pjtName = document.getElementById('pjtName').value.trim();
-        const pjtContent = document.getElementById('pjtContent').value.trim();
-        const pjtStartDate = document.getElementById('pjtStartDate').value;
-        const pjtEndDate = document.getElementById('pjtEndDate').value;
-        const pjtTags = document.getElementById('pjtTags').value.trim();
-
-        // 필수 입력 검증
-        if (!pjtName) {
-            alert('프로젝트 제목을 입력해주세요.');
-            document.getElementById('pjtName').focus();
-            return;
-        }
-        if (!pjtContent) {
-            alert('프로젝트 설명을 입력해주세요.');
-            document.getElementById('pjtContent').focus();
-            return;
-        }
-        if (!pjtStartDate || !pjtEndDate) {
-            alert('프로젝트 시작일과 종료일을 모두 입력해주세요.');
-            return;
-        }
-
-        if (!pjtTags) {
-            alert('프로젝트 태그를 입력해주세요.');
-            document.getElementById('pjtTags').focus();
-            return;
-        }
-
-        // 날짜 유효성 검증
-        const start = new Date(pjtStartDate);
-        const end = new Date(pjtEndDate);
-        if (start >= end) {
-            alert('종료일은 시작일보다 늦어야 합니다.');
-            document.getElementById('pjtEndDate').focus();
-            return;
-        }
-
-        // 폼 데이터 설정
-        document.getElementById('pjtTags').value = tags.join(',');
-
-        // 실제로는 서버로 데이터를 전송하는 코드가 여기에 들어갑니다.
-        console.dir({
-            empNo: document.getElementById('empNo').value,
-            pjtName: pjtName,
-            pjtContent: pjtContent,
-            pjtStartDate: pjtStartDate,
-            pjtEndDate: pjtEndDate,
-            pjtEnrollDate: document.getElementById('pjtEnrollDate').value,
-            pjtCount: document.getElementById('pjtCount').value,
-            pjtStatus: document.getElementById('pjtStatus').value,
-            pjtTags: tags.join(','),
-            members: members,
-            files: uploadedFiles
         });
 
-        alert('프로젝트가 성공적으로 생성되었습니다!');
-        this.submit(); // 폼 제출
-    });
+        // 드래그 앤 드롭으로 파일 처리
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            Array.from(files).forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB 제한
+                    alert('파일 크기는 10MB를 초과할 수 없습니다: ' + file.name);
+                    return;
+                }
+                uploadedFiles.push(file); // 실제 File 객체 저장
+            });
+            updateFileDisplay();
+        }
+
+        // 파일 표시 업데이트 - 수정된 부분
+        function updateFileDisplay() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            uploadedFiles.forEach((file, index) => {
+                const fileElement = document.createElement('div');
+                fileElement.className = 'file-item';
+                const fileExtension = file.name.split('.').pop().toUpperCase();
+                const fileSize = (file.size / 1024 / 1024).toFixed(2) + 'MB';
+
+                fileElement.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-icon">${fileExtension}</div>
+                        <div class="file-details">
+                            <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${file.name}</h4>
+                            <p style="font-size: 0.8rem; color: #6b7280;">${fileSize}</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="removeFile(${index})">제거</button>
+                `;
+                fileList.appendChild(fileElement);
+            });
+
+            // input 요소의 files를 업데이트
+            updateFileInput();
+        }
+
+        // FileList를 업데이트하는 함수
+        function updateFileInput() {
+            const input = document.getElementById('upfiles');
+            const dt = new DataTransfer();
+
+            uploadedFiles.forEach(file => {
+                dt.items.add(file);
+            });
+
+            input.files = dt.files;
+        }
+
+        // 파일 제거 - 수정된 부분
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileDisplay();
+        }
+
+        // 폼 초기화
+        function resetForm() {
+            if (confirm('입력한 내용이 모두 삭제됩니다. 계속하시겠습니까?')) {
+                document.getElementById('pjtName').value = '';
+                document.getElementById('pjtContent').value = '';
+                document.getElementById('tagInput').value = '';
+                document.getElementById('memberName').value = '';
+                document.getElementById('memberPosition').value = '';
+
+                tags = [];
+                members = [];
+                uploadedFiles = []; // 파일 배열도 초기화
+
+                updateTagDisplay();
+                updateMemberDisplay();
+                updateFileDisplay();
+                setCurrentDateTime();
+
+                // 파일 input도 초기화
+                document.getElementById('upfiles').value = '';
+            }
+        }
+
+        // 폼 제출 처리
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // 폼 기본 제출 동작 방지
+
+            const pjtName = document.getElementById('pjtName').value.trim();
+            const pjtContent = document.getElementById('pjtContent').value.trim();
+            const pjtStartDate = document.getElementById('pjtStartDate').value;
+            const pjtEndDate = document.getElementById('pjtEndDate').value;
+            const pjtTags = document.getElementById('pjtTags').value.trim();
+
+            // 필수 입력 검증
+            if (!pjtName) {
+                alert('프로젝트 제목을 입력해주세요.');
+                document.getElementById('pjtName').focus();
+                return;
+            }
+            if (!pjtContent) {
+                alert('프로젝트 설명을 입력해주세요.');
+                document.getElementById('pjtContent').focus();
+                return;
+            }
+            if (!pjtStartDate || !pjtEndDate) {
+                alert('프로젝트 시작일과 종료일을 모두 입력해주세요.');
+                return;
+            }
+
+            if (!pjtTags) {
+                alert('프로젝트 태그를 입력해주세요.');
+                document.getElementById('tagInput').focus(); // pjtTags는 hidden이므로 tagInput으로 포커스
+                return;
+            }
+
+            // 날짜 유효성 검증
+            const start = new Date(pjtStartDate);
+            const end = new Date(pjtEndDate);
+            if (start >= end) {
+                alert('종료일은 시작일보다 늦어야 합니다.');
+                document.getElementById('pjtEndDate').focus();
+                return;
+            }
+
+            // 폼 데이터 설정
+            document.getElementById('pjtTags').value = tags.join(',');
+            document.getElementById('members').value = JSON.stringify(members);
+
+
+            // 파일 input 업데이트 (실제 파일들을 form에 포함)
+            updateFileInput();
+
+            // 콘솔에서 확인용 (개발 시에만 사용)
+            console.log('업로드된 파일 수:', uploadedFiles.length);
+            console.log('파일 목록:', uploadedFiles.map(f => f.name));
+            console.dir({
+                empNo: document.getElementById('empNo').value,
+                pjtName: pjtName,
+                pjtContent: pjtContent,
+                pjtStartDate: pjtStartDate,
+                pjtEndDate: pjtEndDate,
+                pjtEnrollDate: document.getElementById('pjtEnrollDate').value,
+                pjtCount: document.getElementById('pjtCount').value,
+                pjtStatus: document.getElementById('pjtStatus').value,
+                pjtTags: tags.join(','),
+                members: members,
+                files: uploadedFiles.map(f => f.name) // 파일 이름만 표시
+            });
+
+             alert('프로젝트가 성공적으로 생성되었습니다!');
+             this.submit(); // 폼 제출
+        });
+
     // 페이지 로드 시 초기화
     document.addEventListener('DOMContentLoaded', function() {
         setCurrentDateTime();
-        // 페이지 로드 시 기본 팀원 표시
         updateMemberDisplay();
     });
 </script>

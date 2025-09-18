@@ -38,7 +38,7 @@ public class ProjectController {
 
     @GetMapping("enrollForm.pj")
     public ModelAndView enrollForm(ModelAndView mv, HttpSession session) {
-       String myId = (( Employee)session.getAttribute("loginUser")).getEmpId();
+        String myId = (( Employee)session.getAttribute("loginUser")).getEmpId();
 
         ArrayList<Employee> mlist = pService.listProjectMember(myId);
 
@@ -47,8 +47,16 @@ public class ProjectController {
     }
 
     @PostMapping("insert.pj")
-    public String insertProject(Project p, MultipartFile upfiles, Model model, RedirectAttributes redirectAttributes, @RequestParam String members, @RequestParam String uploadedFiles) {
-        System.out.println(uploadedFiles);
+    public String insertProject(Project p, Model model, RedirectAttributes redirectAttributes, @RequestParam String members, @RequestParam List<MultipartFile> upfiles, @RequestParam int attCategory) {
+        System.out.println("=== 파일 업로드 디버깅 ===");
+        System.out.println("파일 개수: " + upfiles.size());
+        for (int i = 0; i < upfiles.size(); i++) {
+            MultipartFile file = upfiles.get(i);
+            System.out.println("파일 " + (i+1) + ": " + file.getOriginalFilename() + " (크기: " + file.getSize() + " bytes)");
+        }
+        System.out.println("attCategory: " + attCategory);
+        System.out.println("=======================");
+
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -78,7 +86,7 @@ public class ProjectController {
 
         Project p = pService.selectProject(pno);
         System.out.println(p);
-       ArrayList<ProjectMember> pm=  pService.selectProjectMember(pno);
+        ArrayList<ProjectMember> pm=  pService.selectProjectMember(pno);
 
         if(pm != null){ mv.addObject("pm", pm);        }
         if(p !=null) {
