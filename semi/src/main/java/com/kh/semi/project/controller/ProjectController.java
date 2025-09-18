@@ -3,6 +3,10 @@ package com.kh.semi.project.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.semi.attachment.model.service.AttachmentServiceImpl;
+import com.kh.semi.attachment.model.vo.Attachment;
+import com.kh.semi.common.template.FilePath;
+import com.kh.semi.common.template.MyFileRenamePolicy;
 import com.kh.semi.employee.model.vo.Employee;
 import com.kh.semi.project.model.service.ProjectServiceImpl;
 import com.kh.semi.project.model.vo.Project;
@@ -18,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +32,9 @@ import java.util.Map;
 public class ProjectController {
     @Autowired
     private ProjectServiceImpl pService;
+
+    @Autowired
+    private AttachmentServiceImpl attService;
 
     @GetMapping("list.pj")
     public ModelAndView selectProjectList(ModelAndView mv){
@@ -38,7 +47,7 @@ public class ProjectController {
 
     @GetMapping("enrollForm.pj")
     public ModelAndView enrollForm(ModelAndView mv, HttpSession session) {
-        String myId = (( Employee)session.getAttribute("loginUser")).getEmpId();
+       String myId = (( Employee)session.getAttribute("loginUser")).getEmpId();
 
         ArrayList<Employee> mlist = pService.listProjectMember(myId);
 
@@ -48,15 +57,34 @@ public class ProjectController {
 
     @PostMapping("insert.pj")
     public String insertProject(Project p, Model model, RedirectAttributes redirectAttributes, @RequestParam String members, @RequestParam List<MultipartFile> upfiles, @RequestParam int attCategory) {
-        System.out.println("=== 파일 업로드 디버깅 ===");
-        System.out.println("파일 개수: " + upfiles.size());
-        for (int i = 0; i < upfiles.size(); i++) {
-            MultipartFile file = upfiles.get(i);
-            System.out.println("파일 " + (i+1) + ": " + file.getOriginalFilename() + " (크기: " + file.getSize() + " bytes)");
-        }
-        System.out.println("attCategory: " + attCategory);
-        System.out.println("=======================");
+        for (MultipartFile file : upfiles) {
+            System.out.println(file.getOriginalFilename());
 
+        }
+
+        if (upfiles  != null && !upfiles.isEmpty()) {
+            File folder = new File(FilePath.UPLOAD_PATH);
+                if (!folder.exists()) folder.mkdirs();
+                for (MultipartFile file : upfiles) {
+                    if (file.isEmpty()) continue;
+                    String originName = file.getOriginalFilename();
+                    String changeName = new MyFileRenamePolicy().rename(originName);
+                    File dest = new File(FilePath.UPLOAD_PATH + changeName);
+                    try {
+                        file.transferTo(dest);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Attachment att = new Attachment();
+                    att.setAttOrigin(originName);
+                    att.setAttChangeName(changeName);
+                    att.setAttFilePath(FilePath.URL_PATH);
+                    att.setAttCategory(attCategory);
+                    att.setRefNo(p.getPjtNo());
+                    int insertAttResult = attService.insertAttachment(att);
+
+                }
+        }
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -86,7 +114,7 @@ public class ProjectController {
 
         Project p = pService.selectProject(pno);
         System.out.println(p);
-        ArrayList<ProjectMember> pm=  pService.selectProjectMember(pno);
+       ArrayList<ProjectMember> pm=  pService.selectProjectMember(pno);
 
         if(pm != null){ mv.addObject("pm", pm);        }
         if(p !=null) {

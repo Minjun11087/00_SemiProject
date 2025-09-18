@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="attachmentMapper">
+
+    <!-- ResultMap -->
+    <resultMap id="attachmentResultSet" type="Attachment">
+        <id property="attNo" column="ATT_NO"/>
+        <result property="attOrigin" column="ATT_ORIGIN"/>
+        <result property="attChangeName" column="ATT_CHANGENAME"/>
+        <result property="attFilePath" column="ATT_FILEPATH"/>
+        <result property="refNo" column="REF_NO"/>
+        <result property="attCategory" column="ATT_CATEGORY"/>
+    </resultMap>
+
+    <insert id="insertAttachment" parameterType="com.kh.semi.attachment.model.vo.Attachment">
+        INSERT INTO ATTACHMENT_TB
+        (ATT_NO ,ATT_ORIGIN, ATT_CHANGENAME, ATT_FILEPATH, ATT_CATEGORY, REF_NO)
+        VALUES
+        (SEQ_ATNO.NEXTVAL, #{attOrigin}, #{attChangeName}, #{attFilePath}, #{attCategory}, #{refNo})
+    </insert>
+
+    <!-- Select attachments by refNo and category -->
+    <select id="selectAttachments" parameterType="java.util.Map" resultMap="attachmentResultSet">
+        SELECT ATT_NO, ATT_ORIGIN, ATT_CHANGENAME, ATT_FILEPATH, REF_NO, ATT_CATEGORY
+        FROM ATTACHMENT_TB
+        WHERE REF_NO = #{refNo}
+        AND ATT_CATEGORY = #{attCategory}
+    </select>
+
+    <!-- Delete attachments by refNo and category -->
+    <delete id="deleteAttachments" parameterType="java.util.Map">
+        DELETE FROM ATTACHMENT_TB
+        WHERE REF_NO = #{refNo}
+        AND ATT_CATEGORY = #{attCategory}
+    </delete>
+
+    <!-- Delete single attachment by ATT_NO -->
+    <delete id="deleteAttachmentByNo" parameterType="_int">
+        DELETE FROM ATTACHMENT_TB
+        WHERE ATT_NO = #{attNo}
+    </delete>
+
+    <!-- Select single attachment by ATT_NO -->
+    <select id="selectAttachmentByNo" parameterType="_int" resultMap="attachmentResultSet">
+        SELECT ATT_NO, ATT_ORIGIN, ATT_CHANGENAME, ATT_FILEPATH, REF_NO, ATT_CATEGORY
+        FROM ATTACHMENT_TB
+        WHERE ATT_NO = #{attNo}
+    </select>
+
+</mapper>
