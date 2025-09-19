@@ -152,4 +152,20 @@ public class ProjectController {
         return pService.mySelectAllProjects(myEmpNo);// 페이징 없이 전체 목록 조회
     }
 
+    @GetMapping("updateForm.pj")
+    public ModelAndView updateProjectForm(@RequestParam("pjtNo") Integer pno, ModelAndView mv){
+        if (pno == null) {
+            mv.addObject("errorMsg", "프로젝트 번호가 없습니다").setViewName("common/errorPage");
+            return mv;
+        }
+
+        Project p = pService.selectProject(pno);
+        if(p != null) {
+            mv.addObject("p", p).setViewName("project/ProjectUpdateForm");
+        } else {
+            mv.addObject("errorMsg", "기존 게시글 원본 조회 실패").setViewName("common/errorPage");
+        }
+        return mv;
+    }
+
 }

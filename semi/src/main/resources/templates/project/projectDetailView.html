@@ -535,7 +535,7 @@
     <div class="action-buttons">
         <a href="list.pj" class="btn btn-back">목록으로</a>
         <th:block th:if="${not #lists.isEmpty(session.loginUser) and session.loginUser.empNo eq p.empNo}">
-            <a class="btn btn-edit" href="update.pj"> 수정 및 삭제</a>
+            <a th:href="'updateForm.pj?pjtNo=' + ${p.pjtNo}" class="btn btn-edit">수정 및 삭제</a>
         </th:block>
     </div>
 </div>

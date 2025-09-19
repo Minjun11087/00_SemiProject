@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 수정 - KH BANK</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .main-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .breadcrumb {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .breadcrumb a {
+            color: #e4b6ec;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e4b6ec;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        .form-label.required::after {
+            content: " *";
+            color: #ef4444;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #e4b6ec;
+            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
+            background: #fefefe;
+        }
+        .form-input:read-only {
+            background-color: #f9fafb;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: #10b981;
+            color: white;
+        }
+        .status-badge.expired {
+            background: #ef4444;
+        }
+        .status-badge.progress {
+            background: #f59e0b;
+        }
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #e4b6ec, #d196dd);
+            color: white;
+            border: 2px solid transparent;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #d196dd, #c084d4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(228, 182, 236, 0.4);
+        }
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+        }
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+            border: 2px solid transparent;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+            color: white;
+            border: 2px solid transparent;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333, #dc3545);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .tag-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .tag {
+            background: #e4b6ec;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tag-remove {
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .tag-remove:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .member-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e4b6ec;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .member-avatar-king {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF416C, #FF4B2B);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .member-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+        .member-details p {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        .file-input-container {
+            border: 2px dashed #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .file-input-container:hover {
+            border-color: #e4b6ec;
+            background: #fefefe;
+        }
+        .file-input-container.dragover {
+            border-color: #e4b6ec;
+            background: #f0f9ff;
+        }
+        .file-list {
+            margin-top: 1rem;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            background: #e4b6ec;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .form-container {
+                padding: 1.5rem;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .tag-input-container {
+                flex-direction: column;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .form-container {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+<main class="main-container">
+    <div class="breadcrumb">
+        <a href="list.pj">프로젝트 관리</a> > <a href="list.pj">프로젝트 목록</a> > <span>프로젝트 수정</span>
+    </div>
+    <div class="page-header">
+        <h1 class="page-title">프로젝트 수정</h1>
+        <p class="page-subtitle">기존 프로젝트의 정보를 수정하고 관리하세요</p>
+    </div>
+    <form class="form-container" id="projectForm" th:action="@{/update.pj}" method="post" enctype="multipart/form-data">
+        <!-- 숨겨진 프로젝트 번호 -->
+        <input type="hidden" name="pjtNo" th:value="${p.pjtNo}">
+        <div class="form-section">
+            <h3 class="section-title">프로젝트 기본 정보</h3>
+            <div class="form-group">
+                <label class="form-label required">프로젝트 제목</label>
+                <input type="text" name="pjtName" class="form-input" id="projectTitle" th:value="${p.pjtName}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label required">프로젝트 설명</label>
+                <textarea name="pjtContent" class="form-textarea" id="projectDescription" required th:text="${p.pjtContent}"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required">시작일</label>
+                    <input type="date" name="pjtStartDate" class="form-input" id="startDate"
+                           th:value="${#dates.format(p.pjtStartDate, 'yyyy-MM-dd')}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">종료일</label>
+                    <input type="date" name="pjtEndDate" class="form-input" id="endDate"
+                           th:value="${#dates.format(p.pjtEndDate, 'yyyy-MM-dd')}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">기술 태그</label>
+                <div class="tag-input-container">
+                    <input type="text" class="form-input" id="tagInput" placeholder="기술명을 입력하고 Enter를 누르세요" style="flex: 1;">
+                    <button type="button" class="btn btn-secondary btn-small" onclick="addTag()">추가</button>
+                </div>
+                <!-- 기존 태그들을 히든 필드로 저장 -->
+                <input type="hidden" name="pjtTags" id="tagsHidden" th:value="${p.pjtTags}">
+                <div class="tag-container" id="tagContainer">
+                    <!-- JavaScript로 기존 태그들이 여기에 표시됩니다 -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">첨부 파일</label>
+                <div class="file-input-container" onclick="document.getElementById('fileInput').click()">
+                    <div>📎 파일을 클릭하거나 드래그하여 업로드하세요</div>
+                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.5rem;">
+                        지원 형식: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (최대 10MB)
+                    </div>
+                </div>
+                <input type="file" name="uploadFiles" id="fileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" style="display: none;">
+                <div class="file-list" id="fileList">
+                    <!-- 기존 파일들이 여기에 표시됩니다 -->
+                    <div th:each="att : ${attachments}" class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon" th:text="${#strings.toUpperCase(#strings.substringAfter(att.attOrigin, '.'))}">FILE</div>
+                            <div class="file-details">
+                                <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;" th:text="${att.attOrigin}">파일명</h4>
+                                <p style="font-size: 0.8rem; color: #6b7280;">기존 파일</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-small" th:onclick="'removeExistingFile(' + ${att.attNo} + ')'">제거</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-section">
+            <h3 class="section-title">프로젝트 구성원</h3>
+            <div class="form-group">
+                <label class="form-label">팀원 추가</label>
+                <div class="tag-input-container">
+                    <input type="text" class="form-input" id="memberName" placeholder="사원명" style="flex: 1;">
+                    <input type="text" class="form-input" id="memberRole" placeholder="역할" style="flex: 1;">
+                    <button type="button" class="btn btn-secondary btn-small" onclick="addMember()">추가</button>
+                </div>
+                <div id="memberList">
+                    <!-- 프로젝트 리더 -->
+                    <div class="member-item">
+                        <div class="member-info">
+                            <div class="member-avatar-king" th:text="${p.empName.substring(0, 1)}">조</div>
+                            <div class="member-details">
+                                <h4 th:text="|${p.empName} ${p.jobTitle}|">조인순 부장</h4>
+                                <p th:text="|${p.deptTitle} ★ 프로젝트 리더|">프로젝트 리더</p>
+                            </div>
+                        </div>
+                        <span class="status-badge">PL</span>
+                    </div>
+                    <!-- 기존 팀원들 -->
+                    <div class="member-item" th:each="m : ${pm}">
+                        <div class="member-info">
+                            <div class="member-avatar" th:text="${m.empName.substring(0, 1)}">김</div>
+                            <div class="member-details">
+                                <h4 th:text="|${m.empName} ${m.jobTitle}|">김개발 과장</h4>
+                                <p th:text="${m.deptTitle}">개발팀</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-small" th:onclick="'removeExistingMember(' + ${m.empNo} + ')'">제거</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">
+                ✅ 수정사항 저장
+            </button>
+            <button type="button" class="btn btn-danger" onclick="deleteProject()">
+                🗑️ 프로젝트 삭제
+            </button>
+            <a th:href="'detail.pj?pjtNo=' + ${p.pjtNo}" class="btn btn-secondary">
+                📋 취소 (상세보기로)
+            </a>
+        </div>
+    </form>
+</main>
+<script th:inline="javascript">
+    // 서버에서 전달받은 데이터
+    /*<![CDATA[*/
+    let existingTags = /*[[${p.pjtTags}]]*/ '';
+    let projectMembers = /*[[${pm}]]*/ [];
+    let attachments = /*[[${attachments}]]*/ [];
+    /*]]>*/
+    // 태그 배열 초기화
+    let tags = existingTags ? existingTags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+
+    // 새로 추가된 멤버들과 파일들
+    let newMembers = [];
+    let newFiles = [];
+    let removedFileIds = [];
+    let removedMemberIds = [];
+    // 기술 태그 추가
+    function addTag() {
+        const tagInput = document.getElementById('tagInput');
+        const tagValue = tagInput.value.trim();
+        if (tagValue && !tags.includes(tagValue)) {
+            tags.push(tagValue);
+            updateTagDisplay();
+            updateTagsHidden();
+            tagInput.value = '';
+        }
+    }
+    // 태그 표시 업데이트
+    function updateTagDisplay() {
+        const tagContainer = document.getElementById('tagContainer');
+        tagContainer.innerHTML = '';
+        tags.forEach((tag, index) => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'tag';
+            tagElement.innerHTML = `
+                ${tag}
+                <span class="tag-remove" onclick="removeTag(${index})">×</span>
+            `;
+            tagContainer.appendChild(tagElement);
+        });
+    }
+    // 히든 필드 업데이트
+    function updateTagsHidden() {
+        document.getElementById('tagsHidden').value = tags.join(', ');
+    }
+    // 태그 제거
+    function removeTag(index) {
+        tags.splice(index, 1);
+        updateTagDisplay();
+        updateTagsHidden();
+    }
+    // Enter 키로 태그 추가
+    document.getElementById('tagInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTag();
+        }
+    });
+    // 팀원 추가
+    function addMember() {
+        const nameInput = document.getElementById('memberName');
+        const roleInput = document.getElementById('memberRole');
+        const name = nameInput.value.trim();
+        const role = roleInput.value.trim();
+        if (name && role) {
+            const member = {
+                empName: name,
+                jobTitle: role,
+                deptTitle: '새 팀원',
+                isNew: true
+            };
+            newMembers.push(member);
+            updateMemberDisplay();
+            nameInput.value = '';
+            roleInput.value = '';
+        }
+    }
+    // 팀원 표시 업데이트
+    function updateMemberDisplay() {
+        const memberList = document.getElementById('memberList');
+        let html = `
+            <div class="member-item">
+                <div class="member-info">
+                    <div class="member-avatar-king">${/*[[${p.empName.substring(0, 1)}]]*/ 'P'}</div>
+                    <div class="member-details">
+                        <h4>${/*[[${p.empName}]]*/ ''} ${/* [[${p.jobTitle}]]*/ ''}</h4>
+                        <p>${/* [[${p.deptTitle}]]*/ ''} ★ 프로젝트 리더</p>
+                    </div>
+                </div>
+                <span class="status-badge">PL</span>
+            </div>
+        `;
+        // 기존 팀원들 (제거되지 않은 것들만)
+        projectMembers.forEach((member, index) => {
+            if (!removedMemberIds.includes(member.empNo)) {
+                html += `
+                    <div class="member-item">
+                        <div class="member-info">
+                            <div class="member-avatar">${member.empName.charAt(0)}</div>
+                            <div class="member-details">
+                                <h4>${member.empName} ${member.jobTitle}</h4>
+                                <p>${member.deptTitle}</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-small" onclick="removeExistingMember(${member.empNo})">제거</button>
+                    </div>
+                `;
+            }
+        });
+        // 새로 추가된 팀원들
+        newMembers.forEach((member, index) => {
+            html += `
+                <div class="member-item">
+                    <div class="member-info">
+                        <div class="member-avatar">${member.empName.charAt(0)}</div>
+                        <div class="member-details">
+                            <h4>${member.empName} ${member.jobTitle}</h4>
+                            <p>${member.deptTitle} (신규)</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="removeNewMember(${index})">제거</button>
+                </div>
+            `;
+        });
+        memberList.innerHTML = html;
+    }
+    // 기존 팀원 제거
+    function removeExistingMember(empNo) {
+        if (confirm('이 팀원을 프로젝트에서 제거하시겠습니까?')) {
+            removedMemberIds.push(empNo);
+            updateMemberDisplay();
+        }
+    }
+    // 새 팀원 제거
+    function removeNewMember(index) {
+        newMembers.splice(index, 1);
+        updateMemberDisplay();
+    }
+    // 기존 파일 제거
+    function removeExistingFile(attNo) {
+        if (confirm('이 파일을 삭제하시겠습니까?')) {
+            removedFileIds.push(attNo);
+            // 해당 파일 요소를 DOM에서 제거
+            event.target.closest('.file-item').remove();
+        }
+    }
+    // 파일 업로드 처리
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        handleFiles(e.target.files);
+    });
+    function handleFiles(files) {
+        [...files].forEach(uploadFile);
+    }
+    function uploadFile(file) {
+        if (file.size > 10 * 1024 * 1024) {
+            alert('파일 크기는 10MB를 초과할 수 없습니다.');
+            return;
+        }
+        const fileObj = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            id: Date.now() + Math.random(),
+            file: file
+        };
+        newFiles.push(fileObj);
+        updateFileDisplay();
+    }
+    function updateFileDisplay() {
+        const fileList = document.getElementById('fileList');
+
+        newFiles.forEach((fileObj, index) => {
+            const fileElement = document.createElement('div');
+            fileElement.className = 'file-item';
+            fileElement.id = `new-file-${index}`;
+            const fileExtension = fileObj.name.split('.').pop().toUpperCase();
+            const fileSize = (fileObj.size / 1024 / 1024).toFixed(2) + 'MB';
+            fileElement.innerHTML = `
+                <div class="file-info">
+                    <div class="file-icon">${fileExtension}</div>
+                    <div class="file-details">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${fileObj.name}</h4>
+                        <p style="font-size: 0.8rem; color: #6b7280;">${fileSize} (신규)</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-small" onclick="removeNewFile(${index})">제거</button>
+            `;
+            fileList.appendChild(fileElement);
+        });
+    }
+    function removeNewFile(index) {
+        newFiles.splice(index, 1);
+        document.getElementById(`new-file-${index}`).remove();
+    }
+    // 프로젝트 삭제
+    function deleteProject() {
+        if (confirm('정말로 이 프로젝트를 삭제하시겠습니까?\n삭제된 프로젝트는 복구할 수 없습니다.')) {
+            if (confirm('삭제를 확정하시겠습니까?')) {
+                // 삭제 요청을 서버로 전송
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'delete.pj';
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'pjtNo';
+                input.value = /*[[${p.pjtNo}]]*/ '';
+
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    }
+    // 폼 제출 시 추가 데이터 처리
+    document.getElementById('projectForm').addEventListener('submit', function(e) {
+        // 제거된 파일 ID들을 히든 필드로 추가
+        if (removedFileIds.length > 0) {
+            const removedFilesInput = document.createElement('input');
+            removedFilesInput.type = 'hidden';
+            removedFilesInput.name = 'removedFileIds';
+            removedFilesInput.value = removedFileIds.join(',');
+            this.appendChild(removedFilesInput);
+        }
+        // 제거된 멤버 ID들을 히든 필드로 추가
+        if (removedMemberIds.length > 0) {
+            const removedMembersInput = document.createElement('input');
+            removedMembersInput.type = 'hidden';
+            removedMembersInput.name = 'removedMemberIds';
+            removedMembersInput.value = removedMemberIds.join(',');
+            this.appendChild(removedMembersInput);
+        }
+        // 새로 추가된 멤버들을 히든 필드로 추가
+        if (newMembers.length > 0) {
+            newMembers.forEach((member, index) => {
+                const memberNameInput = document.createElement('input');
+                memberNameInput.type = 'hidden';
+                memberNameInput.name = `newMembers[${index}].empName`;
+                memberNameInput.value = member.empName;
+                this.appendChild(memberNameInput);
+                const memberRoleInput = document.createElement('input');
+                memberRoleInput.type = 'hidden';
+                memberRoleInput.name = `newMembers[${index}].jobTitle`;
+                memberRoleInput.value = member.jobTitle;
+                this.appendChild(memberRoleInput);
+            });
+        }
+        // 필수 입력 검증
+        const title = document.getElementById('projectTitle').value.trim();
+        const description = document.getElementById('projectDescription').value.trim();
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        if (!title) {
+            alert('프로젝트 제목을 입력해주세요.');
+            document.getElementById('projectTitle').focus();
+            e.preventDefault();
+            return;
+        }
+        if (!description) {
+            alert('프로젝트 설명을 입력해주세요.');
+            document.getElementById('projectDescription').focus();
+            e.preventDefault();
+            return;
+        }
+        if (!startDate || !endDate) {
+            alert('프로젝트 시작일과 종료일을 모두 입력해주세요.');
+            e.preventDefault();
+            return;
+        }
+        // 날짜 유효성 검증
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start >= end) {
+            alert('종료일은 시작일보다 늦어야 합니다.');
+            document.getElementById('endDate').focus();
+            e.preventDefault();
+            return;
+        }
+        // 확인 메시지
+        if (!confirm('프로젝트 정보를 수정하시겠습니까?')) {
+            e.preventDefault();
+            return;
+        }
+    });
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTagDisplay();
+        updateTagsHidden();
+        updateMemberDisplay();
+
+        // 드래그 앤 드롭 이벤트 설정
+        const fileContainer = document.querySelector('.file-input-container');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, highlight, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, unhighlight, false);
+        });
+        function highlight(e) {
+            fileContainer.classList.add('dragover');
+        }
+        function unhighlight(e) {
+            fileContainer.classList.remove('dragover');
+        }
+        fileContainer.addEventListener('drop', handleDrop, false);
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+    });
+</script>
+</body>
+</html>
