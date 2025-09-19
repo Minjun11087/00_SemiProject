@@ -3,10 +3,6 @@ package com.kh.semi.project.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kh.semi.attachment.model.service.AttachmentServiceImpl;
-import com.kh.semi.attachment.model.vo.Attachment;
-import com.kh.semi.common.template.FilePath;
-import com.kh.semi.common.template.MyFileRenamePolicy;
 import com.kh.semi.employee.model.vo.Employee;
 import com.kh.semi.project.model.service.ProjectServiceImpl;
 import com.kh.semi.project.model.vo.Project;
@@ -33,9 +29,6 @@ public class ProjectController {
     @Autowired
     private ProjectServiceImpl pService;
 
-    @Autowired
-    private AttachmentServiceImpl attService;
-
     @GetMapping("list.pj")
     public ModelAndView selectProjectList(ModelAndView mv){
 
@@ -61,30 +54,10 @@ public class ProjectController {
             System.out.println(file.getOriginalFilename());
 
         }
+        System.out.println(p);
+        System.out.println("-------------------------");
 
-        if (upfiles  != null && !upfiles.isEmpty()) {
-            File folder = new File(FilePath.UPLOAD_PATH);
-                if (!folder.exists()) folder.mkdirs();
-                for (MultipartFile file : upfiles) {
-                    if (file.isEmpty()) continue;
-                    String originName = file.getOriginalFilename();
-                    String changeName = new MyFileRenamePolicy().rename(originName);
-                    File dest = new File(FilePath.UPLOAD_PATH + changeName);
-                    try {
-                        file.transferTo(dest);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Attachment att = new Attachment();
-                    att.setAttOrigin(originName);
-                    att.setAttChangeName(changeName);
-                    att.setAttFilePath(FilePath.URL_PATH);
-                    att.setAttCategory(attCategory);
-                    att.setRefNo(p.getPjtNo());
-                    int insertAttResult = attService.insertAttachment(att);
 
-                }
-        }
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -93,7 +66,7 @@ public class ProjectController {
             for(Map<String, String> a : memberList){
                 System.out.println(a);
             }
-            int result = pService.insertProjectMember(p, memberList);
+            int result = pService.insertProjectMember(p, memberList, upfiles, attCategory);
 
             if(result>=0) {//성공
                 redirectAttributes.addFlashAttribute("alertMsg", "성공적으로 게시글 등록");
