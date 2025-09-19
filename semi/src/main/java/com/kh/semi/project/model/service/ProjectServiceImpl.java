@@ -3,6 +3,7 @@ package com.kh.semi.project.model.service;
 
 import com.kh.semi.attachment.model.service.AttachmentServiceImpl;
 import com.kh.semi.attachment.model.vo.Attachment;
+import com.kh.semi.common.model.vo.PageInfo;
 import com.kh.semi.common.template.FilePath;
 import com.kh.semi.common.template.MyFileRenamePolicy;
 import com.kh.semi.employee.model.vo.Employee;
@@ -33,9 +34,20 @@ public class ProjectServiceImpl implements ProjectService{
     private AttachmentServiceImpl attService;
 
     @Override
-    public ArrayList<Project> selectProjectList() {
-        return pDao.selectProjectList(sqlSession);
+    public ArrayList<Project> selectProjectList(PageInfo pi) {
+        return pDao.selectProjectList(sqlSession, pi);
     }
+
+    @Override
+    public int selectListCount() {
+        return pDao.selectListCount(sqlSession);
+    }
+
+    @Override
+    public List<Project> selectAllProjects() {
+        return pDao.selectAllProjects(sqlSession);
+    }
+
 
     @Override
     public int insertProject(Project p) {
@@ -117,8 +129,18 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public ArrayList<Project> myProjectList(int myEmpNo) {
-        return pDao.myProjectList(sqlSession, myEmpNo);
+    public ArrayList<Project> myProjectList(int myEmpNo,  PageInfo pi) {
+        return pDao.myProjectList(sqlSession, myEmpNo, pi);
+    }
+
+    @Override
+    public int mySelectListCount(int myEmpNo) {
+        return pDao.mySelectListCount(sqlSession, myEmpNo);
+    }
+
+    @Override
+    public List<Project> mySelectAllProjects(int myEmpNo) {
+       return  pDao.mySelectAllProjects(sqlSession, myEmpNo);
     }
 
 

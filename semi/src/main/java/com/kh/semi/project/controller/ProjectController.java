@@ -1,8 +1,16 @@
 package com.kh.semi.project.controller;
 
+
+import com.kh.semi.approve.model.vo.Approvement;
+import com.kh.semi.attachment.model.service.AttachmentServiceImpl;
+import com.kh.semi.attachment.model.vo.Attachment;
+import com.kh.semi.common.model.vo.PageInfo;
+import com.kh.semi.common.template.FilePath;
+import com.kh.semi.common.template.MyFileRenamePolicy;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.semi.common.template.Pagination;
 import com.kh.semi.employee.model.vo.Employee;
 import com.kh.semi.project.model.service.ProjectServiceImpl;
 import com.kh.semi.project.model.vo.Project;
@@ -14,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,18 +38,26 @@ public class ProjectController {
     @Autowired
     private ProjectServiceImpl pService;
 
+    @Autowired
+    private AttachmentServiceImpl attService;
+
     @GetMapping("list.pj")
-    public ModelAndView selectProjectList(ModelAndView mv){
+    public ModelAndView selectProjectList(@RequestParam(value = "cpage", defaultValue = "1") int currentPage, ModelAndView mv){
 
-        ArrayList<Project> list = pService.selectProjectList();
+        int listCount = pService.selectListCount();
+        PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 9);
 
-        mv.addObject("list", list).setViewName("project/projectList");
+        ArrayList<Project> list = pService.selectProjectList(pi);
+        List<Project> allProjectList = pService.selectAllProjects();
+
+        mv.addObject("allProjectList", allProjectList);
+        mv.addObject("pi", pi).addObject("list", list).setViewName("project/projectList");
         return mv;
     }
 
     @GetMapping("enrollForm.pj")
     public ModelAndView enrollForm(ModelAndView mv, HttpSession session) {
-       String myId = (( Employee)session.getAttribute("loginUser")).getEmpId();
+        String myId = (( Employee)session.getAttribute("loginUser")).getEmpId();
 
         ArrayList<Employee> mlist = pService.listProjectMember(myId);
 
@@ -84,10 +101,11 @@ public class ProjectController {
 
     @GetMapping("detail.pj")
     public ModelAndView selectProject(int pno, ModelAndView mv) {
+        int attCategory=0;
 
         Project p = pService.selectProject(pno);
         System.out.println(p);
-       ArrayList<ProjectMember> pm=  pService.selectProjectMember(pno);
+        ArrayList<ProjectMember> pm=  pService.selectProjectMember(pno);
 
         if(pm != null){ mv.addObject("pm", pm);        }
         if(p !=null) {
@@ -95,19 +113,37 @@ public class ProjectController {
         } else {
             mv.addObject("errorMsg", "게시글 조회 실패").setViewName("common/errorPage");
         }
+
+        List<Attachment> attachments = attService.selectAttachments(pno, attCategory); // DAO/Service에 구현 필요
+        mv.addObject("attachments", attachments).setViewName("project/projectDetailView");
+
         return mv;
     }
 
     @GetMapping("myProject.pj")
-    public ModelAndView myProjectList(ModelAndView mv, HttpSession session){
+    public ModelAndView myProjectList(@RequestParam(value = "cpage", defaultValue = "1") int currentPage, ModelAndView mv, HttpSession session){
+
         int myEmpNo = (( Employee)session.getAttribute("loginUser")).getEmpNo();
+        System.out.println(myEmpNo);
+        int listCount = pService.mySelectListCount(myEmpNo);
 
-        ArrayList<Project> list = pService.myProjectList(myEmpNo);
+        System.out.println(listCount);
+        PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 9);
 
-        mv.addObject("list", list).setViewName("project/myProject");
+        ArrayList<Project> list = pService.myProjectList(myEmpNo, pi);
+        List<Project> allProjectList = pService.mySelectAllProjects(myEmpNo);
+
+        mv.addObject("allProjectList", allProjectList);
+        mv.addObject("pi", pi).addObject("list", list).setViewName("project/myProject");
         return mv;
     }
 
+
+    @GetMapping("/project/getAllProjects")
+    @ResponseBody
+    public List<Project> getAllProjects() {
+        return pService.selectAllProjects(); // 페이징 없이 전체 목록 조회
+    }
 
 
 }

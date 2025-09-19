@@ -132,4 +132,17 @@
         order by pjt_startdate desc
     </select>
 
+    <select id="selectListCount" resultType="_int">
+        select count(*)
+        from project_tb
+        where pjt_status in('p','c','e')
+    </select>
+
+    <select id="mySelectListCount" resultType="_int">
+        select count(*)
+        from project_tb
+        where pjt_status in('p','c','e')
+        and emp_no = #{empNo}
+    </select>
+
 </mapper>

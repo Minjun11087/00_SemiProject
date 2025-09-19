@@ -436,8 +436,8 @@
     <div class="project-header">
 
         <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="project-title" th:text="${p.pjtName}">
-        </div>
+            <div class="project-title" th:text="${p.pjtName}">
+            </div>
 
             <th:block th:if="${#dates.createNow().after(p.pjtEndDate)}">
                 <span class="status-badge status-expired">만료</span>
@@ -523,9 +523,10 @@
     <div class="content-section">
         <h2 class="section-title">첨부파일</h2>
         <div class="files-list">
-            <a href="download.app" class="file-link" onclick="downloadFile('프로젝트_요구사항_분석서.pdf')">프로젝트_요구사항_분석서.pdf (2.4 MB)</a>
-            <a href="#" class="file-link" onclick="downloadFile('UI_UX_디자인_가이드.ppt')">UI_UX_디자인_가이드.ppt (5.8 MB)</a>
-            <a href="#" class="file-link" onclick="downloadFile('데이터베이스_설계서.xlsx')">데이터베이스_설계서.xlsx (1.2 MB)</a>
+            <th:block th:each="att : ${attachments}">
+                <a th:href="@{/download.app(fileName=${att.attChangeName}, origin=${att.attOrigin})}"
+                   class="file-link">[[${att.attOrigin}]]</a>
+            </th:block>
         </div>
     </div>
 
@@ -558,7 +559,6 @@
 
     // 파일 다운로드 함수
     function downloadFile(filename) {
-        // 실제 구현에서는 서버에서 파일을 다운로드
         alert(`${filename} 다운로드를 시작합니다.`);
         return false; // 링크 기본 동작 방지
     }

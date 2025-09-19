@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+
 @Service
 @Transactional
 public class ApproveServiceImpl implements ApproveService{
 
     @Autowired
     private ApproveDao aDao;
+
 
     @Autowired
     private SqlSessionTemplate sqlSession;
@@ -58,5 +60,9 @@ public class ApproveServiceImpl implements ApproveService{
     public int updateFinalStatus(int ano, String status) {
         return aDao.updateFinalStatus(sqlSession, ano, status);
     }
+
+
+
+
 
 }

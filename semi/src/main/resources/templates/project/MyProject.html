@@ -2,12 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleafe/layout"
       layout:decorate="~{layout/layout}"
-      layout:fragment="content"
->
+      layout:fragment="content">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>프로젝트 관리</title>
     <style>
+        /* 기존 스타일 유지 */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -78,6 +78,7 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
+            min-height: 400px;
         }
 
         .project-card {
@@ -89,6 +90,9 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            height: 180px;
+
         }
 
         .project-card:hover {
@@ -166,110 +170,6 @@
             line-height: 1.5;
         }
 
-        .project-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .project-tech {
-            display: flex;
-            gap: 8px;
-        }
-
-        .tech-tag {
-            background: #f7fafc;
-            color: #4a5568;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .project-team {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .team-avatars {
-            display: flex;
-            margin-left: -8px;
-        }
-
-        .team-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 2px solid white;
-            margin-left: -8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .avatar-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .avatar-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .avatar-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .avatar-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-
-        .add-project-card {
-            background: linear-gradient(135deg, #f7fafc, #edf2f7);
-            border: 2px dashed #cbd5e0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .add-project-card:hover {
-            border-color: #e4b6ec;
-            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
-            transform: translateY(-5px);
-        }
-
-        .add-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e4b6ec, #d196dd);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .add-text {
-            color: #718096;
-            font-weight: 600;
-        }
-
-        .search-bar {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 25px;
-            padding: 12px 20px;
-            width: 300px;
-            font-size: 14px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .search-bar:focus {
-            outline: none;
-            border-color: #e4b6ec;
-            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
-        }
-
         .stats-bar {
             display: flex;
             gap: 30px;
@@ -308,6 +208,23 @@
             margin-top: 5px;
         }
 
+        .search-bar {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 25px;
+            padding: 12px 20px;
+            width: 300px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #e4b6ec;
+            box-shadow: 0 0 0 3px rgba(228, 182, 236, 0.1);
+        }
+
         .no-projects {
             text-align: center;
             padding: 60px 20px;
@@ -316,52 +233,85 @@
             grid-column: 1 / -1;
         }
 
-        .no-projects-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            opacity: 0.5;
+        /* 페이징 스타일 */
+        #pagingArea {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
         }
 
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            gap: 10px;
+        }
 
-            .project-grid {
-                grid-template-columns: 1fr;
-            }
+        .page-item {
+            display: inline-block;
+        }
 
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-            }
+        .page-item a {
+            display: block;
+            padding: 10px 15px;
+            color: #718096;
+            text-decoration: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-            .stats-bar {
-                flex-direction: column;
-                gap: 15px;
-            }
+        .page-item.active a {
+            background: #e4b6ec;
+            color: white;
+            border-color: #e4b6ec;
+        }
 
-            .project-tabs {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
+        .page-item.disabled a {
+            color: #cbd5e0;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
-            .tab {
-                padding: 10px 15px;
-            }
+        .page-item:not(.disabled):not(.active) a:hover {
+            background: #f3e8ff;
+            border-color: #e4b6ec;
+            color: #e4b6ec;
+        }
+
+        /* 로딩 스피너 */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #e4b6ec;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="breadcrumb">
-        <a href="#">프로젝트 관리</a> > <span>나의 프로젝트 목록</span>
+        <a href="#">프로젝트 관리</a> > <span>z내 프로젝트 목록</span>
     </div>
 
     <div class="stats-bar">
-        <div class="stat-item" data-filter="all">
+        <div class="stat-item active" data-filter="all">
             <div class="stat-number" id="total-count">0</div>
-            <div class="stat-label">나의 프로젝트</div>
+            <div class="stat-label">내 프로젝트</div>
         </div>
         <div class="stat-item" data-filter="active">
             <div class="stat-number" id="active-count">0</div>
@@ -377,72 +327,100 @@
         </div>
     </div>
 
-    <input type="text" class="search-bar" placeholder="검색할 프로젝트 제목을 입력하세요...">
+    <input type="text" class="search-bar" id="searchInput" placeholder="검색할 프로젝트 제목을 입력하세요...">
 
     <div class="project-tabs">
-        <div class="tab active" data-filter="all">나의 프로젝트 <span class="tab-count" id="tab-all-count">0</span></div>
+        <div class="tab active" data-filter="all">전체 프로젝트 <span class="tab-count" id="tab-all-count">0</span></div>
         <div class="tab" data-filter="active">진행중인 프로젝트 <span class="tab-count" id="tab-active-count">0</span></div>
         <div class="tab" data-filter="planning">검토중인 프로젝트 <span class="tab-count" id="tab-planning-count">0</span></div>
         <div class="tab" data-filter="expired">지나간 프로젝트 <span class="tab-count" id="tab-expired-count">0</span></div>
     </div>
 
     <div class="project-grid" id="project-grid">
-        <div class="project-card detailProject" th:each="p:${list}">
-            <div class="project-header">
-                <input type="hidden" class="pno" th:value="${p.pjtNo}">
-                <h3 class="project-title" th:text="${p.pjtName}">프로젝트명</h3>
-                <th:block th:if="${#dates.createNow().after(p.pjtEndDate)}">
-                    <span class="project-status status-expired">만료</span>
-                </th:block>
-                <th:block th:unless="${#dates.createNow().after(p.pjtEndDate)}">
-                    <span th:if="${p.pjtStatus eq 'p'}" class="project-status status-active">진행</span>
-                    <span th:if="${p.pjtStatus eq 'c'}" class="project-status status-planning">검토</span>
-
-                </th:block>
-            </div>
-            <div class="project-info">
-                <div class="project-date"  th:text="'작성일: ' + ${#dates.format(p.pjtEnrollDate, 'yyyy년 MM월 dd일')}">작업일</div>
-                <div class="project-description" th:text="'작성자: ' + ${p.empName}">작성자</div>
-            </div>
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>프로젝트를 불러오는 중...</p>
         </div>
+    </div>
 
-        <div class="add-project-card project-card" onclick="location.href='enrollForm.pj'">
-            <div class="add-icon">+</div>
-            <div class="add-text">새 프로젝트 신청</div>
-        </div>
+    <div id="pagingArea">
+        <ul class="pagination" id="pagination">
+        </ul>
     </div>
 </div>
 
-<script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    // 전체 프로젝트 데이터를 저장할 변수
+    let allProjects = [];
+    let filteredProjects = [];
     let currentFilter = 'all';
     let currentSearch = '';
+    let currentPage = 1;
+    const itemsPerPage = 9; // 한 페이지에 표시할 프로젝트 수
 
-    // 페이지 로드 시 초기화
-    $(function(){
-        updateCounts();
-
-        // 프로젝트 카드 클릭 이벤트
-        $(".detailProject").click(function(){
-            let pno = $(this).find(".pno").val();
-            location.href='detail.pj?pno='+ pno;
-        });
+    // 페이지 로드 시 전체 데이터 가져오기
+    $(document).ready(function() {
+        // Thymeleaf에서 초기 데이터를 받아오거나 AJAX로 전체 데이터 로드
+        loadAllProjects();
     });
 
-    // 상태 텍스트를 필터 키로 변환하는 함수
-    function getStatusKeyFromText(statusText) {
-        const statusMap = {
-            '진행': 'active',
-            '검토': 'planning',
-            '만료': 'expired'
-        };
+    // 전체 프로젝트 데이터 로드 (AJAX 방식)
+    function loadAllProjects() {
+        // 방법 1: AJAX로 전체 데이터 가져오기
+        $.ajax({
+            url: '/project/getAllProjects', // 전체 프로젝트를 반환하는 엔드포인트
+            type: 'GET',
+            success: function(data) {
+                allProjects = data;
+                initializeProjects();
+            },
+            error: function() {
+                // 방법 2: 현재 페이지의 데이터를 사용 (Thymeleaf 인라인)
+                // 서버에서 전체 데이터를 미리 전달한 경우
+                /*[# th:if="${allProjectList != null}"]*/
+                allProjects = /*[[${allProjectList}]]*/ [];
+                /*[/]*/
 
-        return statusMap[statusText] || 'unknown';
+                if (allProjects.length === 0) {
+                    // 데모 데이터 (실제로는 서버에서 가져와야 함)
+                    console.log('전체 프로젝트 데이터를 로드할 수 없습니다.');
+                }
+                initializeProjects();
+            }
+        });
     }
 
-    // 개수 업데이트 함수 (상태 텍스트 기반)
-    function updateCounts() {
-        const allProjects = document.querySelectorAll('.project-card.detailProject');
+    // 프로젝트 초기화
+    function initializeProjects() {
+        // 프로젝트 데이터 정규화 (상태 결정)
+        allProjects = allProjects.map(project => {
+            // 만료 여부 체크
+            const endDate = new Date(project.pjtEndDate);
+            const now = new Date();
 
+            let status;
+            if (now > endDate) {
+                status = 'expired';
+                project.statusText = '만료';
+            } else if (project.pjtStatus === 'p') {
+                status = 'active';
+                project.statusText = '진행';
+            } else if (project.pjtStatus === 'c') {
+                status = 'planning';
+                project.statusText = '검토';
+            }
+
+            project.statusKey = status;
+            return project;
+        });
+
+        updateCounts();
+        filterAndDisplay();
+    }
+
+    // 전체 카운트 업데이트
+    function updateCounts() {
         const counts = {
             all: allProjects.length,
             active: 0,
@@ -450,126 +428,210 @@
             expired: 0
         };
 
-        allProjects.forEach(card => {
-            const statusElement = card.querySelector('.project-status');
-            if (statusElement) {
-                const statusText = statusElement.textContent.trim();
-                const statusKey = getStatusKeyFromText(statusText);
-
-                if (counts.hasOwnProperty(statusKey)) {
-                    counts[statusKey]++;
-                }
+        allProjects.forEach(project => {
+            if (project.statusKey) {
+                counts[project.statusKey]++;
             }
         });
 
         // 통계 바 업데이트
-        document.getElementById('total-count').textContent = counts.all;
-        document.getElementById('active-count').textContent = counts.active;
-        document.getElementById('planning-count').textContent = counts.planning;
-        document.getElementById('expired-count').textContent = counts.expired;
+        $('#total-count').text(counts.all);
+        $('#active-count').text(counts.active);
+        $('#planning-count').text(counts.planning);
+        $('#expired-count').text(counts.expired);
 
         // 탭 카운트 업데이트
-        document.getElementById('tab-all-count').textContent = counts.all;
-        document.getElementById('tab-active-count').textContent = counts.active;
-        document.getElementById('tab-planning-count').textContent = counts.planning;
-        document.getElementById('tab-expired-count').textContent = counts.expired;
+        $('#tab-all-count').text(counts.all);
+        $('#tab-active-count').text(counts.active);
+        $('#tab-planning-count').text(counts.planning);
+        $('#tab-expired-count').text(counts.expired);
     }
 
-    // 프로젝트 필터링 함수 (상태 텍스트 기반)
-    function filterProjects() {
-        const projectCards = document.querySelectorAll('.project-card.detailProject');
-        const addCard = document.querySelector('.add-project-card');
-        const projectGrid = document.getElementById('project-grid');
+    // 필터링 및 표시
+    function filterAndDisplay() {
+        // 필터링
+        filteredProjects = allProjects.filter(project => {
+            const matchesFilter = currentFilter === 'all' || project.statusKey === currentFilter;
 
-        let visibleCount = 0;
-
-        projectCards.forEach(card => {
-            const statusElement = card.querySelector('.project-status');
-            const statusText = statusElement ? statusElement.textContent.trim() : '';
-            const statusKey = getStatusKeyFromText(statusText);
-
-            const title = card.querySelector('.project-title').textContent.toLowerCase();
-            const description = card.querySelector('.project-description').textContent.toLowerCase();
-
-            const matchesFilter = currentFilter === 'all' || statusKey === currentFilter;
             const matchesSearch = currentSearch === '' ||
-                                title.includes(currentSearch) ||
-                                description.includes(currentSearch);
+                (project.pjtName && project.pjtName.toLowerCase().includes(currentSearch)) ||
+                (project.empName && project.empName.toLowerCase().includes(currentSearch));
 
-            if (matchesFilter && matchesSearch) {
-                card.style.display = 'block';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
+            return matchesFilter && matchesSearch;
         });
 
-        // 검색 결과가 없을 때 메시지 표시
-        let noResultsDiv = document.querySelector('.no-projects');
-        if (visibleCount === 0) {
-            if (!noResultsDiv) {
-                noResultsDiv = document.createElement('div');
-                noResultsDiv.className = 'no-projects';
-                noResultsDiv.innerHTML = `
+        // 페이지 리셋
+        currentPage = 1;
+
+        // 표시
+        displayProjects();
+        updatePagination();
+    }
+
+    // 프로젝트 표시
+    function displayProjects() {
+        const startIdx = (currentPage - 1) * itemsPerPage;
+        const endIdx = startIdx + itemsPerPage;
+        const projectsToDisplay = filteredProjects.slice(startIdx, endIdx);
+
+        const $grid = $('#project-grid');
+        $grid.empty();
+
+        if (projectsToDisplay.length === 0) {
+            $grid.html(`
+                <div class="no-projects">
                     <div>조건에 맞는 프로젝트가 없습니다.</div>
-                `;
-                projectGrid.insertBefore(noResultsDiv, addCard);
-            }
-        } else {
-            if (noResultsDiv) {
-                noResultsDiv.remove();
-            }
+                </div>
+            `);
+            return;
         }
+
+        projectsToDisplay.forEach(project => {
+            const statusClass = getStatusClass(project.statusKey);
+            const formattedDate = formatDate(project.pjtEnrollDate);
+
+            const cardHtml = `
+                <div class="project-card detailProject" data-pno="${project.pjtNo}">
+                    <div class="project-header">
+                        <input type="hidden" class="pno" value="${project.pjtNo}">
+                        <h3 class="project-title">${project.pjtName}</h3>
+                        <span class="project-status ${statusClass}">${project.statusText}</span>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-date">작성일: ${formattedDate}</div>
+                        <div class="project-description">작성자: ${project.empName}</div>
+                    </div>
+                </div>
+            `;
+
+            $grid.append(cardHtml);
+        });
+
+        // 클릭 이벤트 재바인딩
+        $('.detailProject').off('click').on('click', function() {
+            const pno = $(this).data('pno');
+            location.href = 'detail.pj?pno=' + pno;
+        });
+    }
+
+    // 상태에 따른 클래스 반환
+    function getStatusClass(statusKey) {
+        const classMap = {
+            'active': 'status-active',
+            'planning': 'status-planning',
+            'expired': 'status-expired'
+        };
+        return classMap[statusKey] || '';
+    }
+
+    // 날짜 포맷
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}년 ${month}월 ${day}일`;
+    }
+
+    // 페이지네이션 업데이트
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+        const $pagination = $('#pagination');
+        $pagination.empty();
+
+        if (totalPages <= 1) return;
+
+        // 이전 버튼
+        $pagination.append(`
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a href="#" data-page="${currentPage - 1}">◀ 이전</a>
+            </li>
+        `);
+
+        // 페이지 번호
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            $pagination.append(`
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a href="#" data-page="${i}">${i}</a>
+                </li>
+            `);
+        }
+
+        // 다음 버튼
+        $pagination.append(`
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a href="#" data-page="${currentPage + 1}">다음 ▶</a>
+            </li>
+        `);
+
+        // 페이지 클릭 이벤트
+        $('#pagination a').off('click').on('click', function(e) {
+            e.preventDefault();
+            const page = parseInt($(this).data('page'));
+            if (!isNaN(page) && page !== currentPage && page > 0 && page <= totalPages) {
+                currentPage = page;
+                displayProjects();
+                updatePagination();
+
+                // 스크롤 상단으로
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
     }
 
     // 탭 클릭 이벤트
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.stat-item').forEach(s => s.classList.remove('active'));
+    $('.tab').on('click', function() {
+        $('.tab').removeClass('active');
+        $('.stat-item').removeClass('active');
 
-            this.classList.add('active');
-            currentFilter = this.getAttribute('data-filter');
+        $(this).addClass('active');
+        currentFilter = $(this).data('filter');
 
-            // 해당하는 통계 항목도 활성화
-            const correspondingStat = document.querySelector(`.stat-item[data-filter="${currentFilter}"]`);
-            if (correspondingStat) {
-                correspondingStat.classList.add('active');
-            }
+        $(`.stat-item[data-filter="${currentFilter}"]`).addClass('active');
 
-            filterProjects();
-        });
+        filterAndDisplay();
     });
 
     // 통계 바 클릭 이벤트
-    document.querySelectorAll('.stat-item').forEach(stat => {
-        stat.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
+    $('.stat-item').on('click', function() {
+        const filter = $(this).data('filter');
 
-            // 해당하는 탭 활성화
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.stat-item').forEach(s => s.classList.remove('active'));
+        $('.tab').removeClass('active');
+        $('.stat-item').removeClass('active');
 
-            const correspondingTab = document.querySelector(`.tab[data-filter="${filter}"]`);
-            if (correspondingTab) {
-                correspondingTab.classList.add('active');
-            }
-            this.classList.add('active');
+        $(`.tab[data-filter="${filter}"]`).addClass('active');
+        $(this).addClass('active');
 
-            currentFilter = filter;
-            filterProjects();
-        });
+        currentFilter = filter;
+        filterAndDisplay();
     });
 
-    // 검색 기능
-    document.querySelector('.search-bar').addEventListener('input', function(e) {
-        currentSearch = e.target.value.toLowerCase();
-        filterProjects();
+    // 검색 이벤트
+    $('#searchInput').on('input', function() {
+        currentSearch = $(this).val().toLowerCase();
+        filterAndDisplay();
     });
 
-    // 초기 개수 업데이트
-    updateCounts();
+    // 디바운싱 적용 (검색 성능 향상)
+    let searchTimer;
+    $('#searchInput').on('input', function() {
+        clearTimeout(searchTimer);
+        const searchValue = $(this).val().toLowerCase();
+
+        searchTimer = setTimeout(function() {
+            currentSearch = searchValue;
+            filterAndDisplay();
+        }, 300);
+    });
 </script>
-
 </body>
 </html>

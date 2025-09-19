@@ -1,13 +1,17 @@
 package com.kh.semi.approve.model.vo;
 
+import com.kh.semi.attachment.model.vo.Attachment;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
+
 public class Approvement {
     private int appNo;
     private int empNo;
@@ -32,6 +36,7 @@ public class Approvement {
     private String finalJob;
     private String managerStatus;
     private String finalStatus;
+    private List<Attachment> attachments;
 
 
 }

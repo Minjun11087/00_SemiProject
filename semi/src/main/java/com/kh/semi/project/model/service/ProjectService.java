@@ -1,5 +1,6 @@
 package com.kh.semi.project.model.service;
 
+import com.kh.semi.common.model.vo.PageInfo;
 import com.kh.semi.employee.model.vo.Employee;
 import com.kh.semi.project.model.vo.Project;
 import com.kh.semi.project.model.vo.ProjectMember;
@@ -10,7 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface ProjectService {
-    ArrayList<Project> selectProjectList();
+    ArrayList<Project> selectProjectList(PageInfo pi);
+
+    int selectListCount();
+
+    List<Project> selectAllProjects();
 
     int insertProject(Project p);
 
@@ -23,7 +28,9 @@ public interface ProjectService {
 
     ArrayList<ProjectMember> selectProjectMember(int pno);
 
-    ArrayList<Project> myProjectList(int myEmpNo);
+    ArrayList<Project> myProjectList(int myEmpNo, PageInfo pi);
 
+    int mySelectListCount(int myEmpNo);
 
+    List<Project> mySelectAllProjects(int myEmpNo);
 }
