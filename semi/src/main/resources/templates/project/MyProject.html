@@ -369,7 +369,7 @@
     function loadAllProjects() {
         // 방법 1: AJAX로 전체 데이터 가져오기
         $.ajax({
-            url: '/project/getAllProjects', // 전체 프로젝트를 반환하는 엔드포인트
+            url: '/project/getMyAllProjects', // 전체 프로젝트를 반환하는 엔드포인트
             type: 'GET',
             success: function(data) {
                 allProjects = data;

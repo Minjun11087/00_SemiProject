@@ -145,5 +145,11 @@ public class ProjectController {
         return pService.selectAllProjects(); // 페이징 없이 전체 목록 조회
     }
 
+    @GetMapping("/project/getMyAllProjects")
+    @ResponseBody
+    public List<Project> getAllProjects(HttpSession session) {
+        int myEmpNo = (( Employee)session.getAttribute("loginUser")).getEmpNo();
+        return pService.mySelectAllProjects(myEmpNo);// 페이징 없이 전체 목록 조회
+    }
 
 }
