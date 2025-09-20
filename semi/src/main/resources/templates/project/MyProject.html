@@ -398,6 +398,8 @@
             // 만료 여부 체크
             const endDate = new Date(project.pjtEndDate);
             const now = new Date();
+            now.setHours(0,0,0,0);
+
 
             let status;
             if (now > endDate) {

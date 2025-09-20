@@ -438,12 +438,11 @@
         <div style="display: flex; align-items: center; gap: 10px;">
             <div class="project-title" th:text="${p.pjtName}">
             </div>
-
-            <th:block th:if="${#dates.createNow().after(p.pjtEndDate)}">
+            <th:block th:if="${today.after(p.pjtEndDate)}">
                 <span class="status-badge status-expired">만료</span>
             </th:block>
 
-            <th:block th:unless="${#dates.createNow().after(p.pjtEndDate)}">
+            <th:block th:unless="${today.after(p.pjtEndDate)}">
                 <span th:if="${p.pjtStatus eq 'p'}" class="status-badge status-active">진행</span>
                 <span th:if="${p.pjtStatus eq 'c'}" class="status-badge status-planning">검토</span>
                 <span th:if="${p.pjtStatus eq 'o'}" class="status-badge status-completed">완료</span>

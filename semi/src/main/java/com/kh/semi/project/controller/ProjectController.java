@@ -29,7 +29,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -102,6 +104,8 @@ public class ProjectController {
     @GetMapping("detail.pj")
     public ModelAndView selectProject(int pno, ModelAndView mv) {
         int attCategory=0;
+        Date today = java.sql.Date.valueOf(LocalDate.now()); // 00:00:00으로 세팅
+        mv.addObject("today", today);
 
         Project p = pService.selectProject(pno);
         System.out.println(p);
