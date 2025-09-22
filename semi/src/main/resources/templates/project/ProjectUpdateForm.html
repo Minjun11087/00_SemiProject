@@ -5,25 +5,15 @@
       layout:fragment="content">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로젝트 수정 - KH BANK</title>
+    <title>Title</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
         .main-container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
         .breadcrumb {
+            background: #f7fafc;
             color: #718096;
             font-size: 14px;
             margin-bottom: 20px;
@@ -126,9 +116,6 @@
         .status-badge.expired {
             background: #ef4444;
         }
-        .status-badge.progress {
-            background: #f59e0b;
-        }
         .btn {
             padding: 0.875rem 1.75rem;
             border: none;
@@ -163,26 +150,6 @@
             border-color: #d1d5db;
             transform: translateY(-1px);
         }
-        .btn-warning {
-            background: #f59e0b;
-            color: white;
-            border: 2px solid transparent;
-        }
-        .btn-warning:hover {
-            background: #d97706;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545, #e74c3c);
-            color: white;
-            border: 2px solid transparent;
-        }
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #c82333, #dc3545);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
-        }
         .btn-small {
             padding: 0.5rem 1rem;
             font-size: 0.85rem;
@@ -195,6 +162,7 @@
             padding-top: 2rem;
             border-top: 1px solid #e5e7eb;
         }
+        /* 기술 태그 관련 스타일 */
         .tag-input-container {
             display: flex;
             gap: 0.5rem;
@@ -230,6 +198,7 @@
         .tag-remove:hover {
             background: rgba(255, 255, 255, 0.5);
         }
+        /* 팀원 관련 스타일 */
         .member-item {
             display: flex;
             justify-content: space-between;
@@ -256,18 +225,6 @@
             font-size: 0.8rem;
             font-weight: bold;
         }
-        .member-avatar-king {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FF416C, #FF4B2B);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
         .member-details h4 {
             font-size: 0.95rem;
             margin-bottom: 0.25rem;
@@ -276,6 +233,7 @@
             font-size: 0.8rem;
             color: #6b7280;
         }
+        /* 첨부파일 관련 스타일 */
         .file-input-container {
             border: 2px dashed #e5e7eb;
             border-radius: 12px;
@@ -350,71 +308,64 @@
 <body>
 <main class="main-container">
     <div class="breadcrumb">
-        <a href="list.pj">프로젝트 관리</a> > <a href="list.pj">프로젝트 목록</a> > <span>프로젝트 수정</span>
+        <a href="list.pj">프로젝트 관리</a> >  <span>프로젝트 수정</span>
     </div>
     <div class="page-header">
         <h1 class="page-title">프로젝트 수정</h1>
         <p class="page-subtitle">기존 프로젝트의 정보를 수정하고 관리하세요</p>
     </div>
-    <form class="form-container" id="projectForm" th:action="@{/update.pj}" method="post" enctype="multipart/form-data">
-        <!-- 숨겨진 프로젝트 번호 -->
-        <input type="hidden" name="pjtNo" th:value="${p.pjtNo}">
+    <form class="form-container" id="projectForm" action="update.pj" enctype="multipart/form-data" method="post">
+        <!-- Hidden 필드들 (서버에서 자동 생성되거나 세션에서 가져올 값들) -->
+        <input type="hidden" id="pjtNo" name="pjtNo" th:value="${p.pjtNo}"> <!-- 프로젝트 번호 -->
+        <input type="hidden" id="empNo" name="empNo" th:value="${session.loginUser.empNo}"> <!-- 세션에서 가져올 현재 사용자 사번 -->
+        <input type="hidden" id="pjtEnrollDate" name="pjtEnrollDate"> <!-- 서버에서 현재 날짜/시간으로 설정 -->
+        <input type="hidden" id="pjtCount" name="pjtCount" value="0"> <!-- 기본값 0 -->
+        <input type="hidden" id="pjtStatus" name="pjtStatus" value="c"> <!-- 기본 상태 -->
+        <input type="hidden" id="members" name="members" ><!-- members 넘기기 -->
+        <input type="hidden" id="attCategory" name="attCategory" value="0" >
+        <input type="hidden" id="existingFiles" name="existingFiles" ><!-- 기존 파일 정보 -->
+
         <div class="form-section">
-            <h3 class="section-title">프로젝트 기본 정보</h3>
+            <h3 class="section-title">프로젝트 정보</h3>
             <div class="form-group">
                 <label class="form-label required">프로젝트 제목</label>
-                <input type="text" name="pjtName" class="form-input" id="projectTitle" th:value="${p.pjtName}" required>
+                <input type="text" class="form-input" id="pjtName" name="pjtName"  th:value="${p.pjtName}" required>
             </div>
             <div class="form-group">
                 <label class="form-label required">프로젝트 설명</label>
-                <textarea name="pjtContent" class="form-textarea" id="projectDescription" required th:text="${p.pjtContent}"></textarea>
+                <textarea class="form-textarea" id="pjtContent" name="pjtContent" th:text="${p.pjtContent}" required></textarea>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label required">시작일</label>
-                    <input type="date" name="pjtStartDate" class="form-input" id="startDate"
-                           th:value="${#dates.format(p.pjtStartDate, 'yyyy-MM-dd')}" required>
+                    <input type="date" class="form-input" id="pjtStartDate" name="pjtStartDate"  th:value="${#dates.format(p.pjtStartDate, 'yyyy-MM-dd')}"  required>
                 </div>
                 <div class="form-group">
                     <label class="form-label required">종료일</label>
-                    <input type="date" name="pjtEndDate" class="form-input" id="endDate"
-                           th:value="${#dates.format(p.pjtEndDate, 'yyyy-MM-dd')}" required>
+                    <input type="date" class="form-input" id="pjtEndDate" name="pjtEndDate" th:value="${#dates.format(p.pjtEndDate, 'yyyy-MM-dd')}"  required>
                 </div>
             </div>
-
+        </div>
+        <div class="form-section">
             <div class="form-group">
                 <label class="form-label">기술 태그</label>
                 <div class="tag-input-container">
                     <input type="text" class="form-input" id="tagInput" placeholder="기술명을 입력하고 Enter를 누르세요" style="flex: 1;">
                     <button type="button" class="btn btn-secondary btn-small" onclick="addTag()">추가</button>
                 </div>
-                <!-- 기존 태그들을 히든 필드로 저장 -->
-                <input type="hidden" name="pjtTags" id="tagsHidden" th:value="${p.pjtTags}">
-                <div class="tag-container" id="tagContainer">
-                    <!-- JavaScript로 기존 태그들이 여기에 표시됩니다 -->
-                </div>
+                <div class="tag-container" id="tagContainer"></div>
             </div>
             <div class="form-group">
                 <label class="form-label">첨부 파일</label>
-                <div class="file-input-container" onclick="document.getElementById('fileInput').click()">
+                <div class="file-input-container" onclick="document.getElementById('upfiles').click()">
                     <div>📎 파일을 클릭하거나 드래그하여 업로드하세요</div>
                     <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.5rem;">
-                        지원 형식: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (최대 10MB)
+                        지원 형식: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, PNG (최대 10MB)
                     </div>
                 </div>
-                <input type="file" name="uploadFiles" id="fileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" style="display: none;">
+                <input type="file" id="upfiles" name="upfiles"  multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx, .png" style="display: none;">
                 <div class="file-list" id="fileList">
-                    <!-- 기존 파일들이 여기에 표시됩니다 -->
-                    <div th:each="att : ${attachments}" class="file-item">
-                        <div class="file-info">
-                            <div class="file-icon" th:text="${#strings.toUpperCase(#strings.substringAfter(att.attOrigin, '.'))}">FILE</div>
-                            <div class="file-details">
-                                <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;" th:text="${att.attOrigin}">파일명</h4>
-                                <p style="font-size: 0.8rem; color: #6b7280;">기존 파일</p>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary btn-small" th:onclick="'removeExistingFile(' + ${att.attNo} + ')'">제거</button>
-                    </div>
+                    <!-- 업로드된 파일들이 여기에 표시됩니다 -->
                 </div>
             </div>
         </div>
@@ -423,64 +374,81 @@
             <div class="form-group">
                 <label class="form-label">팀원 추가</label>
                 <div class="tag-input-container">
-                    <input type="text" class="form-input" id="memberName" placeholder="사원명" style="flex: 1;">
-                    <input type="text" class="form-input" id="memberRole" placeholder="역할" style="flex: 1;">
+                    <select class="form-select" id="memberName" style="flex: 1;" onchange="updateJobTitle()" >
+                        <option value="" disabled selected>사원 명</option>
+                        <option th:each="m:${mlist}"  th:text="${m.empName}"  th:value="${m.empNo}" th:attr="data-job-title=${m.jobTitle}">사원 명</option>
+                    </select>
+                    <select class="form-select" id="memberPosition" style="flex: 1;"  disabled>
+                        <option value="" disabled selected>직급 명</option>
+                        <option th:each="m:${mlist}"  th:text="${m.jobTitle}" th:value="${m.jobTitle}" >직급 명</option>
+                    </select>
                     <button type="button" class="btn btn-secondary btn-small" onclick="addMember()">추가</button>
                 </div>
                 <div id="memberList">
-                    <!-- 프로젝트 리더 -->
-                    <div class="member-item">
-                        <div class="member-info">
-                            <div class="member-avatar-king" th:text="${p.empName.substring(0, 1)}">조</div>
-                            <div class="member-details">
-                                <h4 th:text="|${p.empName} ${p.jobTitle}|">조인순 부장</h4>
-                                <p th:text="|${p.deptTitle} ★ 프로젝트 리더|">프로젝트 리더</p>
-                            </div>
-                        </div>
-                        <span class="status-badge">PL</span>
-                    </div>
-                    <!-- 기존 팀원들 -->
-                    <div class="member-item" th:each="m : ${pm}">
-                        <div class="member-info">
-                            <div class="member-avatar" th:text="${m.empName.substring(0, 1)}">김</div>
-                            <div class="member-details">
-                                <h4 th:text="|${m.empName} ${m.jobTitle}|">김개발 과장</h4>
-                                <p th:text="${m.deptTitle}">개발팀</p>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary btn-small" th:onclick="'removeExistingMember(' + ${m.empNo} + ')'">제거</button>
-                    </div>
+                    <!-- 팀원 목록이 여기에 표시됩니다 -->
                 </div>
             </div>
         </div>
         <div class="btn-group">
             <button type="submit" class="btn btn-primary">
-                ✅ 수정사항 저장
+                ✅ 프로젝트 수정
             </button>
-            <button type="button" class="btn btn-danger" onclick="deleteProject()">
-                🗑️ 프로젝트 삭제
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                🔄 초기화
             </button>
-            <a th:href="'detail.pj?pjtNo=' + ${p.pjtNo}" class="btn btn-secondary">
-                📋 취소 (상세보기로)
+            <a href="list.pj" class="btn btn-secondary">
+                📋 목록으로
             </a>
         </div>
+        <input type="hidden" id="pjtTags" name="pjtTags">
     </form>
 </main>
 <script th:inline="javascript">
-    // 서버에서 전달받은 데이터
-    /*<![CDATA[*/
-    let existingTags = /*[[${p.pjtTags}]]*/ '';
-    let projectMembers = /*[[${pm}]]*/ [];
-    let attachments = /*[[${attachments}]]*/ [];
-    /*]]>*/
-    // 태그 배열 초기화
-    let tags = existingTags ? existingTags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+    let tags = [];
+    let members = [];
+    let uploadedFiles = [];
+    let existingFiles = []; // 기존 파일 정보를 별도로 관리
 
-    // 새로 추가된 멤버들과 파일들
-    let newMembers = [];
-    let newFiles = [];
-    let removedFileIds = [];
-    let removedMemberIds = [];
+    // 서버 측 데이터에서 태그 초기화
+    let initialTags = /*[[${p.pjtTags}]]*/ '';
+    if (initialTags) {
+        tags = initialTags.split(',').filter(tag => tag.trim() !== '');
+    }
+
+    // 서버 측 데이터로 팀원 초기화
+    let initialMembers = /*[[${pm}]]*/ [];
+    if (initialMembers && initialMembers.length > 0) {
+        initialMembers.forEach(member => {
+            members.push({
+                name: member.empName,
+                position: member.jobTitle
+            });
+        });
+    }
+
+    // 서버 측 데이터에서 파일 초기화
+    let initialFiles = /*[[${attachments}]]*/ [];
+    if (initialFiles && initialFiles.length > 0) {
+        initialFiles.forEach(file => {
+            const fileInfo = {
+                name: file.attOrigin,
+                size: file.fileSize || 0,
+                isServerFile: true,
+                attNo: file.attNo, // 서버 파일의 고유 ID
+                attChangeName: file.attChangeName // 서버 파일의 변경된 이름
+            };
+            uploadedFiles.push(fileInfo);
+            existingFiles.push(fileInfo); // 기존 파일 목록에도 추가
+        });
+    }
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTagDisplay();
+        updateMemberDisplay();
+        updateFileDisplay();
+    });
+
     // 기술 태그 추가
     function addTag() {
         const tagInput = document.getElementById('tagInput');
@@ -488,10 +456,10 @@
         if (tagValue && !tags.includes(tagValue)) {
             tags.push(tagValue);
             updateTagDisplay();
-            updateTagsHidden();
             tagInput.value = '';
         }
     }
+
     // 태그 표시 업데이트
     function updateTagDisplay() {
         const tagContainer = document.getElementById('tagContainer');
@@ -505,17 +473,15 @@
             `;
             tagContainer.appendChild(tagElement);
         });
+        document.getElementById('pjtTags').value = tags.join(',');
     }
-    // 히든 필드 업데이트
-    function updateTagsHidden() {
-        document.getElementById('tagsHidden').value = tags.join(', ');
-    }
+
     // 태그 제거
     function removeTag(index) {
         tags.splice(index, 1);
         updateTagDisplay();
-        updateTagsHidden();
     }
+
     // Enter 키로 태그 추가
     document.getElementById('tagInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -523,266 +489,328 @@
             addTag();
         }
     });
-    // 팀원 추가
+
+    // 직급명 자동 바꾸기
+    function updateJobTitle() {
+        const memberNameSelect = document.getElementById('memberName');
+        const memberPositionSelect = document.getElementById('memberPosition');
+        const selectedOption = memberNameSelect.options[memberNameSelect.selectedIndex];
+
+        // 선택된 사원의 직급 가져오기
+        const jobTitle = selectedOption.getAttribute('data-job-title');
+
+        // 직급 드롭다운 업데이트
+        for (let i = 0; i < memberPositionSelect.options.length; i++) {
+            if (memberPositionSelect.options[i].text === jobTitle) {
+                memberPositionSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
+
+    // 팀원 추가 (수정됨)
     function addMember() {
         const nameInput = document.getElementById('memberName');
-        const roleInput = document.getElementById('memberRole');
-        const name = nameInput.value.trim();
-        const role = roleInput.value.trim();
-        if (name && role) {
+        const positionSelect = document.getElementById('memberPosition');
+        const name = nameInput.options[nameInput.selectedIndex].text;
+        const position = positionSelect.value;
+
+        if (name && position) {
+            // 중복 체크 - 이름이 같은 팀원이 있는지 확인
+            const existingMember = members.find(member => member.name === name);
+            if (existingMember) {
+                alert('이미 추가된 팀원입니다.');
+                return;
+            }
+
             const member = {
-                empName: name,
-                jobTitle: role,
-                deptTitle: '새 팀원',
-                isNew: true
+                name: name,
+                position: position
             };
-            newMembers.push(member);
+            members.push(member);
             updateMemberDisplay();
-            nameInput.value = '';
-            roleInput.value = '';
+
+            nameInput.selectedIndex = 0;
+            positionSelect.selectedIndex = 0;
+        } else {
+            alert('사원명과 직급을 모두 입력해주세요.');
         }
     }
-    // 팀원 표시 업데이트
+
+    // 팀원 표시 업데이트 (수정됨)
     function updateMemberDisplay() {
         const memberList = document.getElementById('memberList');
-        let html = `
-            <div class="member-item">
-                <div class="member-info">
-                    <div class="member-avatar-king">${/*[[${p.empName.substring(0, 1)}]]*/ 'P'}</div>
-                    <div class="member-details">
-                        <h4>${/*[[${p.empName}]]*/ ''} ${/* [[${p.jobTitle}]]*/ ''}</h4>
-                        <p>${/* [[${p.deptTitle}]]*/ ''} ★ 프로젝트 리더</p>
-                    </div>
+        memberList.innerHTML = '';
+
+        // 기본 프로젝트 리더 표시
+        const leaderElement = document.createElement('div');
+        leaderElement.className = 'member-item';
+        const loginUserEmpName = /*[[${session.loginUser.empName}]]*/ '';
+        const loginUserJobTitle = /*[[${session.loginUser.jobTitle}]]*/ '';
+
+        leaderElement.innerHTML = `
+            <div class="member-info">
+                <div class="member-avatar">${loginUserEmpName.substring(0, 1)}</div>
+                <div class="member-details">
+                    <h4>${loginUserEmpName}</h4>
+                    <p>${loginUserJobTitle}</p>
                 </div>
-                <span class="status-badge">PL</span>
             </div>
+            <span class="status-badge">프로젝트 리더</span>
         `;
-        // 기존 팀원들 (제거되지 않은 것들만)
-        projectMembers.forEach((member, index) => {
-            if (!removedMemberIds.includes(member.empNo)) {
-                html += `
-                    <div class="member-item">
-                        <div class="member-info">
-                            <div class="member-avatar">${member.empName.charAt(0)}</div>
-                            <div class="member-details">
-                                <h4>${member.empName} ${member.jobTitle}</h4>
-                                <p>${member.deptTitle}</p>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary btn-small" onclick="removeExistingMember(${member.empNo})">제거</button>
+        memberList.appendChild(leaderElement);
+
+        // 추가된 팀원들 표시
+        members.forEach((member, index) => {
+            const memberElement = document.createElement('div');
+            memberElement.className = 'member-item';
+            memberElement.innerHTML = `
+                <div class="member-info">
+                    <div class="member-avatar">${member.name.charAt(0)}</div>
+                    <div class="member-details">
+                        <h4>${member.name}</h4>
+                        <p>${member.position}</p>
                     </div>
-                `;
-            }
-        });
-        // 새로 추가된 팀원들
-        newMembers.forEach((member, index) => {
-            html += `
-                <div class="member-item">
-                    <div class="member-info">
-                        <div class="member-avatar">${member.empName.charAt(0)}</div>
-                        <div class="member-details">
-                            <h4>${member.empName} ${member.jobTitle}</h4>
-                            <p>${member.deptTitle} (신규)</p>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-small" onclick="removeNewMember(${index})">제거</button>
                 </div>
+                <button type="button" class="btn btn-secondary btn-small" onclick="removeMember(${index})">제거</button>
             `;
+            memberList.appendChild(memberElement);
         });
-        memberList.innerHTML = html;
+
+        document.getElementById('members').value = JSON.stringify(members);
     }
-    // 기존 팀원 제거
-    function removeExistingMember(empNo) {
-        if (confirm('이 팀원을 프로젝트에서 제거하시겠습니까?')) {
-            removedMemberIds.push(empNo);
-            updateMemberDisplay();
-        }
-    }
-    // 새 팀원 제거
-    function removeNewMember(index) {
-        newMembers.splice(index, 1);
+
+    // 팀원 제거
+    function removeMember(index) {
+        members.splice(index, 1);
         updateMemberDisplay();
     }
-    // 기존 파일 제거
-    function removeExistingFile(attNo) {
-        if (confirm('이 파일을 삭제하시겠습니까?')) {
-            removedFileIds.push(attNo);
-            // 해당 파일 요소를 DOM에서 제거
-            event.target.closest('.file-item').remove();
-        }
-    }
-    // 파일 업로드 처리
-    document.getElementById('fileInput').addEventListener('change', function(e) {
-        handleFiles(e.target.files);
-    });
-    function handleFiles(files) {
-        [...files].forEach(uploadFile);
-    }
-    function uploadFile(file) {
-        if (file.size > 10 * 1024 * 1024) {
-            alert('파일 크기는 10MB를 초과할 수 없습니다.');
-            return;
-        }
-        const fileObj = {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            id: Date.now() + Math.random(),
-            file: file
-        };
-        newFiles.push(fileObj);
+
+    // 파일 업로드 처리 (수정됨)
+    document.getElementById('upfiles').addEventListener('change', function(e) {
+        Array.from(e.target.files).forEach(file => {
+            if (file.size > 10 * 1024 * 1024) { // 10MB 제한
+                alert('파일 크기는 10MB를 초과할 수 없습니다: ' + file.name);
+                return;
+            }
+            uploadedFiles.push(file); // 새 파일은 실제 File 객체로 저장
+        });
         updateFileDisplay();
-    }
+    });
+
+    // 파일 표시 업데이트 (수정됨)
     function updateFileDisplay() {
         const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
 
-        newFiles.forEach((fileObj, index) => {
+        uploadedFiles.forEach((file, index) => {
             const fileElement = document.createElement('div');
             fileElement.className = 'file-item';
-            fileElement.id = `new-file-${index}`;
-            const fileExtension = fileObj.name.split('.').pop().toUpperCase();
-            const fileSize = (fileObj.size / 1024 / 1024).toFixed(2) + 'MB';
+            const fileExtension = file.name.split('.').pop().toUpperCase();
+
+            // 파일 크기 계산 (File 객체인 경우와 서버 파일인 경우 구분)
+            let fileSize;
+            if (file instanceof File) {
+                fileSize = (file.size / 1024 / 1024).toFixed(2) + 'MB';
+            } else if (file.size) {
+                fileSize = (file.size / 1024 / 1024).toFixed(2) + 'MB';
+            } else {
+                fileSize = 'N/A';
+            }
+
             fileElement.innerHTML = `
                 <div class="file-info">
                     <div class="file-icon">${fileExtension}</div>
                     <div class="file-details">
-                        <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${fileObj.name}</h4>
-                        <p style="font-size: 0.8rem; color: #6b7280;">${fileSize} (신규)</p>
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${file.name}</h4>
+
                     </div>
                 </div>
-                <button type="button" class="btn btn-secondary btn-small" onclick="removeNewFile(${index})">제거</button>
+                <button type="button" class="btn btn-secondary btn-small" onclick="removeFile(${index})">제거</button>
             `;
             fileList.appendChild(fileElement);
         });
-    }
-    function removeNewFile(index) {
-        newFiles.splice(index, 1);
-        document.getElementById(`new-file-${index}`).remove();
-    }
-    // 프로젝트 삭제
-    function deleteProject() {
-        if (confirm('정말로 이 프로젝트를 삭제하시겠습니까?\n삭제된 프로젝트는 복구할 수 없습니다.')) {
-            if (confirm('삭제를 확정하시겠습니까?')) {
-                // 삭제 요청을 서버로 전송
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'delete.pj';
 
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'pjtNo';
-                input.value = /*[[${p.pjtNo}]]*/ '';
+        // 기존 파일 정보를 hidden input에 저장
+        document.getElementById('existingFiles').value = JSON.stringify(existingFiles.filter(file =>
+            uploadedFiles.some(uploadedFile => uploadedFile.attNo && uploadedFile.attNo === file.attNo)
+        ));
 
-                form.appendChild(input);
-                document.body.appendChild(form);
-                form.submit();
+        // FileList 업데이트 (새로운 파일들만)
+        updateFileInput();
+    }
+
+    // FileList를 업데이트하는 함수 (수정됨)
+    function updateFileInput() {
+        const input = document.getElementById('upfiles');
+        const dt = new DataTransfer();
+
+        // 실제 File 객체만 추가 (서버 파일은 추가하지 않음)
+        uploadedFiles.forEach(file => {
+            if (file instanceof File) {
+                dt.items.add(file);
             }
+        });
+
+        input.files = dt.files;
+    }
+
+    // 파일 제거 (수정됨)
+    function removeFile(index) {
+        const removedFile = uploadedFiles[index];
+
+        // 기존 파일이 제거된 경우 existingFiles에서도 제거
+        if (removedFile.isServerFile) {
+            existingFiles = existingFiles.filter(file => file.attNo !== removedFile.attNo);
+        }
+
+        uploadedFiles.splice(index, 1);
+        updateFileDisplay();
+    }
+
+    // 폼 초기화 (수정됨)
+    function resetForm() {
+        if (confirm('입력한 내용이 모두 삭제됩니다. 계속하시겠습니까?')) {
+            document.getElementById('pjtName').value = '';
+            document.getElementById('pjtContent').value = '';
+            document.getElementById('tagInput').value = '';
+            document.getElementById('memberName').selectedIndex = 0;
+            document.getElementById('memberPosition').selectedIndex = 0;
+
+            tags = [];
+            members = [];
+            uploadedFiles = [];
+            existingFiles = [];
+
+            updateTagDisplay();
+            updateMemberDisplay();
+            updateFileDisplay();
+
+            // 파일 input도 초기화
+            document.getElementById('upfiles').value = '';
         }
     }
-    // 폼 제출 시 추가 데이터 처리
+
+    // 폼 제출 처리 (수정됨)
     document.getElementById('projectForm').addEventListener('submit', function(e) {
-        // 제거된 파일 ID들을 히든 필드로 추가
-        if (removedFileIds.length > 0) {
-            const removedFilesInput = document.createElement('input');
-            removedFilesInput.type = 'hidden';
-            removedFilesInput.name = 'removedFileIds';
-            removedFilesInput.value = removedFileIds.join(',');
-            this.appendChild(removedFilesInput);
-        }
-        // 제거된 멤버 ID들을 히든 필드로 추가
-        if (removedMemberIds.length > 0) {
-            const removedMembersInput = document.createElement('input');
-            removedMembersInput.type = 'hidden';
-            removedMembersInput.name = 'removedMemberIds';
-            removedMembersInput.value = removedMemberIds.join(',');
-            this.appendChild(removedMembersInput);
-        }
-        // 새로 추가된 멤버들을 히든 필드로 추가
-        if (newMembers.length > 0) {
-            newMembers.forEach((member, index) => {
-                const memberNameInput = document.createElement('input');
-                memberNameInput.type = 'hidden';
-                memberNameInput.name = `newMembers[${index}].empName`;
-                memberNameInput.value = member.empName;
-                this.appendChild(memberNameInput);
-                const memberRoleInput = document.createElement('input');
-                memberRoleInput.type = 'hidden';
-                memberRoleInput.name = `newMembers[${index}].jobTitle`;
-                memberRoleInput.value = member.jobTitle;
-                this.appendChild(memberRoleInput);
-            });
-        }
+        e.preventDefault(); // 폼 기본 제출 동작 방지
+
+        const pjtName = document.getElementById('pjtName').value.trim();
+        const pjtContent = document.getElementById('pjtContent').value.trim();
+        const pjtStartDate = document.getElementById('pjtStartDate').value;
+        const pjtEndDate = document.getElementById('pjtEndDate').value;
+        const pjtTags = document.getElementById('pjtTags').value.trim();
+
         // 필수 입력 검증
-        const title = document.getElementById('projectTitle').value.trim();
-        const description = document.getElementById('projectDescription').value.trim();
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        if (!title) {
+        if (!pjtName) {
             alert('프로젝트 제목을 입력해주세요.');
-            document.getElementById('projectTitle').focus();
-            e.preventDefault();
+            document.getElementById('pjtName').focus();
             return;
         }
-        if (!description) {
+        if (!pjtContent) {
             alert('프로젝트 설명을 입력해주세요.');
-            document.getElementById('projectDescription').focus();
-            e.preventDefault();
+            document.getElementById('pjtContent').focus();
             return;
         }
-        if (!startDate || !endDate) {
+        if (!pjtStartDate || !pjtEndDate) {
             alert('프로젝트 시작일과 종료일을 모두 입력해주세요.');
-            e.preventDefault();
             return;
         }
-        // 날짜 유효성 검증
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+
+        // 시작일이 현재 날짜 이후인지 검증 (추가됨)
+        const today = new Date();
+        const startDate = new Date(pjtStartDate);
+
+        // 시간 부분을 제거하고 날짜만 비교 (오늘 포함)
+        today.setHours(0, 0, 0, 0);
+        startDate.setHours(0, 0, 0, 0);
+
+        if (startDate < today) {
+            alert('프로젝트 시작일은 오늘 이후로 설정해주세요.');
+            document.getElementById('pjtStartDate').focus();
+            return;
+        }
+
+        if (!pjtTags) {
+            alert('프로젝트 태그를 입력해주세요.');
+            document.getElementById('tagInput').focus();
+            return;
+        }
+
+        // 날짜 유효성 검증 (종료일이 시작일보다 나중인지)
+        const start = new Date(pjtStartDate);
+        const end = new Date(pjtEndDate);
         if (start >= end) {
             alert('종료일은 시작일보다 늦어야 합니다.');
-            document.getElementById('endDate').focus();
-            e.preventDefault();
+            document.getElementById('pjtEndDate').focus();
             return;
         }
-        // 확인 메시지
-        if (!confirm('프로젝트 정보를 수정하시겠습니까?')) {
-            e.preventDefault();
-            return;
-        }
+
+        // 폼 데이터 설정
+        document.getElementById('pjtTags').value = tags.join(',');
+        document.getElementById('members').value = JSON.stringify(members);
+
+        // 기존 파일 정보 설정 (서버에서 유지할 파일들)
+        const remainingExistingFiles = existingFiles.filter(file =>
+            uploadedFiles.some(uploadedFile => uploadedFile.attNo && uploadedFile.attNo === file.attNo)
+        );
+        document.getElementById('existingFiles').value = JSON.stringify(remainingExistingFiles);
+
+        // 파일 input 업데이트 (새로 업로드한 파일들만)
+        updateFileInput();
+
+        // 콘솔에서 확인용 (개발 시에만 사용)
+        console.log('전체 파일 수:', uploadedFiles.length);
+        console.log('새 파일 수:', uploadedFiles.filter(f => f instanceof File).length);
+        console.log('기존 파일 수:', uploadedFiles.filter(f => f.isServerFile).length);
+        console.log('유지될 기존 파일:', remainingExistingFiles.map(f => f.name));
+        console.log('새로 업로드할 파일:', Array.from(document.getElementById('upfiles').files).map(f => f.name));
+
+        console.dir({
+            empNo: document.getElementById('empNo').value,
+            pjtName: pjtName,
+            pjtContent: pjtContent,
+            pjtStartDate: pjtStartDate,
+            pjtEndDate: pjtEndDate,
+            pjtEnrollDate: document.getElementById('pjtEnrollDate').value,
+            pjtCount: document.getElementById('pjtCount').value,
+            pjtStatus: document.getElementById('pjtStatus').value,
+            pjtTags: tags.join(','),
+            members: members,
+            newFiles: Array.from(document.getElementById('upfiles').files).map(f => f.name),
+            existingFiles: remainingExistingFiles
+        });
+
+        alert('프로젝트가 성공적으로 수정되었습니다!');
+        this.submit(); // 폼 제출
     });
-    // 페이지 로드 시 초기화
-    document.addEventListener('DOMContentLoaded', function() {
-        updateTagDisplay();
-        updateTagsHidden();
-        updateMemberDisplay();
 
-        // 드래그 앤 드롭 이벤트 설정
-        const fileContainer = document.querySelector('.file-input-container');
+    // 드래그 앤 드롭 이벤트 처리
+    const fileInputContainer = document.querySelector('.file-input-container');
 
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            fileContainer.addEventListener(eventName, preventDefaults, false);
+    fileInputContainer.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    fileInputContainer.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+
+    fileInputContainer.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        Array.from(files).forEach(file => {
+            if (file.size > 10 * 1024 * 1024) { // 10MB 제한
+                alert('파일 크기는 10MB를 초과할 수 없습니다: ' + file.name);
+                return;
+            }
+            uploadedFiles.push(file);
         });
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        ['dragenter', 'dragover'].forEach(eventName => {
-            fileContainer.addEventListener(eventName, highlight, false);
-        });
-        ['dragleave', 'drop'].forEach(eventName => {
-            fileContainer.addEventListener(eventName, unhighlight, false);
-        });
-        function highlight(e) {
-            fileContainer.classList.add('dragover');
-        }
-        function unhighlight(e) {
-            fileContainer.classList.remove('dragover');
-        }
-        fileContainer.addEventListener('drop', handleDrop, false);
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles(files);
-        }
+        updateFileDisplay();
     });
 </script>
 </body>

@@ -48,7 +48,6 @@
              , pjt_name
              , pjt_startdate
              , pjt_enddate
-             , pjt_enrolldate
              , pjt_count
              , pjt_status
              , pjt_content
@@ -61,7 +60,6 @@
              , #{pjtName}
              , #{pjtStartDate}
              , #{pjtEndDate}
-             , #{pjtEnrollDate}
              , #{pjtCount}
              , #{pjtStatus}
              , #{pjtContent}
@@ -95,10 +93,15 @@
         SELECT emp_no FROM employee_tb WHERE emp_name = #{empName}
     </select>
 
+
     <insert id="insertProjectMember" parameterType="map">
-        INSERT INTO projectmember_tb (pjt_no, emp_no)
-        VALUES (#{mPjtNo}, #{empNo})
+        MERGE INTO projectmember_tb t
+        USING dual
+        ON (t.pjt_no = #{mPjtNo} AND t.emp_no = #{empNo})
+        WHEN NOT MATCHED THEN
+        INSERT (pjt_no, emp_no) VALUES (#{mPjtNo}, #{empNo})
     </insert>
+
 
     <select id="selectProjectMember" resultMap="projectResultSet">
        select
@@ -144,5 +147,15 @@
         where pjt_status in('p','c','e')
         and emp_no = #{empNo}
     </select>
-
+    <update  id="updateProject">
+        UPDATE project_tb
+        SET
+        pjt_name = #{pjtName},
+        pjt_startdate = #{pjtStartDate},
+        pjt_enddate = #{pjtEndDate},
+        pjt_content = #{pjtContent},
+        pjt_tags = #{pjtTags}
+        WHERE pjt_no = #{pjtNo}
+        AND emp_no = #{empNo}
+    </update>
 </mapper>

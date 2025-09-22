@@ -76,4 +76,8 @@ public class ProjectDao {
     public List<Project> mySelectAllProjects(SqlSessionTemplate sqlSession, int myEmpNo) {
         return (ArrayList)sqlSession.selectList("projectMapper.myProjectList", myEmpNo);
     }
+
+    public int updateProject(Project p, SqlSessionTemplate sqlSession) {
+        return sqlSession.update("projectMapper.updateProject", p);
+    }
 }

@@ -14,9 +14,9 @@ public class Project {
     private int pjtNo;
     private int empNo;
     private String pjtName;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date pjtStartDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date pjtEndDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private Date pjtEnrollDate;

@@ -33,4 +33,6 @@ public interface ProjectService {
     int mySelectListCount(int myEmpNo);
 
     List<Project> mySelectAllProjects(int myEmpNo);
+
+    int updateProjectMember(Project p, List<Map<String, String>> memberList, List<MultipartFile> upfiles, int attCategory);
 }

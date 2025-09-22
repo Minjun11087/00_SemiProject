@@ -118,8 +118,6 @@ public class ProjectServiceImpl implements ProjectService{
             }
         }
 
-
-
         return memberResult;
     }
 
@@ -141,6 +139,63 @@ public class ProjectServiceImpl implements ProjectService{
     @Override
     public List<Project> mySelectAllProjects(int myEmpNo) {
        return  pDao.mySelectAllProjects(sqlSession, myEmpNo);
+    }
+
+    @Override
+    public int updateProjectMember(Project p, List<Map<String, String>> memberList, List<MultipartFile> upfiles, int attCategory) {
+        int result = pDao.updateProject(p, sqlSession);
+        System.out.println(p);
+        if (result == 0) {
+            return -1;  // 프로젝트 삽입 실패
+        }
+
+        if (upfiles  != null && !upfiles.isEmpty()) {
+            File folder = new File(FilePath.UPLOAD_PATH);
+            if (!folder.exists()) folder.mkdirs();
+
+            for (MultipartFile file : upfiles) {
+                if (file.isEmpty()) continue;
+                String originName = file.getOriginalFilename();
+                String changeName = new MyFileRenamePolicy().rename(originName);
+                File dest = new File(FilePath.UPLOAD_PATH + changeName);
+                try {
+                    file.transferTo(dest);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                Attachment att = new Attachment();
+                att.setAttOrigin(originName);
+                att.setAttChangeName(changeName);
+                att.setAttFilePath(FilePath.URL_PATH);
+                att.setAttCategory(attCategory);
+                att.setRefNo(p.getPjtNo());
+                int insertAttResult = attService.insertAttachment(att);
+
+            }
+        }
+
+        int mPjtNo = p.getPjtNo();
+        System.out.println(mPjtNo);
+
+        int memberResult = 0;
+        for (Map<String, String> m : memberList) {
+            String empName = m.get("name");
+            // 1. empNo 조회
+            Integer empNo = pDao.selectEmpNoByName(sqlSession, empName);
+            if (empNo != null) {
+                // 2. INSERT 실행
+                Map<String, Object> params = new HashMap<>();
+                params.put("mPjtNo", mPjtNo);
+                params.put("empNo", empNo);
+                System.out.println("mPjtNo: " + mPjtNo + ", empNo: " + empNo);
+                memberResult += pDao.insertProjectMember(sqlSession, params);
+            } else {
+                // 로그 또는 예외 처리
+                System.err.println("Employee not found: " + empName);
+            }
+        }
+
+        return memberResult;
     }
 
 

@@ -76,8 +76,6 @@ public class ProjectController {
         System.out.println(p);
         System.out.println("-------------------------");
 
-
-
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             List<Map<String, String>> memberList = objectMapper.readValue(members, new TypeReference<List<Map<String, String>>>() {
@@ -157,19 +155,67 @@ public class ProjectController {
     }
 
     @GetMapping("updateForm.pj")
-    public ModelAndView updateProjectForm(@RequestParam("pjtNo") Integer pno, ModelAndView mv){
+    public ModelAndView updateProjectForm(@RequestParam("pjtNo") Integer pno, ModelAndView mv, HttpSession session){
+        String myId = (( Employee)session.getAttribute("loginUser")).getEmpId();
+        ArrayList<Employee> mlist = pService.listProjectMember(myId);
+        mv.addObject("mlist", mlist).setViewName("project/ProjectUpdateForm");
+
         if (pno == null) {
             mv.addObject("errorMsg", "프로젝트 번호가 없습니다").setViewName("common/errorPage");
             return mv;
         }
 
         Project p = pService.selectProject(pno);
+        ArrayList<ProjectMember> pm=  pService.selectProjectMember(pno);
+
+        if(pm != null){ mv.addObject("pm", pm);        }
         if(p != null) {
             mv.addObject("p", p).setViewName("project/ProjectUpdateForm");
         } else {
             mv.addObject("errorMsg", "기존 게시글 원본 조회 실패").setViewName("common/errorPage");
         }
+
+        System.out.println("진짜진짜진짜진짜진짜진짜");
+        System.out.println(p);
+        int attCategory =0;
+        List<Attachment> attachments = attService.selectAttachments(pno, attCategory); // DAO/Service에 구현 필요
+        mv.addObject("attachments", attachments).setViewName("project/ProjectUpdateForm");
+
         return mv;
     }
+
+
+    @PostMapping("update.pj")
+    public String updateProject(Project p, Model model, RedirectAttributes redirectAttributes, @RequestParam String members, @RequestParam List<MultipartFile> upfiles, @RequestParam int attCategory) {
+        for (MultipartFile file : upfiles) {
+            System.out.println(file.getOriginalFilename());
+        }
+        System.out.println(p);
+        System.out.println("------------------------- 다이아몬드");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            List<Map<String, String>> memberList = objectMapper.readValue(members, new TypeReference<List<Map<String, String>>>() {
+            });
+            for(Map<String, String> a : memberList){
+                System.out.println(a);
+            }
+            int result = pService.updateProjectMember(p, memberList, upfiles, attCategory);
+
+            if(result>=0) {//성공
+                redirectAttributes.addFlashAttribute("alertMsg", "성공적으로 게시글 수정완료");
+                return "redirect:/list.pj";
+            }else {//실패
+                model.addAttribute("errorMsg", "게시글 수정 실패 ");
+                return "common/errorPage";
+            }
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
 
 }

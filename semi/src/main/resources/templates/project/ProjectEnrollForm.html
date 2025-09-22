@@ -336,11 +336,11 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label required">시작일</label>
-                    <input type="datetime-local" class="form-input" id="pjtStartDate" name="pjtStartDate" required>
+                    <input type="date" class="form-input" id="pjtStartDate" name="pjtStartDate" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label required">종료일</label>
-                    <input type="datetime-local" class="form-input" id="pjtEndDate" name="pjtEndDate" required>
+                    <input type="date" class="form-input" id="pjtEndDate" name="pjtEndDate" required>
                 </div>
             </div>
         </div>
@@ -415,16 +415,18 @@
     // 현재 날짜/시간 설정
     function setCurrentDateTime() {
         const now = new Date();
-        const startDate = new Date(now);
-        startDate.setHours(9, 0, 0, 0); // 오전 9시로 설정
-        const currentDateTime = startDate.toISOString().slice(0, 16);
-        document.getElementById('pjtStartDate').value = currentDateTime;
+        // 날짜만 설정 (시간 제거)
+        const currentDate = now.toISOString().slice(0, 10); // YYYY-MM-DD 형식
+        document.getElementById('pjtStartDate').value = currentDate;
+
+        // 7일 후 날짜 설정
         const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-        endDate.setHours(20, 0, 0, 0);
-        document.getElementById('pjtEndDate').value = endDate.toISOString().slice(0, 16);
-        // 등록일시도 현재 시간으로 설정
+        document.getElementById('pjtEndDate').value = endDate.toISOString().slice(0, 10);
+
+        // 등록일시는 그대로 유지 (서버에서 처리하므로)
         document.getElementById('pjtEnrollDate').value = now.toISOString();
     }
+
     // 기술 태그 추가
     function addTag() {
         const tagInput = document.getElementById('tagInput');
@@ -593,7 +595,6 @@
                         <div class="file-icon">${fileExtension}</div>
                         <div class="file-details">
                             <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;">${file.name}</h4>
-                            <p style="font-size: 0.8rem; color: #6b7280;">${fileSize}</p>
                         </div>
                     </div>
                     <button type="button" class="btn btn-secondary btn-small" onclick="removeFile(${index})">제거</button>
@@ -672,13 +673,27 @@
                 return;
             }
 
+            // 시작일이 현재 날짜 이후인지 검증 (추가됨)
+            const today = new Date();
+            const startDate = new Date(pjtStartDate);
+
+            // 시간 부분을 제거하고 날짜만 비교 (오늘 포함)
+            today.setHours(0, 0, 0, 0);
+            startDate.setHours(0, 0, 0, 0);
+
+            if (startDate < today) {
+                alert('프로젝트 시작일은 오늘 이후로 설정해주세요.');
+                document.getElementById('pjtStartDate').focus();
+                return;
+            }
+
             if (!pjtTags) {
                 alert('프로젝트 태그를 입력해주세요.');
                 document.getElementById('tagInput').focus(); // pjtTags는 hidden이므로 tagInput으로 포커스
                 return;
             }
 
-            // 날짜 유효성 검증
+            // 날짜 유효성 검증 (종료일이 시작일보다 나중인지)
             const start = new Date(pjtStartDate);
             const end = new Date(pjtEndDate);
             if (start >= end) {
@@ -690,7 +705,6 @@
             // 폼 데이터 설정
             document.getElementById('pjtTags').value = tags.join(',');
             document.getElementById('members').value = JSON.stringify(members);
-
 
             // 파일 input 업데이트 (실제 파일들을 form에 포함)
             updateFileInput();

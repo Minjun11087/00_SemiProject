@@ -534,12 +534,35 @@
     <div class="action-buttons">
         <a href="list.pj" class="btn btn-back">목록으로</a>
         <th:block th:if="${not #lists.isEmpty(session.loginUser) and session.loginUser.empNo eq p.empNo}">
-            <a th:href="'updateForm.pj?pjtNo=' + ${p.pjtNo}" class="btn btn-edit">수정 및 삭제</a>
+            <a th:href="'updateForm.pj?pjtNo=' + ${p.pjtNo}" class="btn btn-edit" th:data-expired="${today.after(p.pjtEndDate)}">수정 하기</a>
+        </th:block>
+        <th:block th:if="${not #lists.isEmpty(session.loginUser) and session.loginUser.empNo eq p.empNo}">
+            <a th:href="'delete.pj?pjtNo=' + ${p.pjtNo}" class="btn btn-delete" th:data-expired="${today.after(p.pjtEndDate)}">삭제 하기</a>
         </th:block>
     </div>
+
 </div>
 
 <script>
+
+    $(document).ready(function() {
+    $('.btn-edit').on('click', function(e) {
+        const isExpired = $(this).data('expired');
+        if (isExpired) {
+            e.preventDefault(); // 기본 동작 방지
+            alert('만료된 프로젝트는 수정 할 수 없습니다.');
+        }
+    });
+     $('.btn-delete').on('click', function(e) {
+        const isExpired = $(this).data('expired');
+        if (isExpired) {
+            e.preventDefault(); // 기본 동작 방지
+            alert('만료된 프로젝트는 삭제 할 수 없습니다.');
+        }
+    });
+
+});
+
     // 드롭다운 메뉴 토글 함수
     function toggleDropdown() {
         const dropdownMenu = document.getElementById('dropdownMenu');
