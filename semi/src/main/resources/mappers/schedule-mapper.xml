@@ -30,6 +30,7 @@
          from schedule
            join employee_tb using (emp_no)
        where sch_status != 'n'
+        and sch_status != 'c'
     </select>
 
     <insert id="insertSchedule">
