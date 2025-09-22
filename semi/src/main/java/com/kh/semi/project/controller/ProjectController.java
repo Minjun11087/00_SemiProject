@@ -175,8 +175,6 @@ public class ProjectController {
             mv.addObject("errorMsg", "기존 게시글 원본 조회 실패").setViewName("common/errorPage");
         }
 
-        System.out.println("진짜진짜진짜진짜진짜진짜");
-        System.out.println(p);
         int attCategory =0;
         List<Attachment> attachments = attService.selectAttachments(pno, attCategory); // DAO/Service에 구현 필요
         mv.addObject("attachments", attachments).setViewName("project/ProjectUpdateForm");
@@ -214,6 +212,24 @@ public class ProjectController {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @GetMapping("delete.pj")
+    public ModelAndView deleteProject(@RequestParam("pjtNo") Integer pno, ModelAndView mv) {
+        if (pno == null) {
+            mv.addObject("errorMsg", "프로젝트 번호가 없습니다.").setViewName("common/errorPage");
+        }
+
+        int result = pService.deleteProject(pno);
+        if (result > 0) {
+            mv.addObject("alertMsg", "프로젝트 삭제가 완료되었습니다!");
+            mv.addObject("showAlert", true);  // 플래그 사용
+            mv.setViewName("project/projectList");
+        } else {
+            mv.addObject("errorMsg", "프로젝트 삭제 실패").setViewName("common/errorPage");
+
+        }
+        return mv;
     }
 
 

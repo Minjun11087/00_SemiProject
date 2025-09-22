@@ -158,4 +158,12 @@
         WHERE pjt_no = #{pjtNo}
         AND emp_no = #{empNo}
     </update>
+
+    <update  id="deleteProject">
+        UPDATE project_tb
+        SET
+        pjt_status = 'n'
+        WHERE pjt_no = #{pjtNo}
+    </update>
+
 </mapper>

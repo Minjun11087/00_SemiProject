@@ -35,4 +35,6 @@ public interface ProjectService {
     List<Project> mySelectAllProjects(int myEmpNo);
 
     int updateProjectMember(Project p, List<Map<String, String>> memberList, List<MultipartFile> upfiles, int attCategory);
+
+    int deleteProject(Integer pno);
 }

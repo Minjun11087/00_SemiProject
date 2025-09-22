@@ -635,5 +635,8 @@
         }, 300);
     });
 </script>
+<script th:if="${showAlert}">
+    alert('[[${alertMsg}]]');
+</script>
 </body>
 </html>

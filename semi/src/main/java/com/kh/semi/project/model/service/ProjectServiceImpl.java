@@ -198,5 +198,10 @@ public class ProjectServiceImpl implements ProjectService{
         return memberResult;
     }
 
+    @Override
+    public int deleteProject(Integer pno) {
+        return pDao.deleteProject(sqlSession, pno);
+    }
+
 
 }

@@ -80,4 +80,8 @@ public class ProjectDao {
     public int updateProject(Project p, SqlSessionTemplate sqlSession) {
         return sqlSession.update("projectMapper.updateProject", p);
     }
+
+    public int deleteProject(SqlSessionTemplate sqlSession, Integer pno) {
+        return sqlSession.update("projectMapper.deleteProject", pno);
+    }
 }
