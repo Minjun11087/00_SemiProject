@@ -1,4 +1,4 @@
-package com.kh.semi.common;
+package com.kh.semi.common.template;
 
 import com.kh.semi.project.model.vo.Project;
 import com.fasterxml.jackson.databind.JsonNode;
