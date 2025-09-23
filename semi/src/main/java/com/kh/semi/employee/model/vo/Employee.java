@@ -23,7 +23,7 @@ public class Employee {
     private String empEmail;
     private String empAddress;
     private String empStatus;
-    private String empSign;
+    private int attNo;
     private int salary;
     private int bonus;
     private Date hireDate;

@@ -13,7 +13,7 @@
         <result column="emp_email" property="empEmail" />
         <result column="emp_address" property="empAddress" />
         <result column="emp_status" property="empStatus" />
-        <result column="emp_sign" property="empSign" />
+        <result column="att_no" property="attNo" />
         <result column="salary" property="salary" />
         <result column="bonus" property="bonus" />
         <result column="hire_date" property="hireDate" />
@@ -48,7 +48,7 @@
                 , emp_email
                 , emp_address
                 , emp_status
-                , emp_sign
+                , att_no
                 , salary
                 , bonus
                 , to_date(hire_date, 'yyyy-MM-dd') as "hire_date"
@@ -145,7 +145,7 @@
         , emp_email
         , emp_address
         , emp_status
-        , emp_sign
+        , att_no
         , salary
         , bonus
         , to_char(hire_date, 'YYYY-MM-DD') as "hire_date"
