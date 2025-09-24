@@ -16,7 +16,7 @@ DROP TABLE DEPARTMENT;
 DROP TABLE JOB_TB;
 
 
-
+DROP TRIGGER TRG_SCHEDULE_TO_PROJECT;
 DROP TRIGGER TRG_CUS_GENDER;
 DROP TRIGGER TRG_CUS_AGE;
 DROP TRIGGER TRG_LOAN;
@@ -639,7 +639,7 @@ CREATE TABLE SCHEDULE ( -- 일정 테이블
     EMP_NO NUMBER REFERENCES EMPLOYEE_TB(EMP_NO) NOT NULL, -- 작성자 사원번호
     SCH_ENROLLDATE DATE DEFAULT SYSDATE NOT NULL, -- 등록일    
     SCH_COUNT NUMBER DEFAULT 0 NOT NULL, -- 조회수
-    SCH_STATUS CHAR(1) DEFAULT 'c' NOT NULL CHECK (SCH_STATUS IN ('p','c','e')) -- 일정 상태(진행중(p) | 검토중(c) | 만료(e))| 삭제(n)
+    SCH_STATUS CHAR(1) DEFAULT 'c' NOT NULL CHECK (SCH_STATUS IN ('p','c','e','n')) -- 일정 상태(진행중(p) | 검토중(c) | 만료(e))| 삭제(n)
 );
 
 --=================================================
@@ -684,27 +684,104 @@ BEGIN
     );
 END;
 /
-
 -- ============================================
 -- 일정 상태 변경 시 프로젝트 상태도 함께 변경하는 트리거
 -- ============================================
-CREATE OR REPLACE TRIGGER TRG_SCHEDULE_TO_PROJECT
-    AFTER UPDATE ON SCHEDULE
-    FOR EACH ROW
-BEGIN
-    -- 일정 상태가 변경되었을 때만 실행
-    IF :OLD.SCH_STATUS != :NEW.SCH_STATUS THEN
-        -- 해당 일정 이름과 동일한 프로젝트 이름이 있는지 확인하고 업데이트
-        UPDATE PROJECT_TB
-        SET PJT_STATUS = :NEW.SCH_STATUS
-        WHERE PJT_NAME = :NEW.SCH_NAME
-        AND EXISTS (SELECT 1 FROM PROJECT_TB WHERE PJT_NAME = :NEW.SCH_NAME);
-
-        -- 디버깅용 로그 (선택사항)
-        DBMS_OUTPUT.PUT_LINE('일정 이름 ' || :NEW.SCH_NAME || ' 상태 변경: ' || :OLD.SCH_STATUS || ' -> ' || :NEW.SCH_STATUS);
-    END IF;
-END;
+-- 1. 일정 테이블용 COMPOUND TRIGGER
+CREATE OR REPLACE TRIGGER TRG_SCHEDULE_SYNC
+    FOR UPDATE ON SCHEDULE
+    COMPOUND TRIGGER
+    
+    -- 변경된 데이터를 저장할 컬렉션
+    TYPE t_schedule_changes IS TABLE OF SCHEDULE%ROWTYPE INDEX BY PLS_INTEGER;
+    schedule_changes t_schedule_changes;
+    change_count PLS_INTEGER := 0;
+    
+    -- BEFORE EACH ROW: 변경될 데이터 수집
+    BEFORE EACH ROW IS
+    BEGIN
+        -- 상태가 실제로 변경된 경우만 수집
+        IF :OLD.SCH_STATUS != :NEW.SCH_STATUS THEN
+            change_count := change_count + 1;
+            schedule_changes(change_count).SCH_NO := :NEW.SCH_NO;
+            schedule_changes(change_count).SCH_NAME := :NEW.SCH_NAME;
+            schedule_changes(change_count).SCH_STATUS := :NEW.SCH_STATUS;
+        END IF;
+    END BEFORE EACH ROW;
+    
+    -- AFTER STATEMENT: 수집된 데이터로 프로젝트 업데이트
+    AFTER STATEMENT IS
+    BEGIN
+        FOR i IN 1..change_count LOOP
+            -- 프로젝트 상태 업데이트 (무한루프 방지 포함)
+            UPDATE PROJECT_TB
+            SET PJT_STATUS = schedule_changes(i).SCH_STATUS
+            WHERE PJT_NAME = schedule_changes(i).SCH_NAME
+            AND PJT_STATUS != schedule_changes(i).SCH_STATUS; -- 다를 때만 업데이트
+            
+            -- 디버깅용 로그
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('일정->프로젝트 동기화: ' || schedule_changes(i).SCH_NAME || 
+                                   ' 상태변경: ' || schedule_changes(i).SCH_STATUS);
+            END IF;
+        END LOOP;
+        
+        -- 컬렉션 초기화
+        schedule_changes.DELETE;
+        change_count := 0;
+    END AFTER STATEMENT;
+    
+END TRG_SCHEDULE_SYNC;
 /
+
+-- 2. 프로젝트 테이블용 COMPOUND TRIGGER  
+CREATE OR REPLACE TRIGGER TRG_PROJECT_SYNC
+    FOR UPDATE ON PROJECT_TB
+    COMPOUND TRIGGER
+    
+    -- 변경된 데이터를 저장할 컬렉션
+    TYPE t_project_changes IS TABLE OF PROJECT_TB%ROWTYPE INDEX BY PLS_INTEGER;
+    project_changes t_project_changes;
+    change_count PLS_INTEGER := 0;
+    
+    -- BEFORE EACH ROW: 변경될 데이터 수집
+    BEFORE EACH ROW IS
+    BEGIN
+        -- 상태가 실제로 변경된 경우만 수집
+        IF :OLD.PJT_STATUS != :NEW.PJT_STATUS THEN
+            change_count := change_count + 1;
+            project_changes(change_count).PJT_NO := :NEW.PJT_NO;
+            project_changes(change_count).PJT_NAME := :NEW.PJT_NAME;
+            project_changes(change_count).PJT_STATUS := :NEW.PJT_STATUS;
+        END IF;
+    END BEFORE EACH ROW;
+    
+    -- AFTER STATEMENT: 수집된 데이터로 일정 업데이트
+    AFTER STATEMENT IS
+    BEGIN
+        FOR i IN 1..change_count LOOP
+            -- 일정 상태 업데이트 (무한루프 방지 포함)
+            UPDATE SCHEDULE
+            SET SCH_STATUS = project_changes(i).PJT_STATUS
+            WHERE SCH_NAME = project_changes(i).PJT_NAME
+            AND SCH_STATUS != project_changes(i).PJT_STATUS; -- 다를 때만 업데이트
+            
+            -- 디버깅용 로그
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('프로젝트->일정 동기화: ' || project_changes(i).PJT_NAME || 
+                                   ' 상태변경: ' || project_changes(i).PJT_STATUS);
+            END IF;
+        END LOOP;
+        
+        -- 컬렉션 초기화
+        project_changes.DELETE;
+        change_count := 0;
+    END AFTER STATEMENT;
+    
+END TRG_PROJECT_SYNC;
+/
+
+
 
 -- ============================================
 -- PROJECT_TB 샘플 데이터
@@ -729,19 +806,7 @@ INSERT INTO PROJECTMEMBER_TB (PJT_NO, EMP_NO) VALUES (2,102);
 INSERT INTO PROJECTMEMBER_TB (PJT_NO, EMP_NO) VALUES (3,103);
 INSERT INTO PROJECTMEMBER_TB (PJT_NO, EMP_NO) VALUES (3,104);
 
--- ============================================
--- SCHEDULE 샘플 데이터
--- ============================================
-INSERT INTO SCHEDULE (SCH_NO, SCH_NAME, SCH_CONTENT, SCH_STARTDATE, SCH_ENDDATE, EMP_NO)
-VALUES (SEQ_PNO.NEXTVAL, '회의 A', '주간 회의', '2025-08-01', '2025-08-01',100);
-INSERT INTO SCHEDULE (SCH_NO, SCH_NAME, SCH_CONTENT, SCH_STARTDATE, SCH_ENDDATE, EMP_NO)
-VALUES (SEQ_PNO.NEXTVAL, '보고서 제출', '월간 보고서 제출', '2025-08-05', '2025-08-05',101);
-INSERT INTO SCHEDULE (SCH_NO, SCH_NAME, SCH_CONTENT, SCH_STARTDATE, SCH_ENDDATE, EMP_NO)
-VALUES (SEQ_PNO.NEXTVAL, '교육', '신입 교육', '2025-08-10', '2025-08-12',102);
-INSERT INTO SCHEDULE (SCH_NO, SCH_NAME, SCH_CONTENT, SCH_STARTDATE, SCH_ENDDATE, EMP_NO)
-VALUES (SEQ_PNO.NEXTVAL, '워크샵', '팀워크 강화', '2025-08-15', '2025-08-16',103);
-INSERT INTO SCHEDULE (SCH_NO, SCH_NAME, SCH_CONTENT, SCH_STARTDATE, SCH_ENDDATE, EMP_NO)
-VALUES (SEQ_PNO.NEXTVAL, '회의 B', '프로젝트 회의', '2025-08-20', '2025-08-20',104);
+
 
 -- ============================================
 -- 채팅방 테이블
